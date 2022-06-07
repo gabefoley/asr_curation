@@ -1,0 +1,4 @@
+format: jb-book 
+root: kari_example_ec_1_1_1_86_summary_cleaned.ipynb 
+chapters:
+- file: classI_kari_subset_summary_cleaned.ipynb

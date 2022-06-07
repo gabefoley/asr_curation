@@ -1,0 +1,177 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        3              1              1
+add_annotations_from_ancestors        3              1              1
+add_custom_annotations                2              1              1
+align_seqs                            3              1              1
+all                                   1              1              1
+clean_subset_summary                  3              1              1
+clean_summary_document                2              1              1
+compile_summary_document              3              1              1
+create_annotation_file                3              1              1
+create_annotations                    2              1              1
+create_dataset_summary                2              1              1
+create_subset_document                3              1              1
+create_subset_summary                 3              1              1
+create_subsets                        3              1              1
+get_brenda_annotations                2              1              1
+get_uniprot_annotations               2              1              1
+infer_tree                            3              1              1
+run_grasp                             3              1              1
+total                                46              1              1
+
+Select jobs to execute...
+
+[Thu Jun  2 08:04:48 2022]
+rule create_annotations:
+    input: workflows/example_workflow/fasta/uniprot_ec_1_1_1_86_filtered_reviewed_yes.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    jobid: 8
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:04:48 2022]
+Finished job 8.
+1 of 46 steps (2%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:04:48 2022]
+rule get_uniprot_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    jobid: 7
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:05:19 2022]
+Finished job 7.
+2 of 46 steps (4%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:05:19 2022]
+rule get_brenda_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    jobid: 6
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:05:28 2022]
+Finished job 6.
+3 of 46 steps (7%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:05:28 2022]
+rule add_custom_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    jobid: 5
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:05:29 2022]
+Finished job 5.
+4 of 46 steps (9%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:05:29 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/4loop/uniprot_ec_1_1_1_86_filtered_reviewed_yes_4loop.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/4loop/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_4loop.csv
+    jobid: 4
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/4loop/uniprot_ec_1_1_1_86_filtered_reviewed_yes_4loop.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/4loop/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_4loop.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=4loop
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:05:29 2022]
+Finished job 4.
+5 of 46 steps (11%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:05:29 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/7loop/uniprot_ec_1_1_1_86_filtered_reviewed_yes_7loop.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/7loop/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_7loop.csv
+    jobid: 12
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/7loop/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_7loop.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/7loop/uniprot_ec_1_1_1_86_filtered_reviewed_yes_7loop.fasta; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=7loop
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:05:30 2022]
+Finished job 12.
+6 of 46 steps (13%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:05:30 2022]
+rule create_dataset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    jobid: 24
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:06:08 2022]
+Finished job 24.
+7 of 46 steps (15%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:06:08 2022]
+rule clean_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary_cleaned.ipynb
+    jobid: 23
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary_cleaned.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:06:09 2022]
+Finished job 23.
+8 of 46 steps (17%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:06:09 2022]
+rule create_annotations:
+    input: workflows/example_workflow/fasta/uniprot_ec_2_2_1_6_AND_reviewed_yes.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/original/uniprot_ec_2_2_1_6_AND_reviewed_yes_original.csv
+    jobid: 20
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/original/uniprot_ec_2_2_1_6_AND_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_2_2_1_6_AND_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 08:06:09 2022]
+Finished job 20.
+9 of 46 steps (20%) done
+Select jobs to execute...
+
+[Thu Jun  2 08:06:09 2022]
+rule get_uniprot_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/original/uniprot_ec_2_2_1_6_AND_reviewed_yes_original.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/uniprot/uniprot_ec_2_2_1_6_AND_reviewed_yes_uniprot.csv
+    jobid: 19
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/uniprot/uniprot_ec_2_2_1_6_AND_reviewed_yes_uniprot.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/original/uniprot_ec_2_2_1_6_AND_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_2_2_1_6_AND_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+Terminating processes on user request, this might take some time.
+[Thu Jun  2 08:06:13 2022]
+Error in rule get_uniprot_annotations:
+    jobid: 19
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/uniprot/uniprot_ec_2_2_1_6_AND_reviewed_yes_uniprot.csv
+
+RuleException:
+CalledProcessError in line 155 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  /Users/uqgfoley/opt/miniconda3/envs/asr_curation241/bin/python /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmp60a970o1.get_uniprot_annotations_async.py' died with <Signals.SIGINT: 2>.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 155, in __rule_get_uniprot_annotations
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Complete log: .snakemake/log/2022-06-02T080448.059912.snakemake.log

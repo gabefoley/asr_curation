@@ -1,0 +1,303 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        2              1              1
+add_custom_annotations                1              1              1
+align_seqs                            2              1              1
+all                                   1              1              1
+clean_subset_summary                  2              1              1
+clean_summary_document                1              1              1
+compile_summary_document              2              1              1
+create_annotation_file                2              1              1
+create_annotations                    1              1              1
+create_dataset_summary                1              1              1
+create_subset_document                2              1              1
+create_subset_summary                 2              1              1
+create_subsets                        2              1              1
+get_brenda_annotations                1              1              1
+get_uniprot_annotations               1              1              1
+total                                23              1              1
+
+Select jobs to execute...
+
+[Thu Jun  2 21:41:41 2022]
+rule create_annotations:
+    input: workflows/example_workflow/fasta/uniprot_ec_1_1_1_86_filtered_reviewed_yes.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    jobid: 8
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:41:41 2022]
+Finished job 8.
+1 of 23 steps (4%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:41:41 2022]
+rule get_uniprot_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    jobid: 7
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_original.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:19 2022]
+Finished job 7.
+2 of 23 steps (9%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:19 2022]
+rule get_brenda_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    jobid: 6
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:28 2022]
+Finished job 6.
+3 of 23 steps (13%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:28 2022]
+rule add_custom_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    jobid: 5
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:29 2022]
+Finished job 5.
+4 of 23 steps (17%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:29 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv
+    jobid: 4
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:30 2022]
+Finished job 4.
+5 of 23 steps (22%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:30 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv
+    jobid: 12
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:31 2022]
+Finished job 12.
+6 of 23 steps (26%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:31 2022]
+rule create_dataset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    jobid: 16
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:34 2022]
+Error in rule create_dataset_summary:
+    jobid: 16
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 285 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  jupyter-nbconvert --log-level ERROR --execute --output /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb --to notebook --ExecutePreprocessor.timeout=-1 /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmp1kpcr3k7.create_summary_document.py.ipynb' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 285, in __rule_create_dataset_summary
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Removing output files of failed job create_dataset_summary since they might be corrupted:
+workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+Job failed, going on with independent jobs.
+Select jobs to execute...
+
+[Thu Jun  2 21:42:34 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln
+    jobid: 11
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:35 2022]
+Finished job 11.
+7 of 23 steps (30%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:35 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    jobid: 10
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:36 2022]
+Finished job 10.
+8 of 23 steps (35%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:36 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    jobid: 22
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:39 2022]
+Error in rule create_subset_summary:
+    jobid: 22
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 312 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  jupyter-nbconvert --log-level ERROR --execute --output /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb --to notebook --ExecutePreprocessor.timeout=-1 /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmpp3kgbz_o.create_subset_document.py.ipynb' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 312, in __rule_create_subset_summary
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Removing output files of failed job create_subset_summary since they might be corrupted:
+workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+Job failed, going on with independent jobs.
+Select jobs to execute...
+
+[Thu Jun  2 21:42:39 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt
+    jobid: 9
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv; Params have changed since last execution
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:39 2022]
+Error in rule create_annotation_file:
+    jobid: 9
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt
+
+RuleException:
+CalledProcessError in line 266 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  /Users/uqgfoley/opt/miniconda3/envs/asr_curation241/bin/python /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmp6paba27j.create_annotation_file.py' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 266, in __rule_create_annotation_file
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Job failed, going on with independent jobs.
+Select jobs to execute...
+
+[Thu Jun  2 21:42:39 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln
+    jobid: 3
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:39 2022]
+Finished job 3.
+9 of 23 steps (39%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:39 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    jobid: 2
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:40 2022]
+Finished job 2.
+10 of 23 steps (43%) done
+Select jobs to execute...
+
+[Thu Jun  2 21:42:40 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    jobid: 18
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:43 2022]
+Error in rule create_subset_summary:
+    jobid: 18
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 312 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  jupyter-nbconvert --log-level ERROR --execute --output /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb --to notebook --ExecutePreprocessor.timeout=-1 /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmpmcqv6_2x.create_subset_document.py.ipynb' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 312, in __rule_create_subset_summary
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Removing output files of failed job create_subset_summary since they might be corrupted:
+workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+Job failed, going on with independent jobs.
+Select jobs to execute...
+
+[Thu Jun  2 21:42:43 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt
+    jobid: 1
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv; Params have changed since last execution
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 21:42:43 2022]
+Error in rule create_annotation_file:
+    jobid: 1
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt
+
+RuleException:
+CalledProcessError in line 266 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  /Users/uqgfoley/opt/miniconda3/envs/asr_curation241/bin/python /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmp9cfg3qps.create_annotation_file.py' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 266, in __rule_create_annotation_file
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Job failed, going on with independent jobs.
+Exiting because a job execution failed. Look above for error message
+BUG: Out of jobs ready to be started, but not all files built yet. Please check https://github.com/snakemake/snakemake/issues/823 for more information.
+Remaining jobs:
+ - compile_summary_document: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+ - create_subset_document: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_toc.yml
+ - compile_summary_document: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html
+ - all: 
+ - clean_subset_summary: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+ - create_subset_document: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_config.yml, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_toc.yml
+ - create_subset_summary: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+ - clean_summary_document: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary_cleaned.ipynb
+ - create_dataset_summary: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/temp/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary.ipynb
+ - create_annotation_file: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt
+ - create_annotation_file: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt
+ - clean_subset_summary: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+ - create_subset_summary: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+Complete log: .snakemake/log/2022-06-02T214141.024968.snakemake.log

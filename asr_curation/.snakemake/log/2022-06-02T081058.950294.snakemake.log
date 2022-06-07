@@ -1,0 +1,47 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        1              1              1
+add_annotations_from_ancestors        1              1              1
+align_seqs                            1              1              1
+all                                   1              1              1
+clean_subset_summary                  1              1              1
+clean_summary_document                1              1              1
+compile_summary_document              1              1              1
+create_annotation_file                1              1              1
+create_dataset_summary                1              1              1
+create_subset_document                1              1              1
+create_subset_summary                 1              1              1
+infer_tree                            1              1              1
+run_grasp                             1              1              1
+total                                13              1              1
+
+Select jobs to execute...
+
+[Thu Jun  2 08:10:59 2022]
+rule create_dataset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/csv/custom/uniprot_ec_2_2_1_6_AND_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb
+    jobid: 12
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb
+    wildcards: dataset=uniprot_ec_2_2_1_6_AND_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+Terminating processes on user request, this might take some time.
+[Thu Jun  2 08:35:01 2022]
+Error in rule create_dataset_summary:
+    jobid: 12
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 297 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  jupyter-nbconvert --log-level ERROR --execute --output /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/temp/uniprot_ec_2_2_1_6_AND_reviewed_yes_summary.ipynb --to notebook --ExecutePreprocessor.timeout=-1 /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmppp3cc0lf.create_summary_document.py.ipynb' died with <Signals.SIGINT: 2>.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 297, in __rule_create_dataset_summary
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Complete log: .snakemake/log/2022-06-02T081058.950294.snakemake.log

@@ -1,0 +1,13 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "asr_curation"
+authors = [{name = "Gabe Foley", email = "g.foley@uq.edu.au"}]
+readme = "README.md"
+classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
+dynamic = ["version", "description"]
+
+[project.urls]
+Home = "https://github.com/gabefoley/asr_curation"

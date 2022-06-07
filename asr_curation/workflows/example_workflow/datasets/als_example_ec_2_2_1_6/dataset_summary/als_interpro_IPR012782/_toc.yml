@@ -1,0 +1,4 @@
+format: jb-book 
+root: als_example_ec_2_2_1_6_summary_cleaned.ipynb 
+chapters:
+- file: als_interpro_IPR012782_subset_summary_cleaned.ipynb

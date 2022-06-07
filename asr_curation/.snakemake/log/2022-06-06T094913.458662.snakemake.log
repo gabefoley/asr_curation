@@ -1,0 +1,459 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        3              1              1
+add_custom_annotations                2              1              1
+align_seqs                            3              1              1
+all                                   1              1              1
+clean_subset_summary                  3              1              1
+clean_summary_document                2              1              1
+compile_summary_document              3              1              1
+create_annotation_file                3              1              1
+create_dataset_summary                2              1              1
+create_subset_document                3              1              1
+create_subset_summary                 3              1              1
+create_subsets                        3              1              1
+total                                31              1              1
+
+Select jobs to execute...
+
+[Mon Jun  6 09:49:13 2022]
+rule add_custom_annotations:
+    input: workflows/example_workflow/datasets/kari_example/csv/brenda/kari_example_brenda.csv
+    output: workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    jobid: 5
+    reason: Code has changed since last execution
+    wildcards: dataset=kari_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:14 2022]
+Finished job 5.
+1 of 31 steps (3%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:14 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/kari_example.subset, workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.fasta, workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari.csv
+    jobid: 4
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:14 2022]
+Finished job 4.
+2 of 31 steps (6%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:14 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/kari_example.subset, workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.fasta, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari.csv
+    jobid: 12
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:15 2022]
+Finished job 12.
+3 of 31 steps (10%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:15 2022]
+rule create_dataset_summary:
+    input: workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/temp/kari_example_summary.ipynb
+    log: workflows/example_workflow/datasets/kari_example/dataset_summary/temp/kari_example_summary.ipynb
+    jobid: 24
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/csv/custom/kari_example_annotated.csv
+    wildcards: dataset=kari_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:37 2022]
+Finished job 24.
+4 of 31 steps (13%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:37 2022]
+rule clean_summary_document:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/temp/kari_example_summary.ipynb
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example_summary_cleaned.ipynb
+    jobid: 23
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/temp/kari_example_summary.ipynb
+    wildcards: dataset=kari_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:38 2022]
+Finished job 23.
+5 of 31 steps (16%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:38 2022]
+rule add_custom_annotations:
+    input: workflows/example_workflow/datasets/als_example/csv/brenda/als_example_brenda.csv
+    output: workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    jobid: 17
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    wildcards: dataset=als_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:38 2022]
+Finished job 17.
+6 of 31 steps (19%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:38 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/als_example.subset, workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    output: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.fasta, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782.csv
+    jobid: 16
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782.csv, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.fasta; Input files updated by another job: workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:49:39 2022]
+Finished job 16.
+7 of 31 steps (23%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:49:39 2022]
+rule create_dataset_summary:
+    input: workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/temp/als_example_summary.ipynb
+    log: workflows/example_workflow/datasets/als_example/dataset_summary/temp/als_example_summary.ipynb
+    jobid: 34
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/temp/als_example_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/als_example/csv/custom/als_example_annotated.csv
+    wildcards: dataset=als_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:51:52 2022]
+Finished job 34.
+8 of 31 steps (26%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:51:52 2022]
+rule clean_summary_document:
+    input: workflows/example_workflow/datasets/als_example/dataset_summary/temp/als_example_summary.ipynb
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/als_example_summary_cleaned.ipynb
+    jobid: 33
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/als_example_summary_cleaned.ipynb; Input files updated by another job: workflows/example_workflow/datasets/als_example/dataset_summary/temp/als_example_summary.ipynb
+    wildcards: dataset=als_example
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:51:52 2022]
+Finished job 33.
+9 of 31 steps (29%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:51:52 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.fasta
+    output: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.aln
+    jobid: 11
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.fasta
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:51:53 2022]
+Finished job 11.
+10 of 31 steps (32%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:51:53 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_alignment.csv
+    jobid: 10
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari.csv, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.aln
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:51:53 2022]
+Finished job 10.
+11 of 31 steps (35%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:51:53 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    jobid: 30
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/kari_example_classI_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_alignment.csv
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:15 2022]
+Finished job 30.
+12 of 31 steps (39%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:15 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_annotations.txt
+    jobid: 9
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_alignment.csv
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:16 2022]
+Finished job 9.
+13 of 31 steps (42%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:16 2022]
+rule clean_subset_summary:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+    jobid: 29
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:16 2022]
+Finished job 29.
+14 of 31 steps (45%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:16 2022]
+rule create_subset_document:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example_summary_cleaned.ipynb, workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_config.yml, workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_toc.yml
+    jobid: 28
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb, workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example_summary_cleaned.ipynb
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:16 2022]
+Finished job 28.
+15 of 31 steps (48%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:16 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.fasta
+    output: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln
+    jobid: 3
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln; Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.fasta
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:16 2022]
+Finished job 3.
+16 of 31 steps (52%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:16 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv
+    jobid: 2
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv; Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari.csv
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:17 2022]
+Finished job 2.
+17 of 31 steps (55%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:17 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln, workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    jobid: 26
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv, workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/kari_example_eukaryotic_kari.aln
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:35 2022]
+Finished job 26.
+18 of 31 steps (58%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:35 2022]
+rule clean_subset_summary:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+    jobid: 25
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb; Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:35 2022]
+Finished job 25.
+19 of 31 steps (61%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:35 2022]
+rule create_subset_document:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example_summary_cleaned.ipynb, workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_config.yml, workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_toc.yml
+    jobid: 22
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_config.yml; Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb, workflows/example_workflow/datasets/kari_example/dataset_summary/kari_example_summary_cleaned.ipynb
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:35 2022]
+Finished job 22.
+20 of 31 steps (65%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:35 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_annotations.txt
+    jobid: 1
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_annotations.txt; Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_alignment.csv
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:36 2022]
+Finished job 1.
+21 of 31 steps (68%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:36 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.fasta
+    output: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln
+    jobid: 15
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln; Input files updated by another job: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.fasta
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:36 2022]
+Finished job 15.
+22 of 31 steps (71%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:36 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782.csv
+    output: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv
+    jobid: 14
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv; Input files updated by another job: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782.csv
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:52:36 2022]
+Finished job 14.
+23 of 31 steps (74%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:52:36 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb
+    jobid: 36
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/als_example_als_interpro_IPR012782.aln, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:53:02 2022]
+Finished job 36.
+24 of 31 steps (77%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:53:02 2022]
+rule clean_subset_summary:
+    input: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/als_interpro_IPR012782_subset_summary_cleaned.ipynb
+    jobid: 35
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/als_interpro_IPR012782_subset_summary_cleaned.ipynb; Input files updated by another job: workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:53:02 2022]
+Finished job 35.
+25 of 31 steps (81%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:53:02 2022]
+rule create_subset_document:
+    input: workflows/example_workflow/datasets/als_example/dataset_summary/als_example_summary_cleaned.ipynb, workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/als_interpro_IPR012782_subset_summary_cleaned.ipynb
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_config.yml, workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_toc.yml
+    jobid: 32
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_config.yml; Input files updated by another job: workflows/example_workflow/datasets/als_example/dataset_summary/als_example_summary_cleaned.ipynb, workflows/example_workflow/datasets/als_example/dataset_summary/als_example/subsets/als_interpro_IPR012782/als_interpro_IPR012782_subset_summary_cleaned.ipynb
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:53:02 2022]
+Finished job 32.
+26 of 31 steps (84%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:53:02 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv
+    output: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_annotations.txt
+    jobid: 13
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_annotations.txt; Input files updated by another job: workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_alignment.csv
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:53:03 2022]
+Finished job 13.
+27 of 31 steps (87%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:53:03 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_config.yml
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_build/html/index.html
+    jobid: 27
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_build/html/index.html; Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_config.yml
+    wildcards: dataset=kari_example, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:53:47 2022]
+Finished job 27.
+28 of 31 steps (90%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:53:47 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_config.yml
+    output: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_build/html/index.html
+    jobid: 21
+    reason: Missing output files: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_build/html/index.html; Input files updated by another job: workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_config.yml
+    wildcards: dataset=kari_example, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:54:49 2022]
+Finished job 21.
+29 of 31 steps (94%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:54:49 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_config.yml
+    output: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_build/html/index.html
+    jobid: 31
+    reason: Missing output files: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_build/html/index.html; Input files updated by another job: workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_config.yml
+    wildcards: dataset=als_example, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:55:49 2022]
+Finished job 31.
+30 of 31 steps (97%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:55:49 2022]
+localrule all:
+    input: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_annotations.txt, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_annotations.txt, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_annotations.txt, workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_build/html/index.html, workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_build/html/index.html, workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_build/html/index.html
+    jobid: 0
+    reason: Input files updated by another job: workflows/example_workflow/datasets/kari_example/subsets/eukaryotic_kari/csv/kari_example_eukaryotic_kari_annotations.txt, workflows/example_workflow/datasets/kari_example/dataset_summary/eukaryotic_kari/_build/html/index.html, workflows/example_workflow/datasets/als_example/subsets/als_interpro_IPR012782/csv/als_example_als_interpro_IPR012782_annotations.txt, workflows/example_workflow/datasets/kari_example/subsets/classI_kari/csv/kari_example_classI_kari_annotations.txt, workflows/example_workflow/datasets/als_example/dataset_summary/als_interpro_IPR012782/_build/html/index.html, workflows/example_workflow/datasets/kari_example/dataset_summary/classI_kari/_build/html/index.html
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:55:49 2022]
+Finished job 0.
+31 of 31 steps (100%) done
+Complete log: .snakemake/log/2022-06-06T094913.458662.snakemake.log

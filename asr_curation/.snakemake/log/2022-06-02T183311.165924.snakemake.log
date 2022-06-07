@@ -1,0 +1,257 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        2              1              1
+align_seqs                            2              1              1
+all                                   1              1              1
+clean_subset_summary                  2              1              1
+compile_summary_document              2              1              1
+create_annotation_file                2              1              1
+create_subset_document                2              1              1
+create_subset_summary                 2              1              1
+create_subsets                        2              1              1
+total                                17              1              1
+
+Select jobs to execute...
+
+[Thu Jun  2 18:33:11 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv
+    jobid: 4
+    reason: Updated input files: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:11 2022]
+Finished job 4.
+1 of 17 steps (6%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:11 2022]
+rule create_subsets:
+    input: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv
+    jobid: 12
+    reason: Updated input files: workflows/example_workflow/subset_rules/uniprot_ec_1_1_1_86_filtered_reviewed_yes.subset
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:12 2022]
+Finished job 12.
+2 of 17 steps (12%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:12 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln
+    jobid: 11
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.fasta
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:13 2022]
+Finished job 11.
+3 of 17 steps (18%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:13 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    jobid: 10
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:14 2022]
+Finished job 10.
+4 of 17 steps (24%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:14 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    jobid: 22
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:47 2022]
+Finished job 22.
+5 of 17 steps (29%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:47 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt
+    jobid: 9
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_alignment.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:47 2022]
+Finished job 9.
+6 of 17 steps (35%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:47 2022]
+rule clean_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+    jobid: 21
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/temp/classI_kari_subset_summary.ipynb
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:48 2022]
+Finished job 21.
+7 of 17 steps (41%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:48 2022]
+rule create_subset_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary_cleaned.ipynb, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_toc.yml
+    jobid: 20
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/classI_kari_subset_summary_cleaned.ipynb
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:48 2022]
+Finished job 20.
+8 of 17 steps (47%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:48 2022]
+rule align_seqs:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln
+    jobid: 3
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.fasta
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:48 2022]
+Finished job 3.
+9 of 17 steps (53%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:48 2022]
+rule add_annotations_from_alignment:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    jobid: 2
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:33:49 2022]
+Finished job 2.
+10 of 17 steps (59%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:33:49 2022]
+rule create_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    log: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    jobid: 18
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari.aln
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:34:11 2022]
+Finished job 18.
+11 of 17 steps (65%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:34:11 2022]
+rule clean_subset_summary:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+    jobid: 17
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/temp/eukaryotic_kari_subset_summary.ipynb
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:34:11 2022]
+Finished job 17.
+12 of 17 steps (71%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:34:11 2022]
+rule create_subset_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes_summary_cleaned.ipynb, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_config.yml, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_toc.yml
+    jobid: 14
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/eukaryotic_kari_subset_summary_cleaned.ipynb
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:34:11 2022]
+Finished job 14.
+13 of 17 steps (76%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:34:11 2022]
+rule create_annotation_file:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt
+    jobid: 1
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_alignment.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:34:12 2022]
+Finished job 1.
+14 of 17 steps (82%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:34:12 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+    jobid: 19
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html; Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:35:28 2022]
+Finished job 19.
+15 of 17 steps (88%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:35:28 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_config.yml
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html
+    jobid: 13
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_config.yml
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:36:42 2022]
+Finished job 13.
+16 of 17 steps (94%) done
+Select jobs to execute...
+
+[Thu Jun  2 18:36:42 2022]
+localrule all:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+    jobid: 0
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Thu Jun  2 18:36:42 2022]
+Finished job 0.
+17 of 17 steps (100%) done
+Complete log: .snakemake/log/2022-06-02T183311.165924.snakemake.log

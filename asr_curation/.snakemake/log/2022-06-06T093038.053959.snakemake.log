@@ -1,0 +1,66 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                         count    min threads    max threads
+------------------------  -------  -------------  -------------
+all                             1              1              1
+compile_summary_document        3              1              1
+total                           4              1              1
+
+Select jobs to execute...
+
+[Mon Jun  6 09:30:38 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_config.yml
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+    jobid: 27
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=classI_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:31:23 2022]
+Finished job 27.
+1 of 4 steps (25%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:31:23 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_config.yml
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html
+    jobid: 21
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes, subset=eukaryotic_kari
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:32:26 2022]
+Finished job 21.
+2 of 4 steps (50%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:32:26 2022]
+rule compile_summary_document:
+    input: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/als_interpro_IPR012782/_config.yml
+    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/als_interpro_IPR012782/_build/html/index.html
+    jobid: 31
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/als_interpro_IPR012782/_build/html/index.html
+    wildcards: dataset=uniprot_ec_2_2_1_6_AND_reviewed_yes, subset=als_interpro_IPR012782
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:33:27 2022]
+Finished job 31.
+3 of 4 steps (75%) done
+Select jobs to execute...
+
+[Mon Jun  6 09:33:27 2022]
+localrule all:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/eukaryotic_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_eukaryotic_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/subsets/classI_kari/csv/uniprot_ec_1_1_1_86_filtered_reviewed_yes_classI_kari_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/subsets/als_interpro_IPR012782/csv/uniprot_ec_2_2_1_6_AND_reviewed_yes_als_interpro_IPR012782_annotations.txt, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/als_interpro_IPR012782/_build/html/index.html
+    jobid: 0
+    reason: Input files updated by another job: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/eukaryotic_kari/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/als_interpro_IPR012782/_build/html/index.html, workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/dataset_summary/classI_kari/_build/html/index.html
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Mon Jun  6 09:33:27 2022]
+Finished job 0.
+4 of 4 steps (100%) done
+Complete log: .snakemake/log/2022-06-06T093038.053959.snakemake.log

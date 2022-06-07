@@ -1,0 +1,3 @@
+NameError in line 3 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+name 'ddd' is not defined
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 3, in <module>

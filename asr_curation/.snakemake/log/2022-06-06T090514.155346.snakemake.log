@@ -1,0 +1,47 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        3              1              1
+add_custom_annotations                2              1              1
+align_seqs                            3              1              1
+all                                   1              1              1
+clean_subset_summary                  3              1              1
+clean_summary_document                2              1              1
+compile_summary_document              3              1              1
+create_annotation_file                3              1              1
+create_annotations                    1              1              1
+create_dataset_summary                2              1              1
+create_subset_document                3              1              1
+create_subset_summary                 3              1              1
+create_subsets                        3              1              1
+get_brenda_annotations                2              1              1
+get_uniprot_annotations               1              1              1
+total                                35              1              1
+
+Select jobs to execute...
+
+[Mon Jun  6 09:05:14 2022]
+rule get_brenda_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    jobid: 6
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+Terminating processes on user request, this might take some time.
+[Mon Jun  6 09:05:17 2022]
+Error in rule get_brenda_annotations:
+    jobid: 6
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+
+RuleException:
+CalledProcessError in line 175 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  /Users/uqgfoley/opt/miniconda3/envs/barerepo/bin/python /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmpnxyv2vqa.get_brenda_annotations.py' died with <Signals.SIGINT: 2>.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 175, in __rule_get_brenda_annotations
+  File "/Users/uqgfoley/opt/miniconda3/envs/barerepo/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Complete log: .snakemake/log/2022-06-06T090514.155346.snakemake.log

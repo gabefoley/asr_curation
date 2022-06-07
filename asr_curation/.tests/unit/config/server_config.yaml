@@ -1,0 +1,39 @@
+# Main working directory
+workdir: "workflows/server_workflow"
+
+# Store all FASTA files here
+fastadir: "workflows/server_workflow/fasta"
+
+# Each FASTA file needs an according .subset file in this folder (test1.fasta -> test1.subset)
+subdir: "workflows/server_workflow/subset_rules"
+
+# annotation_cols: ['Taxonomic_lineage_PHYLUM', 'Taxonomic_lineage_SUPERKINGDOM',
+# 'KARI_Class', 'Loop_Length', 'Cross-reference_SUPFAM',
+# Cross-reference_Pfam', 'Cross-reference_OMA', 'BRENDA_KM', 'EC_number']
+
+annotation_cols: ['Taxonomic_lineage_PHYLUM', 'Taxonomic_lineage_SUPERKINGDOM',
+'KARI_Class', 'Loop_Length', 'Binding_positions_alignment_residues']
+
+ancestor_cols: ['Acidic_Binding_alignment : Acidic_residue']
+
+# active_datasets : [
+#   'uniprot_ec_1_1_1_86_AND_uniprot_ec_1_1_1_382_AND_uniprot_ec_1_1_1_383',
+# 'uniprot_ec_2_2_1_6',
+# 'uniprot_ec_4_2_1_9',
+# 'uniprot_ec_4_2_1_9_small_example']
+
+# active_datasets : ['klebsiella_ncbi']
+
+# active_datasets : [
+# 'uniprot_ec_3_2_1_21']
+
+active_datasets : ['uniprot_ec_2_2_1_6', 'uniprot_ec_2_2_1_6_jackhmmer_results']
+
+brenda_cols : ['KM', 'TN']
+
+outgroup : ['MOTIF_RFDDR' : True]
+
+key_annotation_cols : ['BRENDA_KM', 'Cross_reference_InterPro', 'Cross_reference_Pfam', 'Cross_reference_PROSITE', 'ChEBI_Cofactor',
+'Gene_ontology_molecular_function', 'MOTIF_SPVEY',  'MOTIF_RFDDR']
+
+

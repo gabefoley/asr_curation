@@ -1,0 +1,51 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                               count    min threads    max threads
+------------------------------  -------  -------------  -------------
+add_annotations_from_alignment        3              1              1
+add_annotations_from_ancestors        3              1              1
+add_custom_annotations                2              1              1
+align_seqs                            3              1              1
+all                                   1              1              1
+clean_subset_summary                  3              1              1
+clean_summary_document                2              1              1
+compile_summary_document              3              1              1
+create_annotation_file                3              1              1
+create_annotations                    1              1              1
+create_dataset_summary                2              1              1
+create_subset_document                3              1              1
+create_subset_summary                 3              1              1
+create_subsets                        3              1              1
+get_brenda_annotations                1              1              1
+get_uniprot_annotations               1              1              1
+infer_tree                            3              1              1
+run_grasp                             3              1              1
+total                                43              1              1
+
+Select jobs to execute...
+
+[Wed Jun  1 21:34:58 2022]
+rule add_custom_annotations:
+    input: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/brenda/uniprot_ec_1_1_1_86_filtered_reviewed_yes_brenda.csv
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    jobid: 5
+    reason: Missing output files: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
+    resources: tmpdir=/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T
+
+[Wed Jun  1 21:34:59 2022]
+Error in rule add_custom_annotations:
+    jobid: 5
+    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/custom/uniprot_ec_1_1_1_86_filtered_reviewed_yes_annotated.csv
+
+RuleException:
+CalledProcessError in line 203 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
+Command 'set -euo pipefail;  /Users/uqgfoley/opt/miniconda3/envs/asr_curation241/bin/python /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/.snakemake/scripts/tmpmqcmahdz.custom_annotations.py' returned non-zero exit status 1.
+  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 203, in __rule_add_custom_annotations
+  File "/Users/uqgfoley/opt/miniconda3/envs/asr_curation241/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2022-06-01T213458.861085.snakemake.log

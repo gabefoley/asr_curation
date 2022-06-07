@@ -7,6 +7,8 @@
 
 Snakemake pipeline for annotating sequences to be used in ancestral sequence reconstruction.
 
+Most of the fun stuff is inside the `asr_curation` folder.
+
 # Basic concept
 
 A common task in phylogenetics and ancestral sequence reconstruction to have a large set of data you are interested in with the need to curate this data to include only relevant sequences. 
@@ -24,7 +26,7 @@ Because this is executed within a snakemake pipeline, it has the added advantage
 1. Clone this repository to your desktop
 
 ```
-git clone http://bioinf1.scmb.uq.edu.au/gabe/asr_curation_moved.git
+git clone https://github.com/gabefoley/asr_curation.git
 ```
 
 

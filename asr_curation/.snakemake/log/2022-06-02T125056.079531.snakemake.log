@@ -1,7 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 300 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
-Missing input files for rule create_subset_summary:
-    output: workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/dataset_summary/uniprot_ec_2_2_1_6_AND_reviewed_yes/subsets/als_interpro_IPR012782/temp/als_interpro_IPR012782_subset_summary.ipynb
-    wildcards: dataset=uniprot_ec_2_2_1_6_AND_reviewed_yes, subset=als_interpro_IPR012782
-    affected files:
-        workflows/example_workflow/datasets/uniprot_ec_2_2_1_6_AND_reviewed_yes/subsets/als_interpro_IPR012782/csv/uniprot_ec_2_2_1_6_AND_reviewed_yes_als_interpro_IPR012782_ancestors.csv

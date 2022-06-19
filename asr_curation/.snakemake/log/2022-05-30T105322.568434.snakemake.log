@@ -1,7 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 179 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
-Missing input files for rule get_uniprot_annotations:
-    output: workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/uniprot/uniprot_ec_1_1_1_86_filtered_reviewed_yes_uniprot.csv
-    wildcards: dataset=uniprot_ec_1_1_1_86_filtered_reviewed_yes
-    affected files:
-        workflows/example_workflow/datasets/uniprot_ec_1_1_1_86_filtered_reviewed_yes/csv/original/uniprot_ec_1_1_1_86_filtered_reviewed_yes_validated.csv

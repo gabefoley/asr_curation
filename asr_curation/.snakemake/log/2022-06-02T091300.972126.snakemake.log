@@ -1,5 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 116 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
-Missing input files for rule all:
-    affected files:
-        

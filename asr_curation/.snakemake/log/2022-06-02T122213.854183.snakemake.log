@@ -1,3 +1,0 @@
-KeyError in line 98 of /Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile:
-'ancestor_cols'
-  File "/Users/uqgfoley/Documents/asr_curation_moved/asr_curation/Snakefile", line 98, in <module>

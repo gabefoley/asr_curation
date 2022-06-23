@@ -162,13 +162,12 @@ if failed:
 elif frames:
     full_df = pd.concat(frames, axis=0)
 
-    full_df.drop_duplicates(subset="Entry", keep="first")
 
-    full_df["Entry"].tolist()
+    full_df.drop_duplicates(subset="Entry", keep="first")
 
 
     merged_df = pd.merge(
-        original_df, full_df, left_on=["Extracted_ID"], right_on = ["Entry name"], suffixes=["", "_r"]
+        original_df, full_df, left_on=["Extracted_ID"], right_on = ["Entry"], suffixes=["", "_r"]
     )
 
     # Remove brackets from header names

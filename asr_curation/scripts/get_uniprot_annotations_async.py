@@ -48,11 +48,13 @@ async def main(split):
             task_count = 0
             # print (len(chunk))
             params = format_uniprot_params(chunk)
-            url = "https://www.legacy.uniprot.org/uniprot/uploadlists"
+            url = "https://legacy.uniprot.org/uniprot/"
 
             task = asyncio.create_task(get_uniprot(session, url, params))
             task.up_ids = chunk
             tasks.append(task)
+
+
 
             # tasks.append(asyncio.ensure_future(get_uniprot(session, url, params)))
 
@@ -161,6 +163,9 @@ if failed:
 # If we have at least some sequences in frames then lets process them
 elif frames:
     full_df = pd.concat(frames, axis=0)
+
+    print (original_df)
+    print (full_df)
 
 
     full_df.drop_duplicates(subset="Entry", keep="first")

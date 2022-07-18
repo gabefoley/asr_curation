@@ -48,7 +48,7 @@ async def main(split):
             task_count = 0
             # print (len(chunk))
             params = format_uniprot_params(chunk)
-            url = "https://www.legacy.uniprot.org/uniprot/"
+            url = "https://www.legacy.uniprot.org/uniprot/uploadlists"
 
             task = asyncio.create_task(get_uniprot(session, url, params))
             task.up_ids = chunk

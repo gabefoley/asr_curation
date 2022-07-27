@@ -20,10 +20,10 @@ def test_create_annotations():
 
         print (os.getcwd())
 
-        data_path = PurePosixPath("create_annotations/data")
-        expected_path = PurePosixPath("create_annotations/expected")
-        config_path = PurePosixPath("config")
-        additional_data_path = PurePosixPath("additional_data")
+        data_path = PurePosixPath("./create_annotations/data")
+        expected_path = PurePosixPath("./create_annotations/expected")
+        config_path = PurePosixPath("./config")
+        additional_data_path = PurePosixPath("./additional_data")
 
         # Copy data to the temporary workdir.
         shutil.copytree(data_path, workdir)

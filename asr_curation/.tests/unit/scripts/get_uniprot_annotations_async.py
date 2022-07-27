@@ -72,7 +72,7 @@ async def main(split):
 
         tasks = []
 
-        chunks = np.array_split(np.array(split), max(1, round(len(split) / 800)))
+        chunks = np.array_split(np.array(split), max(1, round(len(split) / 100)))
 
 
         for chunk in chunks:

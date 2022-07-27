@@ -15,10 +15,10 @@ def test_get_uniprot_annotations():
 
     with TemporaryDirectory() as tmpdir:
         workdir = Path(tmpdir) / "workdir"
-        data_path = PurePosixPath("get_uniprot_annotations/data")
-        expected_path = PurePosixPath("get_uniprot_annotations/expected")
-        config_path = PurePosixPath("config")
-        additional_data_path = PurePosixPath("additional_data")
+        data_path = PurePosixPath("./get_uniprot_annotations/data")
+        expected_path = PurePosixPath("./get_uniprot_annotations/expected")
+        config_path = PurePosixPath("./config")
+        additional_data_path = PurePosixPath("./additional_data")
 
         # Copy data to the temporary workdir.
         shutil.copytree(data_path, workdir)

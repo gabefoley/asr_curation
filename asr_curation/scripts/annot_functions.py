@@ -94,7 +94,6 @@ def get_aligned_positions(entry, sequence, *positions):
         final_pos = get_final_pos(sequence, pos, curr_idx, next_idx)
         aligned_positions.append(final_pos)
 
-
     return aligned_positions
 
 
@@ -131,9 +130,8 @@ def get_binding_pos(binding_sites):
             #             print (site)
             #             print(site.split('/note='))
             #             print(site.split('/note=')[1])
-            if (
-                site.strip().startswith("/note=")
-                and site.split("/note=")[1].startswith('"NADP"')
+            if site.strip().startswith("/note=") and site.split("/note=")[1].startswith(
+                '"NADP"'
             ):
                 bp.append(found_pos)
 

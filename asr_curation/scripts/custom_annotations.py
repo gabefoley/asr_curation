@@ -28,8 +28,8 @@ def check_terms(check, terms):
     for term in terms:
         if term.lower() in check.lower():
             return True
-    return False    
-    
+    return False
+
 
 # thermo_split = [x.split(" ")[0] for x in thermo_species]
 
@@ -45,14 +45,16 @@ def check_terms(check, terms):
 #         lambda row: True if check_terms(row["Taxonomic_lineage_SPECIES"], ['therm', 'acid', 'sulfur', 'methan', 'pyro', 'lividus']) else False, axis=1)
 
 
-
 if "uniprot_ec_4_2_1_9" in snakemake.wildcards.dataset:
     annot_df = an.annotate_motif(annot_df, "[AG][AQNP][KTAYG][LVI][PG][RK][HD][NS]H")
 
     annot_df = sc.add_from_csv(annot_df, "./data/dhad/experimental_values.csv")
 
 # Check if the ALS EC number is in the dataset we're currently looking at
-if "ec_2_2_1_6" in snakemake.wildcards.dataset or 'als_example' in snakemake.wildcards.dataset:
+if (
+    "ec_2_2_1_6" in snakemake.wildcards.dataset
+    or "als_example" in snakemake.wildcards.dataset
+):
     print("Adding ALS specific annotations")
 
     # Add the catabolic and anabolic ALS motifs
@@ -106,48 +108,50 @@ if "ec_2_2_1_6" in snakemake.wildcards.dataset or 'als_example' in snakemake.wil
 
     truncated_seqs += truncated_seqs2 + extended_seqs
 
-    truncated_seqs_latest = ['C2E671_LACJH',
-    'A0A466K947_LISMN',
-    'Q8L209_STRTR',
-    'A0A6M1VHR7_STAAU',
-    'A0A269XHG3_9STAP',
-    'X0PAD2_9LACO',
-    'H1LFR7_9LACO',
-    'Q3EXB3_BACTI',
-    'A0A4U3BWC4_BACCE',
-    'A0A6B0Q4H7_9BACL',
-    'H2JLH2_STRHJ',
-    'A0A0M8WM32_9ACTN',
-    'X8FB41_MYCUL',
-    'A0A7I7X1Q7_9MYCO',
-    'A0A485ALN6_RAOPL',
-    'A0A2J4YTM5_9ENTR',
-    'A0A4P0UPF2_KLEPN',
-    'A0A7G3EXU3_ENTCL',
-    'A0A377X9X4_KLEPN',
-    'A0A258BR40_9PROT',
-    'A0A0R2XD91_9BACT',
-    'T2JQD0_CROWT',
-    'A0A6P0YME3_9CYAN',
-    'A0A533Y2U3_9BACT',
-    'A0A7C5NBV0_9GAMM',
-    'A0A536YJ78_9PROT',
-    'A0A2V6TMH4_9BACT',
-    'W0BGQ1_9GAMM',
-    'G6EQQ9_STRTR',
-    'T0TXU9_9STRE',
-    'A0A5C8XAD6_STAAU',
-    'A0A0S2SI96_9GAMM',
-    'A0A535NN83_9CHLR',
-    'A0A558KH33_9LACO',
-    'A0A4U9YPB6_9STRE',
-    'A0A536W0P0_9PROT',
-    'A0A377NDB6_9GAMM',
-    'A0A6G4ZSV6_9BACT',
-    'K0N695_LACPA',
-    'A0A485BQI2_RAOTE',
-    'A0A6A8LP27_9LACO',
-    'A0A1Q7D210_9BACT']
+    truncated_seqs_latest = [
+        "C2E671_LACJH",
+        "A0A466K947_LISMN",
+        "Q8L209_STRTR",
+        "A0A6M1VHR7_STAAU",
+        "A0A269XHG3_9STAP",
+        "X0PAD2_9LACO",
+        "H1LFR7_9LACO",
+        "Q3EXB3_BACTI",
+        "A0A4U3BWC4_BACCE",
+        "A0A6B0Q4H7_9BACL",
+        "H2JLH2_STRHJ",
+        "A0A0M8WM32_9ACTN",
+        "X8FB41_MYCUL",
+        "A0A7I7X1Q7_9MYCO",
+        "A0A485ALN6_RAOPL",
+        "A0A2J4YTM5_9ENTR",
+        "A0A4P0UPF2_KLEPN",
+        "A0A7G3EXU3_ENTCL",
+        "A0A377X9X4_KLEPN",
+        "A0A258BR40_9PROT",
+        "A0A0R2XD91_9BACT",
+        "T2JQD0_CROWT",
+        "A0A6P0YME3_9CYAN",
+        "A0A533Y2U3_9BACT",
+        "A0A7C5NBV0_9GAMM",
+        "A0A536YJ78_9PROT",
+        "A0A2V6TMH4_9BACT",
+        "W0BGQ1_9GAMM",
+        "G6EQQ9_STRTR",
+        "T0TXU9_9STRE",
+        "A0A5C8XAD6_STAAU",
+        "A0A0S2SI96_9GAMM",
+        "A0A535NN83_9CHLR",
+        "A0A558KH33_9LACO",
+        "A0A4U9YPB6_9STRE",
+        "A0A536W0P0_9PROT",
+        "A0A377NDB6_9GAMM",
+        "A0A6G4ZSV6_9BACT",
+        "K0N695_LACPA",
+        "A0A485BQI2_RAOTE",
+        "A0A6A8LP27_9LACO",
+        "A0A1Q7D210_9BACT",
+    ]
 
     annot_df["truncated_seqs"] = annot_df.apply(
         lambda row: True if row["Entry"] in truncated_seqs else False, axis=1
@@ -161,11 +165,14 @@ if "ec_2_2_1_6" in snakemake.wildcards.dataset or 'als_example' in snakemake.wil
 annot_df["Length_2"] = annot_df["Length"]
 annot_df["Cross_reference_InterPro_2"] = annot_df["Cross_reference_InterPro"]
 
-    # annot_df = an.summarise_motifs(annot_df, 'SPVEY', 'RFDDR')
+# annot_df = an.summarise_motifs(annot_df, 'SPVEY', 'RFDDR')
 
 
 # Check if the KARI EC number is in the dataset we're currently looking at
-if "ec_1_1_1_86" in snakemake.wildcards.dataset or "kari_example" in snakemake.wildcards.dataset:
+if (
+    "ec_1_1_1_86" in snakemake.wildcards.dataset
+    or "kari_example" in snakemake.wildcards.dataset
+):
     print("Adding KARI specific annotations")
 
     print("Adding KARI Class")
@@ -206,7 +213,14 @@ if "ec_1_1_1_86" in snakemake.wildcards.dataset or "kari_example" in snakemake.w
     )
 
     print("Adding acidic binding")
-    annot_df['Acidic_Binding'] = annot_df.apply(lambda row : "No_binding_positions" if not pd.notnull(row['Binding_site']) else an.check_binding_for_acidic(row['Sequence'], row['Binding_positions_extracted']), axis = 1)
+    annot_df["Acidic_Binding"] = annot_df.apply(
+        lambda row: "No_binding_positions"
+        if not pd.notnull(row["Binding_site"])
+        else an.check_binding_for_acidic(
+            row["Sequence"], row["Binding_positions_extracted"]
+        ),
+        axis=1,
+    )
 
     print("Add a tag to NADH preferring sequences")
 

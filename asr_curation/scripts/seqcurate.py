@@ -4,6 +4,7 @@ from Bio import SeqIO, AlignIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 
+
 def get_sequence_df(
     *fasta_paths,
     drop_duplicates=True,
@@ -29,16 +30,18 @@ def get_sequence_df(
         # seqs = sequence.readFastaFile(fasta_path, alpha)
 
         if alignment:
-            seqs = AlignIO.parse(open(fasta_path), format='fasta')
+            seqs = AlignIO.parse(open(fasta_path), format="fasta")
 
         else:
 
-            seqs = SeqIO.parse(open(fasta_path), format='fasta')
+            seqs = SeqIO.parse(open(fasta_path), format="fasta")
 
         # Add to annotation file
         for seq in seqs:
 
-            if alignment==False: 
+            print(seq.name)
+
+            if alignment == False:
                 if seq.name in duplicates:
                     print(
                         f"DUPLICATE:{seq.name} is in {duplicates[seq.name]} and {fasta_path}\n"
@@ -50,33 +53,28 @@ def get_sequence_df(
                     seq.id,
                     seq.id.split(" ")[0],
                     seq.id.split("|")[-1],
-                    seq.seq.replace("-", "")
-                    if len(seq.seq) > 0
-                    else None,
+                    seq.seq.replace("-", "") if len(seq.seq) > 0 else None,
                     fasta_path,
                 ]
 
             elif alignment:
-      
 
                 for aligned_seq in seq:
                     curr_seq = [
-                    aligned_seq.id,
-                    aligned_seq.id.split(" ")[0],
-                    aligned_seq.id.split("|")[-1],
-                    aligned_seq.seq.replace("-", "")
-                    if len(aligned_seq.seq) > 0
-                    else None,
-                    fasta_path,
-                ]
+                        aligned_seq.id,
+                        aligned_seq.id.split(" ")[0],
+                        aligned_seq.id.split("|")[-1],
+                        aligned_seq.seq.replace("-", "")
+                        if len(aligned_seq.seq) > 0
+                        else None,
+                        fasta_path,
+                    ]
                     curr_seq.append(aligned_seq.seq)
-
 
             if ancestor:
                 curr_seq.append(aligned_seq)
 
             seq_list.append(curr_seq)
-
 
     df = pd.DataFrame(seq_list, columns=cols)
 
@@ -142,15 +140,10 @@ def get_subset(df, *cols_dict, include=True):
 def write_to_fasta(df, outpath, trim=False):
 
     if trim:
-        seq_list = [
-            SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()
-        ]
-
+        seq_list = [SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()]
 
     else:
-        seq_list = [
-            SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()
-        ]
+        seq_list = [SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()]
     # sequence.writeFastaFile(outpath, seq_list)
 
     SeqIO.write(seq_list, outpath, "fasta")
@@ -170,8 +163,8 @@ def add_from_csv(df, add_df, match="Entry"):
 
 def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
 
-    #TODO: Change to biopython is not working to work
+    # TODO: Change to biopython is not working to work
 
-    seqs = SeqIO.read(fasta_path, 'fasta')
+    seqs = SeqIO.read(fasta_path, "fasta")
 
     return [seq.name for seq in seqs]

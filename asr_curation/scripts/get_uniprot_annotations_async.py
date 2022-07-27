@@ -1,6 +1,7 @@
 import io
-#import sequence
-#from sequence import Alphabet
+
+# import sequence
+# from sequence import Alphabet
 import numpy as np
 import pandas as pd
 import seqcurate as sc
@@ -10,6 +11,7 @@ import aiohttp
 import asyncio
 import async_timeout
 import time
+
 
 async def get_uniprot(session, url, params):
     async with session.post(url, data=params) as resp:
@@ -54,8 +56,6 @@ async def main(split):
             task.up_ids = chunk
             tasks.append(task)
 
-
-
             # tasks.append(asyncio.ensure_future(get_uniprot(session, url, params)))
 
         print(
@@ -89,6 +89,7 @@ async def main(split):
                     print(f"Task {task_count} failed")
                     failed.append(task.up_ids)
 
+
 def split_data_for_uniprot(data, chunk_size):
     splits = np.array_split(np.array(names), max(1, round(len(names) / 8000)))
     split_count = 0
@@ -99,7 +100,6 @@ def split_data_for_uniprot(data, chunk_size):
         print(f"Running stage {split_count} of {len(splits)}")
         asyncio.run(main(split))
         time.sleep(5)
-
 
 
 # Read in the dataframe
@@ -128,13 +128,13 @@ if failed:
     split_data_for_uniprot(failed_names, 8000)
 
 
-
 # If sequences still fail write them to a file
 if failed:
     failed_names = [item for sublist in failed for item in sublist]
 
-
-    print(f"\nWARNING: {len(failed_names)} sequences failed even after a second attempt.")
+    print(
+        f"\nWARNING: {len(failed_names)} sequences failed even after a second attempt."
+    )
 
     failed_names = [item for sublist in failed for item in sublist]
 
@@ -159,20 +159,21 @@ if failed:
     )
 
 
-
 # If we have at least some sequences in frames then lets process them
 elif frames:
     full_df = pd.concat(frames, axis=0)
 
-    print (original_df)
-    print (full_df)
-
+    print(original_df)
+    print(full_df)
 
     full_df.drop_duplicates(subset="Entry", keep="first")
 
-
     merged_df = pd.merge(
-        original_df, full_df, left_on=["Extracted_ID"], right_on = ["Entry"], suffixes=["", "_r"]
+        original_df,
+        full_df,
+        left_on=["Extracted_ID"],
+        right_on=["Entry"],
+        suffixes=["", "_r"],
     )
 
     # Remove brackets from header names

@@ -15,10 +15,10 @@ def test_all_images():
 
     with TemporaryDirectory() as tmpdir:
         workdir = Path(tmpdir) / "workdir"
-        data_path = PurePosixPath("./all_images/data")
+        data_path = PurePosixPath("all_images/data")
         expected_path = PurePosixPath("./all_images/expected")
-        config_path = PurePosixPath("./config")
-        additional_data_path = PurePosixPath("./additional_data")
+        config_path = PurePosixPath("config")
+        additional_data_path = PurePosixPath("additional_data")
 
         # Copy data to the temporary workdir.
         shutil.copytree(data_path, workdir)

@@ -53,47 +53,48 @@ if 'uniprot_ec_1_1_1_86' in snakemake.wildcards.dataset:
 	print ("Adding KARI Class")
 	annot_df['KARI_Class'] = annot_df.apply(lambda row : an.classify_KARI(row['Features'] if pd.notnull(row['Features']) else ''), axis = 1)
 	
-	print ("Adding loop length")
-	annot_df['Loop_Length'] = annot_df.apply(lambda row : 
-		an.classify_loop_length(
-			an.get_binding_pos(row['Binding_site']) 
-			if pd.notnull(row['Binding_site']) 
-			else 'No_binding_positions'), axis = 1)
+	#TODO: Fix this to work
+	# print ("Adding loop length")
+	# annot_df['Loop_Length'] = annot_df.apply(lambda row : 
+	# 	an.classify_loop_length(
+	# 		an.get_binding_pos(row['Binding_site']) 
+	# 		if pd.notnull(row['Binding_site']) 
+	# 		else 'No_binding_positions'), axis = 1)
 
-	print ("Adding Binding positions extracted")
-	annot_df['Binding_positions_extracted'] = annot_df.apply(lambda row : "No_binding_positions" if pd.isnull(row['Binding_site']) else an.get_binding_pos(row['Binding_site']), axis = 1)
-	# annot_df['Binding_positions_extracted'] = annot_df.apply(lambda row : "No_binding_positions" if pd.notnull(row['Binding_site']) else an.get_binding_pos(row['Binding_site']), axis = 1)
+	# print ("Adding Binding positions extracted")
+	# annot_df['Binding_positions_extracted'] = annot_df.apply(lambda row : "No_binding_positions" if pd.isnull(row['Binding_site']) else an.get_binding_pos(row['Binding_site']), axis = 1)
+	# # annot_df['Binding_positions_extracted'] = annot_df.apply(lambda row : "No_binding_positions" if pd.notnull(row['Binding_site']) else an.get_binding_pos(row['Binding_site']), axis = 1)
 
 
-	# df['Testing']=df.apply(lambda x: 1 if x['Liq_Factor']=='Nan'  else min(x['Use']/x['Tw'],1), axis=1)
+	# # df['Testing']=df.apply(lambda x: 1 if x['Liq_Factor']=='Nan'  else min(x['Use']/x['Tw'],1), axis=1)
 
-	print ("Adding Binding positions character")
-	annot_df['Binding_positions_character'] = annot_df.apply(lambda row : "No_binding_positions" if pd.isnull(row['Binding_site']) else  an.get_amino_acids(row['Sequence'], *row['Binding_positions_extracted']), axis = 1)
+	# print ("Adding Binding positions character")
+	# annot_df['Binding_positions_character'] = annot_df.apply(lambda row : "No_binding_positions" if pd.isnull(row['Binding_site']) else  an.get_amino_acids(row['Sequence'], *row['Binding_positions_extracted']), axis = 1)
 	
-	print ("Adding acidic binding")
-	# annot_df['Acidic_Binding'] = annot_df.apply(lambda row : "No_binding_positions" if pd.notnull(row['Binding_site']) else an.check_binding_for_acidic(row['Sequence'], *row['Binding_positions_extracted']), axis = 1)
+	# print ("Adding acidic binding")
+	# # annot_df['Acidic_Binding'] = annot_df.apply(lambda row : "No_binding_positions" if pd.notnull(row['Binding_site']) else an.check_binding_for_acidic(row['Sequence'], *row['Binding_positions_extracted']), axis = 1)
 
-	print ("Add a tag to NADH preferring sequences")
+	# print ("Add a tag to NADH preferring sequences")
 
-	import os
+	# import os
 
-	print (os.getcwd())
-	psuedomonas_aeruginosa = sc.get_entry_ids_from_fasta("./additional_data/kari/pseudomonas_aeruginosa.fasta")
-
-
-	annot_df['psuedomonas_aeruginosa'] = annot_df.apply(lambda row: True if row['Entry'] in psuedomonas_aeruginosa else False, axis=1)
+	# print (os.getcwd())
+	# psuedomonas_aeruginosa = sc.get_entry_ids_from_fasta("./additional_data/kari/pseudomonas_aeruginosa.fasta")
 
 
-	nadh_pref = sc.get_entry_ids_from_fasta("./additional_data/NADH_preferring.fasta")
+	# annot_df['psuedomonas_aeruginosa'] = annot_df.apply(lambda row: True if row['Entry'] in psuedomonas_aeruginosa else False, axis=1)
 
-	print (nadh_pref)
 
-	annot_df['NADH_pref'] = annot_df.apply(lambda row: True if row['Entry'] in nadh_pref else False, axis=1)
+	# nadh_pref = sc.get_entry_ids_from_fasta("./additional_data/NADH_preferring.fasta")
 
-	general_approach = sc.get_entry_ids_from_fasta("./additional_data/general_approach_class_I.fasta")
-	print ("Add a tag to sequences in the general approach paper that are also Class I")
+	# print (nadh_pref)
 
-	annot_df['General_approach_Class_I'] = annot_df.apply(lambda row: True if row['Entry'] in general_approach else False, axis=1)
+	# annot_df['NADH_pref'] = annot_df.apply(lambda row: True if row['Entry'] in nadh_pref else False, axis=1)
+
+	# general_approach = sc.get_entry_ids_from_fasta("./additional_data/general_approach_class_I.fasta")
+	# print ("Add a tag to sequences in the general approach paper that are also Class I")
+
+	# annot_df['General_approach_Class_I'] = annot_df.apply(lambda row: True if row['Entry'] in general_approach else False, axis=1)
 
 
 

@@ -16,7 +16,7 @@ def get_sequence_df(
     seq_list = []
     duplicates = {}
 
-    cols = ["Entry", "Truncated_Info", "Extracted_ID", "Sequence", "Original_FASTA"]
+    cols = ["Entry", "Truncated_Info", "Extracted_ID", "Extracted_Name", "Sequence", "Original_FASTA"]
 
     if alignment:
         cols.append("Sequence_aligned")
@@ -52,6 +52,7 @@ def get_sequence_df(
                 curr_seq = [
                     seq.id,
                     seq.id.split(" ")[0],
+                    seq.id.split("|")[1],
                     seq.id.split("|")[-1],
                     seq.seq.replace("-", "") if len(seq.seq) > 0 else None,
                     fasta_path,
@@ -63,6 +64,7 @@ def get_sequence_df(
                     curr_seq = [
                         aligned_seq.id,
                         aligned_seq.id.split(" ")[0],
+                        aligned_seq.id.split("|")[1],
                         aligned_seq.id.split("|")[-1],
                         aligned_seq.seq.replace("-", "")
                         if len(aligned_seq.seq) > 0

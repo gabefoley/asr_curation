@@ -139,6 +139,17 @@ Config files should define -
 `blocked_datasets` - stops the pipeline from being run on a specific pair of FASTA files / subset files. For example, adding `test1` to this list stops `test1.fasta` and `test1.subset` from being run.
 
 
+# Where do I place the config files?
+
+To keep this repository clean, because it is still being developed - I suggest placing the folders with your data outside this repository and pointing the snakemake call to them.
+
+You can then capture the stderr and stdoutput, which will contain all of the snakemake run information and save it to a file located with your data.
+
+`&>` will overwrite the output file and `&>>` will append to the end of the output file
+
+snakemake --cores 1 --configfile <path/to/data_folder/config/config.yaml> &>><path/to/data_folder/logs/output_log.txt>
+
+
 
 # Snakemake tips
 

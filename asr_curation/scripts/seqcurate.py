@@ -16,7 +16,7 @@ def get_sequence_df(
     seq_list = []
     duplicates = {}
 
-    cols = ["Entry", "Truncated_Info", "Extracted_ID", "Extracted_Name", "Sequence", "Original_FASTA"]
+    cols = ["accession", "truncated_info", "extracted_id", "extracted_name", "sequence", "original_fasta"]
 
     if alignment:
         cols.append("Sequence_aligned")
@@ -81,7 +81,7 @@ def get_sequence_df(
     df = pd.DataFrame(seq_list, columns=cols)
 
     if drop_duplicates:
-        df = df.drop_duplicates(subset="Entry", keep="first")
+        df = df.drop_duplicates(subset="accession", keep="first")
 
     # Drop the sequence column if there are no sequences (i.e. if we just added a list of identifiers)
     nan_value = float("NaN")
@@ -93,7 +93,7 @@ def get_sequence_df(
     return df
 
 
-def annotate_col_from_dict(df, col, annot_dict, match="Entry"):
+def annotate_col_from_dict(df, col, annot_dict, match="accession"):
     df.loc[df[match].isin(annot_dict.keys()), col] = df[match].map(annot_dict)
     return df
 
@@ -106,12 +106,12 @@ def add_col_from_up_dict(df, cols_to_add, up_dict):
     for name, annots in up_dict.items():
 
         for key in annots.keys():
-            df.loc[df["Entry"].str.contains(name), key] = annots.get(key)
+            df.loc[df["accession"].str.contains(name), key] = annots.get(key)
 
     return df
 
 
-def annotate_col_from_other_df(df, other_df, col, match_from="Entry", match_to="Entry"):
+def annotate_col_from_other_df(df, other_df, col, match_from="accession", match_to="accession"):
     other_dict = dict(zip(other_df[match_from], other_df[col]))
 
     df = annotate_col_from_dict(df, col, other_dict, match_to)
@@ -142,10 +142,10 @@ def get_subset(df, *cols_dict, include=True):
 def write_to_fasta(df, outpath, trim=False):
 
     if trim:
-        seq_list = [SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()]
+        seq_list = [SeqRecord(Seq(r.sequence), id=r.accession) for r in df.itertuples()]
 
     else:
-        seq_list = [SeqRecord(Seq(r.Sequence), id=r.Entry) for r in df.itertuples()]
+        seq_list = [SeqRecord(Seq(r.sequence), id=r.accession) for r in df.itertuples()]
     # sequence.writeFastaFile(outpath, seq_list)
 
     SeqIO.write(seq_list, outpath, "fasta")
@@ -156,7 +156,7 @@ def randstring(length=10):
     return "".join((random.choice(valid_letters) for i in range(length)))
 
 
-def add_from_csv(df, add_df, match="Entry"):
+def add_from_csv(df, add_df, match="accession"):
     add_df = pd.read_csv(add_df)
     merged_df = pd.merge(df, add_df, how="left", on=[match], suffixes=["", "_r"])
 

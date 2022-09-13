@@ -1,5 +1,6 @@
 # THIS IS A COMMENT LINE.
 
-eukaryotic_kari = Taxonomic_lineage_SUPERKINGDOM : Eukaryota $ Protein_names : NOT Deleted, Merged $ Non_AA_Character : FALSE
+#eukaryotic_kari = Taxonomic_lineage_SUPERKINGDOM : Eukaryota $ Protein_names : NOT Deleted, Merged $ Non_AA_Character : FALSE
 
-classI_kari = KARI_Class : Class_I $ Protein_names : NOT Deleted, Merged $ Non_AA_Character : FALSE
+eukaryotic_kari = lineage_superkingdom : Eukaryota $ protein_name : NOT Deleted, Merged $ Non_AA_Character : FALSE
+classI_kari = KARI_Class : Class_I $ protein_name : NOT Deleted, Merged $ Non_AA_Character : FALSE

@@ -51,7 +51,7 @@ def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
     for name, annots in brenda_dict.items():
         print(name)
         print(annots)
-        df.loc[df["Entry"].str.contains(entry_id), name] = ";".join(
+        df.loc[df["accession"].str.contains(entry_id), name] = ";".join(
             str(x) for x in annots
         )
 
@@ -109,11 +109,11 @@ if ec_nums:
         for prot_id, protein in sorted(ec_dict.items()):
             if protein.uniprot:
                 print("here are references")
-                print(protein.references)
+                #print(protein.references)
 
                 # For all the references, add them as separate columns so we can search them
                 for refno, ref_dict in protein.references.items():
-                    print(ref_dict)
+                    #print(ref_dict)
                     brenda_dict[protein.uniprot][f"BRENDA_REFERENCES_{refno}"].append(
                         ref_dict["info"]
                     )

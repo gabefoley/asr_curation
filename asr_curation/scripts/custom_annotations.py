@@ -154,16 +154,16 @@ if (
     ]
 
     annot_df["truncated_seqs"] = annot_df.apply(
-        lambda row: True if row["Entry"] in truncated_seqs else False, axis=1
+        lambda row: True if row["accession"] in truncated_seqs else False, axis=1
     )
 
     annot_df["truncated_seqs_latest"] = annot_df.apply(
-        lambda row: True if row["Entry"] in truncated_seqs_latest else False, axis=1
+        lambda row: True if row["accession"] in truncated_seqs_latest else False, axis=1
     )
 
 # Add an additional Length column (this can be removed once we can call more complex, multiple queries on a single column)
-annot_df["Length_2"] = annot_df["Length"]
-annot_df["Cross_reference_InterPro_2"] = annot_df["Cross_reference_InterPro"]
+annot_df["Length_2"] = annot_df["length"]
+annot_df["Cross_reference_InterPro_2"] = annot_df["xref_interpro"]
 
 # annot_df = an.summarise_motifs(annot_df, 'SPVEY', 'RFDDR')
 
@@ -178,7 +178,7 @@ if (
     print("Adding KARI Class")
     annot_df["KARI_Class"] = annot_df.apply(
         lambda row: an.classify_KARI(
-            row["Features"] if pd.notnull(row["Features"]) else ""
+            row["feature_count"] if pd.notnull(row["feature_count"]) else ""
         ),
         axis=1,
     )

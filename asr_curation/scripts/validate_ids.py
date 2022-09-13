@@ -1,221 +1,340 @@
+''' Python script to validate uniprot ids and find the corresponding NCBI,EMBL,Uniparc ids '''
+
 import pandas as pd
 import urllib.parse
 import urllib.request
 from io import StringIO
+import requests,json
+from time import sleep
+import re
+import time
+import json
+import zlib
+from xml.etree import ElementTree
+from urllib.parse import urlparse, parse_qs, urlencode
+import requests
+from requests.adapters import HTTPAdapter, Retry
 
-# At the moment this workflow just supports two ID types. In the future if we want to support more we need to change
-# this workflow
+# configuration and api parameters
+POLLING_INTERVAL = 3
+API_URL = "https://rest.uniprot.org"
+retries = Retry(total=5, backoff_factor=0.25, status_forcelist=[500, 502, 503, 504])
+session = requests.Session()
+session.mount("https://", HTTPAdapter(max_retries=retries))
 
-# Setup the two types of IDs to map to / from
-to_from_dict = {"ACC": "P_REFSEQ_AC", "P_REFSEQ_AC": "ACC"}
+# list of lookup for aiding the querying and processing of results
 
+# database name in uniprot for different databases when used in the "FROM" field.
+from_id_db_lookup = {'NCBI':'RefSeq_Protein','EMBL':'EMBL-GenBank-DDBJ',\
+                     'UNIPROT-FROM':'UniProtKB_AC-ID','UNIPARC':'UniParc'}
 
-def get_uniprot_ids(queries, from_id, to_id):
-    url = "https://www.uniprot.org/uploadlists/"
+# database name in uniprot for different databases when used in the "TO" field.
+to_id_db_lookup = {'NCBI':'RefSeq_Protein','EMBL':'EMBL-GenBank-DDBJ','UNIPROT':'UniProtKB','UNIPARC':'UniParc'}
 
-    queries = " ".join(queries)
+# response format from uniprot when using these databases in the "TO" field.
+db_response_format = {'UNIPROT':'long','NCBI':'short','UNIPARC':'long','EMBL':'short'}
 
-    params = {"from": from_id, "to": to_id, "format": "tab", "query": queries}
+# response key to be used in JSON format is the response format is long.
+db_response_key = {'UNIPROT':'primaryAccession','UNIPARC':'uniParcId'}
 
-    #     print ('getting uniprot')
+# functions
+def submit_id_mapping(from_db, to_db, ids):
+    ''' function to make api call to uniprot '''
 
-    data = urllib.parse.urlencode(params)
-    data = data.encode("utf-8")
-    req = urllib.request.Request(url, data)
-    with urllib.request.urlopen(req) as response:
-        res = response.read()
-    df_fasta = pd.read_csv(StringIO(res.decode("utf-8")), sep="\t")
-    df_fasta.columns = ["Entry", "To"]
-
-    df_fasta = df_fasta.groupby(["Entry"]).agg(To=("To", ";".join)).reset_index()
-
-    return df_fasta
-
-
-def map_df_to_uniprot(chunk_df, try_ids, map_back, from_id, to_id, to_name):
-
-    #     print ('variables')
-    #     print(try_ids)
-    #     print (map_back)
-    #     print (from_id)
-    #     print (to_id)
-    #     print (to_name)
-
-    # Try mapping the uniprot IDs to UniProt IDs
-    up_df = get_uniprot_ids(try_ids, from_id, to_id)
-
-    up_df = up_df.rename(columns={"Entry": map_back})
-
-    # Check if the item returned and create a new column that validates this as being a correct ID
-
-    #     print("this was the up df from here")
-    #     print(up_df)
-    #     print()
-
-    if not up_df.empty:
-
-        #         print("chunk here is ")
-
-        #         print(chunk_df)
-        #         print()
-
-        up_df["join"] = 1
-        chunk_df["join"] = 1
-
-        # Joint the two dataframes then drop the join columns
-
-        merged_df = chunk_df.merge(up_df, on="join").drop("join", axis=1)
-
-        del chunk_df["join"]
-
-        #         print ('merged')
-
-        #         print(merged_df)
-
-        merged_df["match"] = merged_df.apply(
-            lambda row: row[f"{map_back}_x"].find(row[f"{map_back}_y"]), axis=1
-        ).ge(0)
-
-        matched_df = merged_df[merged_df.match]
-
-        matched_df = matched_df.drop(["match", f"{map_back}_y"], axis=1)
-
-        if f"{to_name}_validated" in matched_df.columns:
-            matched_df = matched_df.drop(f"{to_name}_validated", axis=1)
-
-        #         print ('matched')
-        #         print (matched_df)
-
-        # Rename the Entry column back and specify which ID this has been validated as in the To column
-        matched_df = matched_df.rename(
-            columns={f"{map_back}_x": map_back, "To": f"{to_name}_validated"}
-        )
-
-        #         print ('renamed')
-        #         print (matched_df)
-
-        return matched_df
-
-    return chunk_df
-
-
-def merge_dfs(chunk_df, add_df, map_back):
-
-    # print ('check here')
-    # print (chunk_df)
-
-    # print ('****')
-    # print (add_df)
-
-    # print ('****')
-
-    merge_cols = [x for x in list(chunk_df.columns) if x != map_back]
-    chunk_df = chunk_df.merge(
-        add_df,
-        how="left",
-        on=merge_cols,
+    request = requests.post(
+        f"{API_URL}/idmapping/run",
+        data={"from": from_db, "to": to_db, "ids": ",".join(ids)},
     )
+    try:
+        request.raise_for_status()
+    except:
+        return
+    return request.json()["jobId"]
 
-    # print (chunk_df)
+def check_id_mapping_results_ready(job_id):
+    ''' function to check if the api call results are ready '''
 
-    if f"{map_back}_x" in chunk_df.columns:
-
-        chunk_df[f"{map_back}"] = chunk_df[f"{map_back}_x"].fillna(
-            chunk_df[f"{map_back}_y"]
-        )
-
-        chunk_df = chunk_df.drop([f"{map_back}_x", f"{map_back}_y"], axis=1)
-
-    return chunk_df
-
-
-df = pd.read_csv(snakemake.input[0])
-
-
-entries = [name for name in df["Entry"].tolist()]
-
-ncbi_headers = ["WP_", "XP_", "YP_", "NP_", "AP_"]
-
-ncbi_ids = [x for x in entries if x[0:3] in ncbi_headers]
-
-df["Try"] = df.apply(
-    lambda row: "P_REFSEQ_AC" if row["Entry"] in ncbi_ids else "ID", axis=1
-)
-
-# Sort the dataframe so that when we chunk the dataframe most of the calls will be to the same type of ID
-sorted_df = df.sort_values(by=["Try"])
-
-
-# ncbi_ids = [x for x in entries if ]
-
-n = 500
-list_df = [sorted_df[i : i + n] for i in range(0, df.shape[0], n)]
-
-
-# For holding the processed chunks
-final_list = []
-
-# For each data base ID, try and get the set of UniProt IDs
-
-for chunk_df in list_df:
-
-    # Map each sequence to a UniProt ID
-
-    for db_id in chunk_df["Try"].unique():
-
-        # Define which column we want to use to search and to map back the search results onto
-        map_back = "Entry"
-
-        # IDs we want to map to UniProt identifiers
-        try_ids = chunk_df[chunk_df["Try"] == db_id][map_back].to_list()
-
-        # Here we don't know if the ID is UniProt or RefSeq or EMBL so we use our best guess stored in db_id
-        add_df = map_df_to_uniprot(chunk_df, try_ids, map_back, db_id, "ID", "UniProt")
-
-        map_back = "UniProt_validated"
-
-        # Some still might not have mapped to UniProt correctly so try them with EMBL_ID as well
-
-        # Maybe they all failed
-        if map_back not in add_df.columns:
-            missing_ids = try_ids
-
-        # Or maybe just a subset
+    while True:
+        request = session.get(f"{API_URL}/idmapping/status/{job_id}")
+        request.raise_for_status()
+        j = request.json()
+        if "jobStatus" in j:
+            if j["jobStatus"] == "RUNNING":
+                print(f"Retrying in {POLLING_INTERVAL}s")
+                time.sleep(POLLING_INTERVAL)
+            else:
+                raise Exception(request["jobStatus"])
         else:
-            missing_ids = add_df[add_df[map_back].isna()]["Entry"].tolist()
+            return bool(j["results"] or j["failedIds"])
 
-        # If there are missing IDs, try mapping them as EMBL IDs
+def get_id_mapping_results_link(job_id):
+    ''' function to get the mapping results link from uniprot after results are ready '''
 
-        if missing_ids:
-            add_df = map_df_to_uniprot(
-                chunk_df, missing_ids, "Entry", "EMBL", "ID", "UniProt"
-            )
+    url = f"{API_URL}/idmapping/details/{job_id}"
+    request = session.get(url)
+    request.raise_for_status()
+    return request.json()["redirectURL"]
 
-        # Add the add_df to the chunk_df
+def decode_results(response, file_format, compressed):
+    ''' function to decode the results based on file format '''
 
-        chunk_df = merge_dfs(chunk_df, add_df, map_back)
+    if compressed:
+        decompressed = zlib.decompress(response.content, 16 + zlib.MAX_WBITS)
+        if file_format == "json":
+            j = json.loads(decompressed.decode("utf-8"))
+            return j
+        elif file_format == "tsv":
+            return [line for line in decompressed.decode("utf-8").split("\n") if line]
+        elif file_format == "xlsx":
+            return [decompressed]
+        elif file_format == "xml":
+            return [decompressed.decode("utf-8")]
+        else:
+            return decompressed.decode("utf-8")
+    elif file_format == "json":
+        return response.json()
+    elif file_format == "tsv":
+        return [line for line in response.text.split("\n") if line]
+    elif file_format == "xlsx":
+        return [response.content]
+    elif file_format == "xml":
+        return [response.text]
+    return response.text
 
-    # Now that we have validated UniProt identifiers, lets map them to RefSeq
-    try_ids = chunk_df[map_back].dropna().to_list()
+def get_batch(batch_response, file_format, compressed):
+    ''' function to get the batch if the results are too big '''
 
-    # Here we know that the validated IDs are UniProt so we can hardcode the ID field
+    batch_url = get_next_link(batch_response.headers)
+    while batch_url:
+        batch_response = session.get(batch_url)
+        batch_response.raise_for_status()
+        yield decode_results(batch_response, file_format, compressed)
+        batch_url = get_next_link(batch_response.headers)
 
-    add_df = map_df_to_uniprot(
-        chunk_df, try_ids, map_back, "ID", "P_REFSEQ_AC", "RefSeq_Protein"
+def get_next_link(headers):
+    re_next_link = re.compile(r'<(.+)>; rel="next"')
+    if "Link" in headers:
+        match = re_next_link.match(headers["Link"])
+        if match:
+            return match.group(1)
+
+def print_progress_batches(batch_index, size, total):
+    n_fetched = min((batch_index + 1) * size, total)
+    print(f"Fetched: {n_fetched} / {total}")
+
+def get_xml_namespace(element):
+    m = re.match(r"\{(.*)\}", element.tag)
+    return m.groups()[0] if m else ""
+
+
+def merge_xml_results(xml_results):
+    merged_root = ElementTree.fromstring(xml_results[0])
+    for result in xml_results[1:]:
+        root = ElementTree.fromstring(result)
+        for child in root.findall("{http://uniprot.org/uniprot}entry"):
+            merged_root.insert(-1, child)
+    ElementTree.register_namespace("", get_xml_namespace(merged_root[0]))
+    return ElementTree.tostring(merged_root, encoding="utf-8", xml_declaration=True)
+
+def get_id_mapping_results_search(url):
+    ''' function to process the results in a batch by batch '''
+
+    parsed = urlparse(url)
+    query = parse_qs(parsed.query)
+    file_format = query["format"][0] if "format" in query else "json"
+    if "size" in query:
+        size = int(query["size"][0])
+    else:
+        size = 500
+        query["size"] = size
+    compressed = (
+        query["compressed"][0].lower() == "true" if "compressed" in query else False
     )
+    parsed = parsed._replace(query=urlencode(query, doseq=True))
+    url = parsed.geturl()
+    request = session.get(url)
+    request.raise_for_status()
+    results = decode_results(request, file_format, compressed)
 
-    chunk_df = merge_dfs(chunk_df, add_df, map_back)
+    if results['results']:
+        total = int(request.headers["x-total-results"])
+        print_progress_batches(0, size, total)
+        for i, batch in enumerate(get_batch(request, file_format, compressed), 1):
+            results = combine_batches(results, batch, file_format)
+            print_progress_batches(i, size, total)
+        if file_format == "xml":
+            return merge_xml_results(results)
+    else:
+        return # no results returned. all ids failed
+    return results
 
-    add_df = map_df_to_uniprot(chunk_df, try_ids, map_back, "ID", "EMBL", "EMBL")
+def combine_batches(all_results, batch_results, file_format):
+    ''' function to combine results from many batches into 1 output json format '''
 
-    chunk_df = merge_dfs(chunk_df, add_df, map_back)
-    # print ('and now')
+    if file_format == "json":
+        for key in ("results", "failedIds"):
+            if key in batch_results and batch_results[key]:
+                all_results[key] += batch_results[key]
+    elif file_format == "tsv":
+        return all_results + batch_results[1:]
+    else:
+        return all_results + batch_results
+    return all_results
 
-    # print (chunk_df)
+def map_ids_in_uniprot(ids,from_db,to_db):
+    ''' map ids to uniprot '''
 
-    # print ("*****")
+    # submit job to uniprot
+    job_id = submit_id_mapping(from_db,to_db,ids)
+    #print('job_id',job_id)
 
-    final_list.append(chunk_df)
+    if job_id != None: # if the call was made successfully
+        # check if ready and get if ready.
+        if check_id_mapping_results_ready(job_id):
+            link    = get_id_mapping_results_link(job_id)
+            results = get_id_mapping_results_search(link)
+    else:
+        return  # this happens if the "from id" is not correct id, so the call was not made
+    return results
 
-final_df = pd.concat(final_list)
-final_df.to_csv(snakemake.output[0], index=False)
+def try_map_all_ids(ids,from_db_short,to_db_short):
+    ''' function to try guess each database id belongs to and make a call to uniprot'''
+
+    # get uniprot identifier for database
+    from_db = from_id_db_lookup[from_db_short]
+    to_db   = to_id_db_lookup[to_db_short]
+
+    results_this_db = map_ids_in_uniprot(ids,from_db,to_db)
+
+    return results_this_db
+
+def merge_results_to_main_data(main_df,add_df,from_db,to_db):
+    ''' merge the result processed output with main master data '''
+
+    # left join on all extracted ids to check if they match on the returned result
+    main_df = main_df.merge(add_df,left_on='Extracted_ID_1', right_on='from', how='left')
+    main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
+
+    # to be done only if it is not uniprot id
+    if from_db != 'UNIPROT-FROM':
+        main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
+    main_df.drop(columns=['from','grouped_to'],inplace=True)
+
+    main_df = main_df.merge(add_df,left_on='Extracted_ID_2', right_on='from', how='left')
+    main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
+    if from_db != 'UNIPROT-FROM':
+        main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
+    main_df.drop(columns=['from','grouped_to'],inplace=True)
+
+    main_df = main_df.merge(add_df,left_on='Extracted_ID_3', right_on='from', how='left')
+    main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
+    if from_db != 'UNIPROT-FROM':
+        main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
+    main_df.drop(columns=['from','grouped_to'],inplace=True)
+
+    return main_df
+
+
+def process_results(data_df,results,from_db,to_db):
+    ''' process the combined output results from uniprot to a grouped cleaner format'''
+
+    # response can be short or long, depending on that need to process seperately
+    if db_response_format[to_db] == 'short':  # short response recieved
+        result_df = pd.DataFrame(results['results'],columns = ['from','to'])
+    else:
+        id_mapping_list = []
+        for d in results['results']:
+
+            from_id = d['from']
+            to_key  = db_response_key[to_db]
+            to_id   = d['to'][to_key]
+            id_mapping_list.append((from_id,to_id))
+        result_df = pd.DataFrame(id_mapping_list,columns = ['from','to'])
+
+    #print("Result Dataframe",result_df.head())
+
+    # group the results by from and remove duplicates
+    result_df['grouped_to'] = result_df.groupby(['from'])['to'].transform(lambda x : ' '.join(x))
+    result_df = result_df[['from','grouped_to']].drop_duplicates().reset_index(drop = True)
+
+    # merge the results with the main dataframe
+    merged_df = merge_results_to_main_data(data_df,result_df,from_db,to_db)
+
+    return merged_df
+
+def create_output_file(data_df,to_id_lookup,output_file):
+    ''' function is create a clean output file with sequence as the primary key'''
+
+    # combine entry column,id columns by sequence
+    data_df['accession_all'] = data_df.groupby(['sequence'])['accession'].transform(lambda x : ' '.join(x))
+    for db in to_id_lookup:
+        data_df[to_id_lookup] = data_df.groupby(['sequence'])[to_id_lookup].transform(lambda x : ' '.join(x))
+
+    # drop duplicates by sequence
+    cols_output_file = ['sequence','accession_all'] + [db for db in to_id_lookup]
+    output_df = data_df[cols_output_file].drop_duplicates().reset_index(drop = True)
+
+    # remove duplicates in id each column themselves
+    for db in to_id_lookup:
+        output_df[db] = output_df[db].apply(lambda x: list(set(x.strip().split(' '))))
+
+    # remove duplicates in the entry column
+    output_df['accession_all'] = output_df['accession_all'].apply(lambda x: list(set(x.strip().split(' '))))
+
+    # save as csv and return
+    output_df.to_csv(output_file,index=False)
+
+
+def all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup):
+    ''' main function to map input ids to different database specified in the id_lookup list '''
+
+    # read data and get ids
+    df_data = pd.read_csv(input_file)
+
+    # sepearate the ids if they are mulitple seperated by |
+    df_data[['Extracted_ID_1','Extracted_ID_2','Extracted_ID_3']]= df_data['accession'].str.split('|', expand=True)
+    ids = list(df_data['accession'])
+
+    # empty string for each of the lookup id columns
+    for db in to_id_lookup:
+        df_data[db] = ''
+
+    # process mapping from uniprot to "to ids list"
+    for from_db_short in from_id_lookup:
+        print("Finding the ids from database:",from_db_short)
+
+        for to_db_short in to_id_lookup:
+            if from_db_short != to_db_short:
+                print("Finding the ids to database:",to_db_short)
+
+                # call uniport
+                results_uniprot = try_map_all_ids(ids,from_db_short,to_db_short)
+
+                # check if any results returned
+                if results_uniprot:
+                    # process the results
+                    print("OUTCOME :: Results Returned")
+                    df_data = process_results(df_data,results_uniprot,from_db_short,to_db_short)
+                    print("Results Processed")
+                else:
+                    print("OUTCOME :: No Results Returned")
+
+    # create final clean output file - sequence as primary key
+    create_output_file(df_data,to_id_lookup,output_file)
+    return df_data
+
+# main function
+def main():
+
+    input_file  = snakemake.input[0]
+    output_file = snakemake.output[0]
+    #input_file  = 'kari_example_ec_1_1_1_86_original.csv'
+    #output_file = 'kari_example_ec_1_1_1_86_original_validated.csv'
+    from_id_lookup   = ['UNIPROT-FROM'] #,'NCBI','EMBL']
+    to_id_lookup     = ['NCBI','EMBL','UNIPROT','UNIPARC']
+
+    print("Starting Validating IDs")
+    all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup)
+
+if __name__ == "__main__":
+    main()

@@ -5,7 +5,7 @@
 
 
 ######## snakemake preamble start (automatically inserted, do not edit) ########
-import sys; sys.path.extend(['/Users/uqgfoley/opt/miniconda3/envs/cleanrepo/lib/python3.10/site-packages', '/Users/uqgfoley/Documents/asr_curation/asr_curation/notebooks']); import pickle; snakemake = pickle.loads(b"\x80\x04\x95\xe4\x06\x00\x00\x00\x00\x00\x00\x8c\x10snakemake.script\x94\x8c\tSnakemake\x94\x93\x94)\x81\x94}\x94(\x8c\x05input\x94\x8c\x0csnakemake.io\x94\x8c\nInputFiles\x94\x93\x94)\x81\x94\x8cnworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/csv/custom/kari_example_ec_1_1_1_86_annotated.csv\x94a}\x94(\x8c\x06_names\x94}\x94\x8c\x12_allowed_overrides\x94]\x94(\x8c\x05index\x94\x8c\x04sort\x94eh\x10\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94h\x06\x8c\x19Namedlist._used_attribute\x94\x93\x94\x85\x94R\x94(h\x16)}\x94\x8c\x05_name\x94h\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bub\x8c\x06output\x94h\x06\x8c\x0bOutputFiles\x94\x93\x94)\x81\x94\x8cxworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/dataset_summary/temp/kari_example_ec_1_1_1_86_summary.ipynb\x94a}\x94(h\x0c}\x94\x8c\x07summary\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bh'h$ub\x8c\x06params\x94h\x06\x8c\x06Params\x94\x93\x94)\x81\x94]\x94(\x8c\x16Cross_reference_SUPFAM\x94\x8c\x17Cross_reference_PANTHER\x94\x8c\x0bLoop_Length\x94\x8c\nKARI_Class\x94\x8c\tEC_number\x94ea}\x94(h\x0c}\x94\x8c\x0fannotation_cols\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bh>h6ub\x8c\twildcards\x94h\x06\x8c\tWildcards\x94\x93\x94)\x81\x94\x8c\x18kari_example_ec_1_1_1_86\x94a}\x94(h\x0c}\x94\x8c\x07dataset\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94b\x8c\x07dataset\x94hMub\x8c\x07threads\x94K\x01\x8c\tresources\x94h\x06\x8c\tResources\x94\x93\x94)\x81\x94(K\x01K\x01\x8c0/var/folders/xs/24s9hwqd191f2x7rhdy6_ryc0000gr/T\x94e}\x94(h\x0c}\x94(\x8c\x06_cores\x94K\x00N\x86\x94\x8c\x06_nodes\x94K\x01N\x86\x94\x8c\x06tmpdir\x94K\x02N\x86\x94uh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bhdK\x01hfK\x01hhhaub\x8c\x03log\x94h\x06\x8c\x03Log\x94\x93\x94)\x81\x94\x8cxworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/dataset_summary/temp/kari_example_ec_1_1_1_86_summary.ipynb\x94a}\x94(h\x0c}\x94\x8c\x08notebook\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bhzhwub\x8c\x06config\x94}\x94(\x8c\x07workdir\x94\x8c\x1aworkflows/example_workflow\x94\x8c\x08fastadir\x94\x8c workflows/example_workflow/fasta\x94\x8c\x06subdir\x94\x8c'workflows/example_workflow/subset_rules\x94\x8c\x0fannotation_cols\x94]\x94(h7h8h9h:h;e\x8c\x10blocked_datasets\x94]\x94u\x8c\x04rule\x94\x8c\x16create_dataset_summary\x94\x8c\x0fbench_iteration\x94N\x8c\tscriptdir\x94\x8c=/Users/uqgfoley/Documents/asr_curation/asr_curation/notebooks\x94ub."); from snakemake.logging import logger; logger.printshellcmds = False; import os; os.chdir(r'/Users/uqgfoley/Documents/asr_curation/asr_curation');
+import sys; sys.path.extend(['/Users/sanjanatule/opt/anaconda3/envs/asr_curation/lib/python3.10/site-packages', '/Users/sanjanatule/asr_curation/asr_curation/notebooks']); import pickle; snakemake = pickle.loads(b"\x80\x04\x95\xdd\x06\x00\x00\x00\x00\x00\x00\x8c\x10snakemake.script\x94\x8c\tSnakemake\x94\x93\x94)\x81\x94}\x94(\x8c\x05input\x94\x8c\x0csnakemake.io\x94\x8c\nInputFiles\x94\x93\x94)\x81\x94\x8cnworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/csv/custom/kari_example_ec_1_1_1_86_annotated.csv\x94a}\x94(\x8c\x06_names\x94}\x94\x8c\x12_allowed_overrides\x94]\x94(\x8c\x05index\x94\x8c\x04sort\x94eh\x10\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94h\x06\x8c\x19Namedlist._used_attribute\x94\x93\x94\x85\x94R\x94(h\x16)}\x94\x8c\x05_name\x94h\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bub\x8c\x06output\x94h\x06\x8c\x0bOutputFiles\x94\x93\x94)\x81\x94\x8cxworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/dataset_summary/temp/kari_example_ec_1_1_1_86_summary.ipynb\x94a}\x94(h\x0c}\x94\x8c\x07summary\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bh'h$ub\x8c\x06params\x94h\x06\x8c\x06Params\x94\x93\x94)\x81\x94]\x94(\x8c\x16Cross_reference_SUPFAM\x94\x8c\x17Cross_reference_PANTHER\x94\x8c\x0bLoop_Length\x94\x8c\nKARI_Class\x94\x8c\tEC_number\x94ea}\x94(h\x0c}\x94\x8c\x0fannotation_cols\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bh>h6ub\x8c\twildcards\x94h\x06\x8c\tWildcards\x94\x93\x94)\x81\x94\x8c\x18kari_example_ec_1_1_1_86\x94a}\x94(h\x0c}\x94\x8c\x07dataset\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94b\x8c\x07dataset\x94hMub\x8c\x07threads\x94K\x01\x8c\tresources\x94h\x06\x8c\tResources\x94\x93\x94)\x81\x94(K\x01K\x01\x8c0/var/folders/6g/6gy05kt92q5478c3_f84df280000gn/T\x94e}\x94(h\x0c}\x94(\x8c\x06_cores\x94K\x00N\x86\x94\x8c\x06_nodes\x94K\x01N\x86\x94\x8c\x06tmpdir\x94K\x02N\x86\x94uh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bhdK\x01hfK\x01hhhaub\x8c\x03log\x94h\x06\x8c\x03Log\x94\x93\x94)\x81\x94\x8cxworkflows/example_workflow/datasets/kari_example_ec_1_1_1_86/dataset_summary/temp/kari_example_ec_1_1_1_86_summary.ipynb\x94a}\x94(h\x0c}\x94\x8c\x08notebook\x94K\x00N\x86\x94sh\x0e]\x94(h\x10h\x11eh\x10h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x10sNt\x94bh\x11h\x14h\x16\x85\x94R\x94(h\x16)}\x94h\x1ah\x11sNt\x94bhzhwub\x8c\x06config\x94}\x94(\x8c\x07workdir\x94\x8c\x1aworkflows/example_workflow\x94\x8c\x08fastadir\x94\x8c workflows/example_workflow/fasta\x94\x8c\x06subdir\x94\x8c'workflows/example_workflow/subset_rules\x94\x8c\x0fannotation_cols\x94]\x94(h7h8h9h:h;e\x8c\x10blocked_datasets\x94]\x94u\x8c\x04rule\x94\x8c\x16create_dataset_summary\x94\x8c\x0fbench_iteration\x94N\x8c\tscriptdir\x94\x8c6/Users/sanjanatule/asr_curation/asr_curation/notebooks\x94ub."); from snakemake.logging import logger; logger.printshellcmds = False; import os; os.chdir(r'/Users/sanjanatule/asr_curation/asr_curation');
 ######## snakemake preamble end #########
 
 
@@ -263,7 +263,7 @@ print (f'Summary sheet - {snakemake.wildcards.dataset}')
 
 
 df = pd.read_csv(snakemake.input[0])
-non_fragment_df = df[df['Fragment'] == False]
+non_fragment_df = df[df['fragment'] == False]
 entry_df = df.dropna(axis=1, how='all')
 
 
@@ -272,7 +272,7 @@ entry_df = df.dropna(axis=1, how='all')
 # In[7]:
 
 
-ec_nums = list(pd.unique(df['EC_number']))
+ec_nums = list(pd.unique(df['ec']))
 
 ec_set = set()
 
@@ -288,7 +288,7 @@ print (f'The EC numbers found in the current data set are {ec_set}')
 # In[8]:
 
 
-taxonomy_cols = ['Taxonomic_lineage_SUPERKINGDOM', 'Taxonomic_lineage_PHYLUM']
+taxonomy_cols = ['lineage_superkingdom', 'lineage_phylum']
 
 for col in taxonomy_cols:
     fig, ax = plt.subplots(figsize=(len(col) / 3 ,10))
@@ -312,8 +312,8 @@ for col in key_annotation_cols:
 # In[10]:
 
 
-seq_len = df['Length'].describe()
-non_fragment_seq_len = non_fragment_df['Length'].describe()
+seq_len = df['length'].describe()
+non_fragment_seq_len = non_fragment_df['length'].describe()
 
 
 def print_sequence_summarys(seq_summary):
@@ -370,10 +370,10 @@ if len(b_df) > 0:
 # In[12]:
 
 
-pdb_df = df[['Entry', 'Cross_reference_PDB']].dropna()
+pdb_df = df[['accession', 'xref_pdb']].dropna()
 pdb_dict = defaultdict(list)
 for pdb_entries in pdb_df.itertuples():
-    pdb_dict[pdb_entries.Entry] = [x for x in pdb_entries.Cross_reference_PDB.strip().split(";") if len(x) > 0]
+    pdb_dict[pdb_entries.accession] = [x for x in pdb_entries.xref_pdb.strip().split(";") if len(x) > 0]
 
 total_structures = sum([len(x) for x in pdb_dict.values()])
 

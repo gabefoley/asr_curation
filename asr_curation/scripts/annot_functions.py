@@ -3,7 +3,7 @@ import pandas as pd
 
 def annotate_motif(df, motif):
 
-    df[f"MOTIF_{motif}"] = df["Sequence"].dropna().str.contains(motif)
+    df[f"MOTIF_{motif}"] = df["sequence"].dropna().str.contains(motif)
 
     return df
 
@@ -12,7 +12,7 @@ def annotate_nonAA(df):
     # Does the sequences have non amino acid characters in it
 
     non_AA = "B|J|O|U|X|Z"
-    df["Non_AA_Character"] = df["Sequence"].dropna().str.contains(non_AA)
+    df["Non_AA_Character"] = df["sequence"].dropna().str.contains(non_AA)
 
     return df
 
@@ -23,7 +23,7 @@ def annotate_AA(df):
     # print ('lets check')
     # print (df['Sequence'])
     non_AA = "B|J|O|U|X|Z"
-    df["AA_Character"] = ~(df["Sequence"].dropna().str.contains(non_AA, na=None))
+    df["AA_Character"] = ~(df["sequence"].dropna().str.contains(non_AA, na=None))
 
     # booleanDictionary = {True: 'TRUE', False: 'FALSE'}
     # df = df.replace(booleanDictionary)
@@ -35,8 +35,8 @@ def annotate_AA(df):
 
 def annotate_sp_tr(df):
     # Is the sequence from SwissProt or TrEMBL
-    df.loc[df["Entry"].str.startswith("sp"), "UniProt_DB"] = "SwissProt"
-    df.loc[df["Entry"].str.startswith("tr"), "UniProt_DB"] = "TrEMBL"
+    df.loc[df["accession"].str.startswith("sp"), "UniProt_DB"] = "SwissProt"
+    df.loc[df["accession"].str.startswith("tr"), "UniProt_DB"] = "TrEMBL"
 
     return df
 

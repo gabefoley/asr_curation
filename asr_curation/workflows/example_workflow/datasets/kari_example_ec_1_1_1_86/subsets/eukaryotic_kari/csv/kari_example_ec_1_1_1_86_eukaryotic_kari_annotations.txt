@@ -1,7 +1,7 @@
-Cross_reference_SUPFAM	Cross_reference_PANTHER	Loop_Length	KARI_Class	EC_number
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_I	1.1.1.86
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_II	1.1.1.86
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_II	1.1.1.86
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_II	1.1.1.86
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_I	1.1.1.86
-SSF48179;SSF51735;	PTHR21371;	No_binding_positions	Class_I	1.1.1.86
+KARI_Class
+Class_II
+Class_II
+Class_I
+Class_II
+Class_I
+Class_I

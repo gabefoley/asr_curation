@@ -100,7 +100,7 @@ rule all:
             # files = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta' for dataset in DATASETS for subset in subsets[dataset]]
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt' for dataset in DATASETS for subset in subsets[dataset]],
             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
-            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
+            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
 
             # expand(WORKDIR + "/{dataset}/grasp_results/GRASP_ancestors.fasta",
             #     dataset=DATASETS)
@@ -117,22 +117,22 @@ rule create_annotations:
         "scripts/create_annotations.py"
 
 # Map the IDs to UniProt and NCBI in order to validate the type of IDs they are
-# rule validate_ids:
-#    input:
-#        WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
-#    output:
-#        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
-#    script:
-#        "scripts/validate_ids.py"
+rule validate_ids:
+   input:
+       WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
+   output:
+       WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
+   script:
+       "scripts/validate_ids.py"
 
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:
     input:
-        WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
+        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
     output:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
     script:
-        "scripts/get_uniprot_annotations_async.py"
+        "scripts/get_uniprot_annotations_pagination.py"
 
 # # # Map the UniProt sequences to IDs we can query IPG with, and then query IPG to add genome information
 # rule get_genomes:
@@ -144,7 +144,7 @@ rule get_uniprot_annotations:
 #     script:
 #         "scripts/get_genomes.py"
 
-# # Map the Genomes to GTDB 
+# # Map the Genomes to GTDB
 # rule get_gtdb_annotations:
 #    input:
 #        WORKDIR + "/{dataset}/csv/genome/{dataset}_genome.csv"
@@ -173,7 +173,7 @@ rule get_brenda_annotations:
     script:
         "scripts/get_brenda_annotations.py"
 
-# Add any custom annotations 
+# Add any custom annotations
 rule add_custom_annotations:
     input:
         WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
@@ -227,11 +227,11 @@ rule run_grasp:
 
     output:
         dir= directory(WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/"),
-        aln= WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta",
+        aln= WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
         tree = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.nwk"
 
     shell:
-        "grasp -aln {input.aln} -nwk {input.tree} -model LG -out {output.dir} -savetree  -indel BEP -inf joint -gap -threads 2"
+        "grasp -a {input.aln} -n {input.tree} -s LG -o {output.dir} -i BEP -j --save-as FASTA TREE -pre GRASP -t 2"
 
 rule add_annotations_from_alignment:
     input:
@@ -244,7 +244,7 @@ rule add_annotations_from_alignment:
         "scripts/add_annotations_from_alignment.py"
 
 # rule add_annotations_from_ancestors:
-#     input: 
+#     input:
 #         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv",
 #         aln = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta",
 #     output:
@@ -320,7 +320,7 @@ rule clean_subset_summary:
 
    script:
        "scripts/clean_summary_document.py"
-            
+
         #expand("indelible_summaries/{{taxon}}/{rep}.csv", rep = [x for x in range(1, config['REPS'] + 1)])
 rule create_subset_document:
    input:
@@ -351,9 +351,9 @@ rule compile_summary_document:
 rule concat_ancestor_alignment:
     input:
         extants = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
-        ancestors = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta",
+        ancestors = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
 
-    output: 
+    output:
         WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln"
     shell:
         "cat {input.extants} {input.ancestors} > {output}"
@@ -379,8 +379,7 @@ rule concat_ancestor_alignment:
 #         WORKDIR + "/{dataset}/subsets/{subset}/tree_images/{column}.png"
 #     # output:
 #     #     expand(WORKDIR + "/{dataset}/tree_images/{dataset}_{column}.png",
-#     #         dataset=DATASETS, 
+#     #         dataset=DATASETS,
 #     #         column=config['annotation_cols'])
 #     shell:
 #         "python scripts/tree_annot.py -t {input.tree} -a {input.aln} -c {input.csv} --col '{wildcards.column}' --match_from 'Entry' -r 4425 -o {output}"
-

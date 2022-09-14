@@ -56,11 +56,11 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
         frames = [sub_df, req_df]
         merge_df = pd.concat(frames)
 
-        merge_df = merge_df.drop_duplicates(subset="Entry")
+        merge_df = merge_df.drop_duplicates(subset="accession")
 
         return merge_df
     else:
-        sub_df = sub_df.drop_duplicates(subset="Entry")
+        sub_df = sub_df.drop_duplicates(subset="accession")
         return sub_df
 
 
@@ -194,7 +194,7 @@ for line in open(snakemake.input.rules).read().splitlines():
                     frames = [sub_df, req_df]
                     merge_df = pd.concat(frames)
 
-                    sub_df = merge_df.drop_duplicates(subset="Entry")
+                    sub_df = merge_df.drop_duplicates(subset="accession")
 
             # Write the subset to a fasta
             # TODO: Currently this is just working for one subset file (not multiple)

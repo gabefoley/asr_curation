@@ -1,7 +1,7 @@
 # ASR Curation workflow
 
 <p align="center">
-	<img src="asr_curation/static/asr_curation.png?raw=true" alt="ASR Curation" height="300" />
+	<img src="static/asr_curation.png?raw=true" alt="ASR Curation" height="300" />
 
 </p>
 
@@ -82,7 +82,7 @@ The pipeline requires you to be online and takes around 5 minutes to complete.
 The full pipeline as defined in `snakefile` for the example workflow is displayed below.
 
 <p align="center">
-	<img src="asr_curation/static/example_workflow_dag.png?raw=true" alt="ASR Curation" height="600" />
+	<img src="static/example_workflow_dag.png?raw=true" alt="ASR Curation" height="600" />
 
 </p>
 
@@ -103,7 +103,7 @@ Quick note: More of these folders are being kept then are required (specifically
 
 
 <p align="center">
-	<img src="asr_curation/static/directory.png?raw=true" alt="ASR Curation" height="600" />
+	<img src="static/directory.png?raw=true" alt="ASR Curation" height="600" />
 
 </p>
 

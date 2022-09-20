@@ -114,18 +114,20 @@ def classify_KARI(features):
         return "No_domain_info"
 
 
-def get_binding_pos(binding_sites):
+def get_binding_pos(binding_sites, ligand=None):
 
-    # print (binding_sites)
+    print (binding_sites)
     if pd.notnull(binding_sites):
         bp = []
         #         print ('bs is')
         #         print (binding_sites)
         for site in binding_sites.split(";"):
-            #         print ('***')
-            #         print (site)
+                    # print ('***')
+                    # print (site)
             if site.strip().startswith("BINDING"):
+                print (site.split("BINDING")[1])
                 found_pos = int(site.split("BINDING")[1]) - 1
+                print (found_pos)
             #         if site.strip().startswith('/note='):
             #             print (site)
             #             print(site.split('/note='))

@@ -165,8 +165,9 @@ def add_from_csv(df, add_df, match="accession"):
 
 def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
 
-    # TODO: Change to biopython is not working to work
+    seqs = SeqIO.parse(fasta_path, "fasta")
 
-    seqs = SeqIO.read(fasta_path, "fasta")
+    for seq in seqs:
+        print (seq)
 
     return [seq.name for seq in seqs]

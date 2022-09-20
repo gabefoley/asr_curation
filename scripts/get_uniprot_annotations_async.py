@@ -187,3 +187,4 @@ elif frames:
 
     # Save the merged annotations to a csv
     merged_df.to_csv(snakemake.output[0], index=False)
+

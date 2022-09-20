@@ -108,13 +108,13 @@ rule all:
 
 
 # Create the initial annotation file from the FASTA file or list of IDs
-rule create_annotations:
+rule create_ids:
     input:
         FASTADIR + "/{dataset}.fasta"
     output:
         WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
     script:
-        "scripts/create_annotations.py"
+        "scripts/create_ids.py"
 
 # Map the IDs to UniProt and NCBI in order to validate the type of IDs they are
 rule validate_ids:

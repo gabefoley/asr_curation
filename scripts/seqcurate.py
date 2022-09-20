@@ -39,7 +39,7 @@ def get_sequence_df(
         # Add to annotation file
         for seq in seqs:
 
-            print(seq.name)
+            #print(seq.name)
 
             if alignment == False:
                 if seq.name in duplicates:

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import seqcurate as sc
 import os
-from configs.uniprot_cols import full_uniprot_cols
+from scripts.configs.uniprot_cols import full_uniprot_cols
 import aiohttp
 import asyncio
 import async_timeout

@@ -52,7 +52,7 @@ def split_lineage(x):
     lineage_list = []
 
     for l in lin_split:
-        if 'no rank' not in l:
+        if 'no rank' not in l and '(' in l and ')' in l:
             val = l.split('(')[0].strip()
             key = 'lineage_' + l.split('(')[1].split(')')[0]
             lineage_dict[key] = val

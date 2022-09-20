@@ -268,7 +268,7 @@ def create_output_file(data_df,to_id_lookup,output_file):
     # combine entry column,id columns by sequence
     data_df['accession_all'] = data_df.groupby(['sequence'])['accession'].transform(lambda x : ' '.join(x))
     for db in to_id_lookup:
-        data_df[to_id_lookup] = data_df.groupby(['sequence'])[to_id_lookup].transform(lambda x : ' '.join(x))
+        data_df[to_id_lookup] = data_df.groupby(['sequence'])[to_id_lookup].transform(lambda x : ' '.join(x.str.strip()))
 
     # drop duplicates by sequence
     cols_output_file = ['sequence','accession_all'] + [db for db in to_id_lookup]

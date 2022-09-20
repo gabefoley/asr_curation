@@ -8,9 +8,9 @@ align_df = pd.read_csv(snakemake.input.csv)
 
 # annotation_cols = ['Entry', 'Taxonomic_lineage_PHYLUM', 'Taxonomic_lineage_SUPERKINGDOM', 'Taxonomic_lineage_CLASS', 'Cross_reference_OMA', 'Cross_reference_InterPro', 'Cross_reference_Pfam']
 
-if snakemake.params.annotation_cols[0] != "Entry":
+if snakemake.params.annotation_cols[0] != "accession":
 
-    annotation_cols = ["Entry"] + snakemake.params.annotation_cols
+    annotation_cols = ["accession"] + snakemake.params.annotation_cols
 
 subset_df = align_df[[x for x in annotation_cols if x in align_df.columns]]
 

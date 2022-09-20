@@ -1,8 +1,12 @@
+import os
+
 import pandas as pd
 
 import scripts.get_uniprot_annotations_pagination
 
 def test_split_lineage():
+
+    print (os.getcwd())
     assert (True)
 
 def test_get_uniprot_id_list():

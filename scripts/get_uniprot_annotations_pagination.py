@@ -1,20 +1,10 @@
 ''' Python code to fetch annotations from uniprot in batches, use pagination to process results and creating .csv output file '''
 
 import pandas as pd
-import urllib.parse
-import urllib.request
-from io import StringIO
-import requests,json
-from time import sleep
 import re
-import time
-import json
-import zlib
-from xml.etree import ElementTree
-from urllib.parse import urlparse, parse_qs, urlencode
 import requests
 from requests.adapters import HTTPAdapter, Retry
-from scripts.configs.uniprot_cols import full_uniprot_cols
+from configs.uniprot_cols import full_uniprot_cols
 import numpy as np
 
 # config parameters

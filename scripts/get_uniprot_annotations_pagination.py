@@ -186,7 +186,7 @@ def main():
     output_file = snakemake.output[0]
     intermediate_tsv_file = snakemake.input[0].split(".")[0] + '.tsv'
 
-    id_batch_size = 100 # process ids in batches of this parameter
+    id_batch_size = 110 # process ids in batches of this parameter
     result_batch_size = 50 # process results in this batches (uses pagination)
 
     print("Starting Uniprot Annotations Job")

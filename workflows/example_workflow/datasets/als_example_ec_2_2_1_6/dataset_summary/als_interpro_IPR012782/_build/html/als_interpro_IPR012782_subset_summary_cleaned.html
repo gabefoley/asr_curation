@@ -459,8 +459,8 @@ Ligand : DI(HYDROXYETHYL)ETHER at position 702
 1ozf chain B has helices at residue ranges [&#39;12-24&#39;, &#39;37-45&#39;, &#39;56-72&#39;, &#39;82-87&#39;, &#39;88-99&#39;, &#39;110-114&#39;, &#39;123-129&#39;, &#39;130-132&#39;, &#39;140-142&#39;, &#39;143-157&#39;, &#39;169-174&#39;, &#39;193-207&#39;, &#39;216-220&#39;, &#39;220-222&#39;, &#39;223-235&#39;, &#39;242-245&#39;, &#39;266-275&#39;, &#39;284-288&#39;, &#39;289-293&#39;, &#39;323-333&#39;, &#39;342-361&#39;, &#39;372-384&#39;, &#39;395-404&#39;, &#39;405-408&#39;, &#39;424-436&#39;, &#39;447-454&#39;, &#39;455-464&#39;, &#39;477-489&#39;, &#39;500-508&#39;, &#39;517-519&#39;, &#39;520-530&#39;, &#39;542-544&#39;, &#39;545-551&#39;] and strands at [&#39;8-10&#39;, &#39;28-32&#39;, &#39;50-53&#39;, &#39;75-79&#39;, &#39;102-108&#39;, &#39;134-137&#39;, &#39;162-168&#39;, &#39;176-178&#39;, &#39;210-214&#39;, &#39;238-240&#39;, &#39;256-259&#39;, &#39;277-281&#39;, &#39;299-304&#39;, &#39;318-321&#39;, &#39;389-392&#39;, &#39;412-414&#39;, &#39;441-446&#39;, &#39;467-473&#39;, &#39;511-514&#39;, &#39;535-540&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_1664157980029174"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_1664157980029174" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_1664159916319336"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_1664159916319336" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -483,20 +483,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_1664157980029174 = null;
-var warn = document.getElementById("3dmolwarning_1664157980029174");
+var viewer_1664159916319336 = null;
+var warn = document.getElementById("3dmolwarning_1664159916319336");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_1664157980029174 = $3Dmol.createViewer($("#3dmolviewer_1664157980029174"),{backgroundColor:"white"});
-$3Dmol.download("pdb:1OZF", viewer_1664157980029174, {}, function() {
-viewer_1664157980029174.zoomTo();
-	viewer_1664157980029174.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_1664157980029174.render();
+viewer_1664159916319336 = $3Dmol.createViewer($("#3dmolviewer_1664159916319336"),{backgroundColor:"white"});
+$3Dmol.download("pdb:1OZF", viewer_1664159916319336, {}, function() {
+viewer_1664159916319336.zoomTo();
+	viewer_1664159916319336.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_1664159916319336.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x1242dc070&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x129bb3940&gt;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
@@ -531,8 +531,8 @@ Ligand : DI(HYDROXYETHYL)ETHER at position 702
 1ozg chain B has helices at residue ranges [&#39;12-24&#39;, &#39;37-45&#39;, &#39;56-72&#39;, &#39;82-87&#39;, &#39;88-99&#39;, &#39;110-114&#39;, &#39;123-129&#39;, &#39;130-132&#39;, &#39;140-142&#39;, &#39;143-157&#39;, &#39;169-174&#39;, &#39;193-207&#39;, &#39;216-220&#39;, &#39;223-235&#39;, &#39;242-245&#39;, &#39;266-275&#39;, &#39;284-288&#39;, &#39;289-294&#39;, &#39;323-333&#39;, &#39;342-362&#39;, &#39;372-384&#39;, &#39;395-404&#39;, &#39;405-408&#39;, &#39;424-436&#39;, &#39;447-454&#39;, &#39;456-464&#39;, &#39;477-489&#39;, &#39;500-508&#39;, &#39;517-519&#39;, &#39;520-530&#39;, &#39;542-544&#39;, &#39;545-551&#39;] and strands at [&#39;8-10&#39;, &#39;28-32&#39;, &#39;50-53&#39;, &#39;75-79&#39;, &#39;102-108&#39;, &#39;134-137&#39;, &#39;162-168&#39;, &#39;176-178&#39;, &#39;210-214&#39;, &#39;238-240&#39;, &#39;256-259&#39;, &#39;277-281&#39;, &#39;299-304&#39;, &#39;318-321&#39;, &#39;389-392&#39;, &#39;412-414&#39;, &#39;441-446&#39;, &#39;467-473&#39;, &#39;511-514&#39;, &#39;535-540&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_16641579837219882"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_16641579837219882" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_1664159920065467"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_1664159920065467" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -555,20 +555,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_16641579837219882 = null;
-var warn = document.getElementById("3dmolwarning_16641579837219882");
+var viewer_1664159920065467 = null;
+var warn = document.getElementById("3dmolwarning_1664159920065467");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_16641579837219882 = $3Dmol.createViewer($("#3dmolviewer_16641579837219882"),{backgroundColor:"white"});
-$3Dmol.download("pdb:1OZG", viewer_16641579837219882, {}, function() {
-viewer_16641579837219882.zoomTo();
-	viewer_16641579837219882.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_16641579837219882.render();
+viewer_1664159920065467 = $3Dmol.createViewer($("#3dmolviewer_1664159920065467"),{backgroundColor:"white"});
+$3Dmol.download("pdb:1OZG", viewer_1664159920065467, {}, function() {
+viewer_1664159920065467.zoomTo();
+	viewer_1664159920065467.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_1664159920065467.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x1214a8370&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x129cb8370&gt;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
@@ -610,8 +610,8 @@ Ligand : DI(HYDROXYETHYL)ETHER at position 1430
 1ozh chain D has helices at residue ranges [&#39;12-24&#39;, &#39;34-36&#39;, &#39;37-46&#39;, &#39;56-72&#39;, &#39;82-87&#39;, &#39;88-99&#39;, &#39;110-114&#39;, &#39;123-129&#39;, &#39;130-132&#39;, &#39;140-142&#39;, &#39;143-157&#39;, &#39;169-174&#39;, &#39;193-206&#39;, &#39;216-220&#39;, &#39;220-222&#39;, &#39;223-235&#39;, &#39;242-245&#39;, &#39;249-253&#39;, &#39;266-275&#39;, &#39;284-288&#39;, &#39;289-293&#39;, &#39;323-334&#39;, &#39;342-360&#39;, &#39;372-384&#39;, &#39;395-404&#39;, &#39;405-408&#39;, &#39;424-436&#39;, &#39;447-454&#39;, &#39;455-464&#39;, &#39;477-489&#39;, &#39;500-507&#39;, &#39;520-531&#39;, &#39;545-551&#39;] and strands at [&#39;8-10&#39;, &#39;28-31&#39;, &#39;50-53&#39;, &#39;75-79&#39;, &#39;102-108&#39;, &#39;134-137&#39;, &#39;162-168&#39;, &#39;176-178&#39;, &#39;210-214&#39;, &#39;238-240&#39;, &#39;256-259&#39;, &#39;277-281&#39;, &#39;299-304&#39;, &#39;318-321&#39;, &#39;389-392&#39;, &#39;412-414&#39;, &#39;441-446&#39;, &#39;467-473&#39;, &#39;511-514&#39;, &#39;535-540&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_1664157987781812"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_1664157987781812" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_1664159924930527"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_1664159924930527" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -634,20 +634,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_1664157987781812 = null;
-var warn = document.getElementById("3dmolwarning_1664157987781812");
+var viewer_1664159924930527 = null;
+var warn = document.getElementById("3dmolwarning_1664159924930527");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_1664157987781812 = $3Dmol.createViewer($("#3dmolviewer_1664157987781812"),{backgroundColor:"white"});
-$3Dmol.download("pdb:1OZH", viewer_1664157987781812, {}, function() {
-viewer_1664157987781812.zoomTo();
-	viewer_1664157987781812.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_1664157987781812.render();
+viewer_1664159924930527 = $3Dmol.createViewer($("#3dmolviewer_1664159924930527"),{backgroundColor:"white"});
+$3Dmol.download("pdb:1OZH", viewer_1664159924930527, {}, function() {
+viewer_1664159924930527.zoomTo();
+	viewer_1664159924930527.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_1664159924930527.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x1242dc070&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x12b1994f0&gt;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
@@ -677,8 +677,8 @@ Ligand : 3-[(4-amino-2-methylpyrimidin-5-yl)methyl]-2-[(Z)-2-fluoro-1-hydroxy-2-
 5d6r chain M has helices at residue ranges [&#39;32-44&#39;, &#39;57-64&#39;, &#39;65-67&#39;, &#39;76-92&#39;, &#39;102-107&#39;, &#39;108-119&#39;, &#39;130-134&#39;, &#39;143-149&#39;, &#39;150-152&#39;, &#39;160-162&#39;, &#39;163-177&#39;, &#39;189-194&#39;, &#39;213-227&#39;, &#39;236-240&#39;, &#39;240-242&#39;, &#39;243-255&#39;, &#39;262-265&#39;, &#39;286-295&#39;, &#39;304-308&#39;, &#39;309-313&#39;, &#39;343-353&#39;, &#39;362-377&#39;, &#39;392-404&#39;, &#39;415-424&#39;, &#39;425-428&#39;, &#39;444-456&#39;, &#39;467-474&#39;, &#39;476-484&#39;, &#39;497-509&#39;, &#39;520-527&#39;, &#39;537-539&#39;, &#39;540-550&#39;, &#39;562-564&#39;, &#39;565-571&#39;] and strands at [&#39;28-30&#39;, &#39;48-51&#39;, &#39;70-73&#39;, &#39;95-99&#39;, &#39;122-128&#39;, &#39;154-157&#39;, &#39;182-188&#39;, &#39;196-198&#39;, &#39;230-234&#39;, &#39;258-260&#39;, &#39;276-279&#39;, &#39;297-301&#39;, &#39;319-324&#39;, &#39;338-341&#39;, &#39;408-412&#39;, &#39;432-434&#39;, &#39;460-466&#39;, &#39;487-493&#39;, &#39;531-534&#39;, &#39;555-560&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_1664157991509671"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_1664157991509671" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_1664159929655612"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_1664159929655612" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -701,20 +701,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_1664157991509671 = null;
-var warn = document.getElementById("3dmolwarning_1664157991509671");
+var viewer_1664159929655612 = null;
+var warn = document.getElementById("3dmolwarning_1664159929655612");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_1664157991509671 = $3Dmol.createViewer($("#3dmolviewer_1664157991509671"),{backgroundColor:"white"});
-$3Dmol.download("pdb:5D6R", viewer_1664157991509671, {}, function() {
-viewer_1664157991509671.zoomTo();
-	viewer_1664157991509671.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_1664157991509671.render();
+viewer_1664159929655612 = $3Dmol.createViewer($("#3dmolviewer_1664159929655612"),{backgroundColor:"white"});
+$3Dmol.download("pdb:5D6R", viewer_1664159929655612, {}, function() {
+viewer_1664159929655612.zoomTo();
+	viewer_1664159929655612.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_1664159929655612.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x12542bdf0&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x12b2dbd30&gt;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
@@ -743,8 +743,8 @@ Ligand : 3-fluoro-2-oxopropanoic acid at position 604
 5dx6 chain B has helices at residue ranges [&#39;32-44&#39;, &#39;54-56&#39;, &#39;57-65&#39;, &#39;76-92&#39;, &#39;102-107&#39;, &#39;108-119&#39;, &#39;130-134&#39;, &#39;136-140&#39;, &#39;143-149&#39;, &#39;150-152&#39;, &#39;160-162&#39;, &#39;163-177&#39;, &#39;189-194&#39;, &#39;213-227&#39;, &#39;236-240&#39;, &#39;240-242&#39;, &#39;243-255&#39;, &#39;263-265&#39;, &#39;286-295&#39;, &#39;304-308&#39;, &#39;309-314&#39;, &#39;343-354&#39;, &#39;362-374&#39;, &#39;392-404&#39;, &#39;415-424&#39;, &#39;425-428&#39;, &#39;444-456&#39;, &#39;467-474&#39;, &#39;475-484&#39;, &#39;497-509&#39;, &#39;520-527&#39;, &#39;537-539&#39;, &#39;540-551&#39;, &#39;565-571&#39;, &#39;574-578&#39;] and strands at [&#39;28-30&#39;, &#39;48-52&#39;, &#39;70-73&#39;, &#39;95-99&#39;, &#39;122-128&#39;, &#39;154-157&#39;, &#39;182-188&#39;, &#39;196-198&#39;, &#39;230-234&#39;, &#39;258-261&#39;, &#39;276-280&#39;, &#39;297-301&#39;, &#39;319-324&#39;, &#39;338-341&#39;, &#39;409-412&#39;, &#39;432-434&#39;, &#39;461-466&#39;, &#39;487-493&#39;, &#39;531-534&#39;, &#39;555-560&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_1664157995737341"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_1664157995737341" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_1664159934607973"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_1664159934607973" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -767,20 +767,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_1664157995737341 = null;
-var warn = document.getElementById("3dmolwarning_1664157995737341");
+var viewer_1664159934607973 = null;
+var warn = document.getElementById("3dmolwarning_1664159934607973");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_1664157995737341 = $3Dmol.createViewer($("#3dmolviewer_1664157995737341"),{backgroundColor:"white"});
-$3Dmol.download("pdb:5DX6", viewer_1664157995737341, {}, function() {
-viewer_1664157995737341.zoomTo();
-	viewer_1664157995737341.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_1664157995737341.render();
+viewer_1664159934607973 = $3Dmol.createViewer($("#3dmolviewer_1664159934607973"),{backgroundColor:"white"});
+$3Dmol.download("pdb:5DX6", viewer_1664159934607973, {}, function() {
+viewer_1664159934607973.zoomTo();
+	viewer_1664159934607973.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_1664159934607973.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x121477a90&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x129cb8370&gt;
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
@@ -813,8 +813,8 @@ Ligand : PYRUVIC ACID at position 606
 5wdg chain B has helices at residue ranges [&#39;32-44&#39;, &#39;57-64&#39;, &#39;65-67&#39;, &#39;76-92&#39;, &#39;102-107&#39;, &#39;108-119&#39;, &#39;130-135&#39;, &#39;143-149&#39;, &#39;150-152&#39;, &#39;160-162&#39;, &#39;163-177&#39;, &#39;189-194&#39;, &#39;213-227&#39;, &#39;236-240&#39;, &#39;240-242&#39;, &#39;243-255&#39;, &#39;262-265&#39;, &#39;286-295&#39;, &#39;304-308&#39;, &#39;309-313&#39;, &#39;343-354&#39;, &#39;362-376&#39;, &#39;392-404&#39;, &#39;415-424&#39;, &#39;425-428&#39;, &#39;444-456&#39;, &#39;467-474&#39;, &#39;476-484&#39;, &#39;497-509&#39;, &#39;520-528&#39;, &#39;537-539&#39;, &#39;540-550&#39;, &#39;562-564&#39;, &#39;565-571&#39;] and strands at [&#39;28-30&#39;, &#39;48-51&#39;, &#39;70-73&#39;, &#39;95-99&#39;, &#39;122-128&#39;, &#39;154-157&#39;, &#39;182-188&#39;, &#39;196-198&#39;, &#39;230-234&#39;, &#39;258-260&#39;, &#39;276-279&#39;, &#39;297-301&#39;, &#39;319-324&#39;, &#39;338-341&#39;, &#39;408-412&#39;, &#39;432-434&#39;, &#39;460-466&#39;, &#39;487-493&#39;, &#39;531-534&#39;, &#39;555-560&#39;]
 </pre></div>
 </div>
-<div class="output text_html"><div id="3dmolviewer_1664157999354412"  style="position: relative; width: 640px; height: 480px">
-        <p id="3dmolwarning_1664157999354412" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
+<div class="output text_html"><div id="3dmolviewer_16641599389919229"  style="position: relative; width: 640px; height: 480px">
+        <p id="3dmolwarning_16641599389919229" style="background-color:#ffcccc;color:black">You appear to be running in JupyterLab (or JavaScript failed to load for some other reason).  You need to install the 3dmol extension: <br>
         <tt>jupyter labextension install jupyterlab_3dmol</tt></p>
         </div>
 <script>
@@ -837,20 +837,20 @@ $3Dmolpromise = null;
   $3Dmolpromise = loadScriptAsync('https://cdn.jsdelivr.net/npm/3dmol@latest/build/3Dmol-min.min.js');
 }
 
-var viewer_1664157999354412 = null;
-var warn = document.getElementById("3dmolwarning_1664157999354412");
+var viewer_16641599389919229 = null;
+var warn = document.getElementById("3dmolwarning_16641599389919229");
 if(warn) {
     warn.parentNode.removeChild(warn);
 }
 $3Dmolpromise.then(function() {
-viewer_1664157999354412 = $3Dmol.createViewer($("#3dmolviewer_1664157999354412"),{backgroundColor:"white"});
-$3Dmol.download("pdb:5WDG", viewer_1664157999354412, {}, function() {
-viewer_1664157999354412.zoomTo();
-	viewer_1664157999354412.setStyle({"cartoon": {"color": "spectrum"}});
-viewer_1664157999354412.render();
+viewer_16641599389919229 = $3Dmol.createViewer($("#3dmolviewer_16641599389919229"),{backgroundColor:"white"});
+$3Dmol.download("pdb:5WDG", viewer_16641599389919229, {}, function() {
+viewer_16641599389919229.zoomTo();
+	viewer_16641599389919229.setStyle({"cartoon": {"color": "spectrum"}});
+viewer_16641599389919229.render();
 })
 });
-</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x124435430&gt;
+</script></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view at 0x129b84f40&gt;
 </pre></div>
 </div>
 </div>

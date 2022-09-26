@@ -8,7 +8,7 @@ fastadir: "workflows/example_workflow/fasta"
 subdir: "workflows/example_workflow/subset_rules"
 
 # Which columns should we plot in the summary documents?
-annotation_cols: ['Cross_reference_SUPFAM', 'Cross_reference_PANTHER', 'Loop_Length', 'KARI_Class', 'EC_number']
+annotation_cols: ['xref_supfam', 'xref_panther', 'KARI_Class', 'ec']
 
 # Block a data set from being run (you can still keep the FASTA and .subset file in the fastadir and subdir)
 blocked_datasets : []

@@ -105,9 +105,9 @@ def classify_KARI(features):
     if "Domain" in features:
         domain_num = features.split("Domain")[1].split(";")[0]
         if "2" in domain_num:
-            return "Class_I"
+            return "Class_1"
         elif "3" in domain_num:
-            return "Class_II"
+            return "Class_2"
         else:
             return "Different_domain_number"
     else:

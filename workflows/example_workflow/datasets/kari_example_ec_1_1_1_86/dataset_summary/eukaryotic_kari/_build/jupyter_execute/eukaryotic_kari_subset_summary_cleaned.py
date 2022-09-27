@@ -170,8 +170,8 @@ def get_secondary_structure_ranges(pdb_id=None, pdb_list=None):
             # Loop through all the chains of a given molecules
             for j in range(len(chains)):
                 secondary_structure = chains[j]["secondary_structure"]
-                helices = secondary_structure["helices"]
-                strands = secondary_structure["strands"]
+                helices = secondary_structure["helices"] if 'helices' in secondary_structure else []
+                strands = secondary_structure["strands"] if 'strands' in secondary_structure else []
                 helix_list = []
                 strand_list = []
                 

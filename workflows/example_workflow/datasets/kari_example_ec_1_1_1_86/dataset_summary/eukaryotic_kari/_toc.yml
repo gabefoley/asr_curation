@@ -1,5 +1,6 @@
 format: jb-book 
 root: kari_example_ec_1_1_1_86_summary_cleaned.ipynb 
 chapters:
+- file: all_kari_subset_summary_cleaned.ipynb
 - file: classI_kari_subset_summary_cleaned.ipynb
 - file: eukaryotic_kari_subset_summary_cleaned.ipynb

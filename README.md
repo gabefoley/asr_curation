@@ -147,7 +147,9 @@ You can then capture the stderr and stdoutput, which will contain all of the sna
 
 `&>` will overwrite the output file and `&>>` will append to the end of the output file
 
-snakemake --cores 1 --configfile <path/to/data_folder/config/config.yaml> &>><path/to/data_folder/logs/output_log.txt>
+`snakemake --cores 1 --configfile <path/to/data_folder/config/config.yaml> &>><path/to/data_folder/logs/output_log.txt>`
+
+If you don't want to save the log then you can just call snakemake as above without the call to save the log and the snakemake output will print to the screen as normal and your data will still be saved in your `data_folder`
 
 
 # Subset files

@@ -30,10 +30,10 @@ git clone https://github.com/gabefoley/asr_curation.git
 ```
 
 
-2. Create a conda environment and install the required packages
+2. Create a conda environment
 
 ```
-conda env create -n asr_curation -f ./asr_curation/environment.yml
+conda env create -n asr_curation python=3.9
 ```
 
 3. Activate the conda environment
@@ -42,7 +42,14 @@ conda env create -n asr_curation -f ./asr_curation/environment.yml
 conda activate asr_curation
 ```
 
-4. Install the following so that they are callable from the command line
+4. Install the required Python packages
+
+```
+pip install -r requirements.txt
+```
+
+
+5. Install the following so that they are callable from the command line
 - [mafft](https://mafft.cbrc.jp/alignment/software/) - callable as `mafft`
 - [FastTree](http://www.microbesonline.org/fasttree/) - callable as `FastTree`
 - [GRASP](https://bodenlab.github.io/GRASP-suite/project/graspcmd/) - callable as `grasp`
@@ -59,7 +66,7 @@ Optional (for viewing trees with generated annotation files)
 To run a pipeline we need to define a config file, a fasta file, and a subset file
 
 
-5. Run the example snakemake pipeline with the default configs defined in `example_config.yaml`
+Run the example snakemake pipeline with the default configs defined in `example_config.yaml`
 
 The output here has already been generated. If you want to rerun this pipeline you can first delete the folder and all items stored in `./asr_curation/workflows/example_workflow/datasets`
 
@@ -68,7 +75,7 @@ The output here has already been generated. If you want to rerun this pipeline y
 Then you can run
 
 ```
-snakemake --cores 1 --configfile ./asr_curation/configs/example_config.yaml
+snakemake --cores 1 --configfile ./asr_curation/config/example_config.yaml
 
 ```
 

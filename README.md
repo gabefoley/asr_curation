@@ -150,6 +150,29 @@ You can then capture the stderr and stdoutput, which will contain all of the sna
 snakemake --cores 1 --configfile <path/to/data_folder/config/config.yaml> &>><path/to/data_folder/logs/output_log.txt>
 
 
+# Subset files
+
+Subset files need to be in the format 
+
+`<subset_name> = <column_name> : <string> $ <other_column_name> : NOT <string>`
+
+Where `subset_name` can be any name you wish to call the subset, `column_name` and `other_column_name` are columns that appear in the final annotation file (see /csv/custom/*.csv) and `string` is a term that you wish to include or exclude.
+
+For each row / sequence in your annotation file, if the given column contains the string (or substring) then it will be included.
+
+If you use the `NOT` modifier, for each row / sequence in your annotation file, if the given column contains the string (or substring) then it will not be included.
+
+
+
+The default way to include every row / sequence is 
+
+`<subset_name> = *`
+
+For example,
+
+`all = *`  
+
+See the subset files in the example data for full examples.
 
 # Snakemake tips
 

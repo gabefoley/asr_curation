@@ -113,36 +113,39 @@ for line in open(snakemake.input.rules).read().splitlines():
 
         dict_def = line.split("=")[1].strip()
 
-        for i in dict_def.split("$"):
+        # Wildcard for accepting all columns
+        if dict_def != "*":
 
-            term = i.split(":")[0].strip()
+            for i in dict_def.split("$"):
 
-            if term:
+                term = i.split(":")[0].strip()
 
-                term_val = i.split(":")[1].strip()
+                if term:
 
-                # If it is instructions on how to sample from columns create the conditions
+                    term_val = i.split(":")[1].strip()
 
-                if term.split(" ")[0].strip().lower() == "sample_from":
-                    sample_num = term.split("(")[1].split(")")[0]
-                    sample_from = [x.strip() for x in term_val.split(",")]
+                    # If it is instructions on how to sample from columns create the conditions
 
-                else:
+                    if term.split(" ")[0].strip().lower() == "sample_from":
+                        sample_num = term.split("(")[1].split(")")[0]
+                        sample_from = [x.strip() for x in term_val.split(",")]
 
-                    # If the value is a negation add it to the negation dictionary
-                    if term_val.split(" ")[0].strip().lower() == "not":
-
-                        add_val_to_dict(
-                            term, "".join(term_val.split(" ")[1:]), not_col_val_dict
-                        )
-
-                    # If the value is required to be there add it to the required dictionary
-                    elif term_val.split(" ")[0].strip().lower() == "required":
-                        add_val_to_dict(term, term_val.split(" ")[1], req_col_val_dict)
-
-                    # Else add the term value we want
                     else:
-                        add_val_to_dict(term, term_val.split(" ")[0], col_val_dict)
+
+                        # If the value is a negation add it to the negation dictionary
+                        if term_val.split(" ")[0].strip().lower() == "not":
+
+                            add_val_to_dict(
+                                term, "".join(term_val.split(" ")[1:]), not_col_val_dict
+                            )
+
+                        # If the value is required to be there add it to the required dictionary
+                        elif term_val.split(" ")[0].strip().lower() == "required":
+                            add_val_to_dict(term, term_val.split(" ")[1], req_col_val_dict)
+
+                        # Else add the term value we want
+                        else:
+                            add_val_to_dict(term, term_val.split(" ")[0], col_val_dict)
 
         # col_val_dict = {i.split(':')[0].strip(): bool(i.split(':')[1].strip().lower() == 'true') if i.split(':')[1].strip().lower() in ['true', 'false'] else i.split(':')[1].strip() for i in dict_def.split(",")}
 
@@ -157,9 +160,12 @@ for line in open(snakemake.input.rules).read().splitlines():
             df = df.fillna("None")
 
             # Subset the annotation file
-            sub_df = subset_column_vals(
-                df, col_val_dict, not_col_val_dict, req_col_val_dict
-            )
+            if dict_def == "*":
+                sub_df = df
+            else:
+                sub_df = subset_column_vals(
+                    df, col_val_dict, not_col_val_dict, req_col_val_dict
+                )
 
             if sample_from:
                 print(

@@ -8,6 +8,12 @@ FASTADIR = config['fastadir']
 SUBDIR = config['subdir']
 VERBOSE = True
 
+# path for custom annotation scripts
+try:
+    CUSTOMDIR = config['customdir']
+except:
+    CUSTOMDIR = "scripts"
+
 # Collect config info from parameters passed from command line
 if 'BRENDA_RUN' in config.keys():
     BRENDA_RUN = config['BRENDA_RUN']
@@ -180,7 +186,7 @@ rule add_custom_annotations:
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     script:
-        "scripts/custom_annotations.py"
+        CUSTOMDIR + "/custom_annotations.py"
 
 
 # Create the su

@@ -247,7 +247,7 @@ rule add_annotations_from_alignment:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv"
 
     script:
-        "scripts/add_annotations_from_alignment.py"
+        CUSTOMDIR + "/add_annotations_from_alignment.py"
 
 # rule add_annotations_from_ancestors:
 #     input:

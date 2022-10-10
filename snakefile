@@ -179,15 +179,23 @@ rule get_brenda_annotations:
     script:
         "scripts/get_brenda_annotations.py"
 
+# Add any generic annotations
+rule add_generic_annotations:
+    input:
+        WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
+    output:
+        WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv"
+    script:
+        "scripts/generic_annotations.py"
+
 # Add any custom annotations
 rule add_custom_annotations:
     input:
-        WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
+        WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv"
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     script:
         CUSTOMDIR + "/custom_annotations.py"
-
 
 # Create the su
 rule create_column_summary_images:

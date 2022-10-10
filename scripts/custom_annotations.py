@@ -4,13 +4,6 @@ import pandas as pd
 
 annot_df = pd.read_csv(snakemake.input[0])
 
-annot_df = an.annotate_nonAA(annot_df)
-annot_df = an.annotate_AA(annot_df)
-
-annot_df = an.annotate_sp_tr(annot_df)
-# annot_df = an.annotate_fragment(annot_df)
-
-
 # Add the thermostability checks for all data sets
 
 # thermo = open("./additional_data/20211118_als_ancestors/thermophilic_bacteria.txt")

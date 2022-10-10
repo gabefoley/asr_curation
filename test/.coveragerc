@@ -1,5 +1,8 @@
 [report]
 show_missing = True
+[run]
+source =
+    scripts
 omit =
-    ../workflows/*
-    /workflows/*
+    */workflows/*
+    */test/*

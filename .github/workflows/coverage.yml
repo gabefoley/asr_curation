@@ -23,7 +23,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
       - name: coverage.py badge
-      - uses: tj-actions/coverage-badge-py@v1.8
+        uses: tj-actions/coverage-badge-py@v1.8
 

@@ -1,4 +1,8 @@
+[![Coverage](coverage.svg)]
+[![Twitter](https://badgen.net/twitter/follow/gabefoley)](https://twitter.com/gabefoley)
 # ASR Curation workflow
+
+
 
 <p align="center">
 	<img src="static/asr_curation.png?raw=true" alt="ASR Curation" height="300" />

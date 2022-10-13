@@ -32,10 +32,32 @@ jobs:
 #          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 #          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
 #          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - name: Test with pytest
-        run: |
-          python -m pytest
+#       - name: Test with pytest
+#         run: |
+#           python -m pytest
       - name: Run coverage
         run:  pytest  --cov-config="test/.coveragerc" --cov
+      
       - name: coverage.py badge
         uses: tj-actions/coverage-badge-py@v1.8
+      
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v9
+        id: changed_files
+        with:
+          files: coverage.svg
+
+      - name: Commit files
+        if: steps.changed_files.outputs.files_changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add coverage.svg
+          git commit -m "Updated coverage.svg"
+
+      - name: Push changes
+        if: steps.changed_files.outputs.files_changed == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          branch: ${{ github.ref }}

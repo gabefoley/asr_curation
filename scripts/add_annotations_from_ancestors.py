@@ -8,6 +8,17 @@ align_df = pd.read_csv(snakemake.input.csv)
 
 anc_df = sc.get_sequence_df(snakemake.input.aln, alignment=True, ancestor=True)
 
+merged_df = pd.merge(
+        align_df,
+        anc_df,
+        left_on=["accession"],
+        right_on=["accession"],
+        suffixes=["", "_r"],
+    )
+
+merged_df.to_csv(snakemake.output.csv, index=False)
+
+
 # if "ec_1_1_1_86" in snakemake.wildcards.dataset:
 #     print("Adding KARI specific annotations based on the ancestors")
 
@@ -51,11 +62,11 @@ anc_df = sc.get_sequence_df(snakemake.input.aln, alignment=True, ancestor=True)
 #     )
 
 
-frames = [align_df, anc_df]
-merge_df = pd.concat(frames)
+# frames = [align_df, anc_df]
+# merge_df = pd.concat(frames)
 
 
-merge_df.to_csv(snakemake.output.csv, index=False)
+# merge_df.to_csv(snakemake.output.csv, index=False)
 
 
 #     # else:

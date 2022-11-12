@@ -39,6 +39,8 @@ def get_sequence_df(
         # Add to annotation file
         for seq in seqs:
 
+            print (seq)
+
             #print(seq.name)
 
             if alignment == False:
@@ -58,25 +60,31 @@ def get_sequence_df(
                     fasta_path,
                 ]
 
+                seq_list.append(curr_seq)
+
+
             elif alignment:
 
                 for aligned_seq in seq:
+                    print (aligned_seq.id)
                     curr_seq = [
                         aligned_seq.id,
                         aligned_seq.id.split(" ")[0],
-                        aligned_seq.id.split("|")[1],
+                        aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else  aligned_seq.id.split(" ")[0] ,
                         aligned_seq.id.split("|")[-1],
                         aligned_seq.seq.replace("-", "")
                         if len(aligned_seq.seq) > 0
                         else None,
                         fasta_path,
                     ]
-                    curr_seq.append(aligned_seq.seq)
+                    curr_seq.append("".join(aligned_seq.seq))
+                    seq_list.append(curr_seq)
+
 
             if ancestor:
-                curr_seq.append(aligned_seq)
+                curr_seq.append("".join(aligned_seq.seq))
 
-            seq_list.append(curr_seq)
+
 
     df = pd.DataFrame(seq_list, columns=cols)
 
@@ -86,7 +94,9 @@ def get_sequence_df(
     # Drop the sequence column if there are no sequences (i.e. if we just added a list of identifiers)
     nan_value = float("NaN")
 
-    df.replace("", nan_value, inplace=True)
+    print (df)
+
+    # df.replace("", nan_value, inplace=True)
 
     df.dropna(how="all", axis=1, inplace=True)
 

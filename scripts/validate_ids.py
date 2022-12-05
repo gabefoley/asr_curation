@@ -331,7 +331,7 @@ def main():
     #input_file  = 'kari_example_ec_1_1_1_86_original.csv'
     #output_file = 'kari_example_ec_1_1_1_86_original_validated.csv'
     from_id_lookup   = ['UNIPROT-FROM'] #,'NCBI','EMBL']
-    to_id_lookup     = ['NCBI','EMBL','UNIPROT','UNIPARC']
+    to_id_lookup     = ['NCBI','EMBL','UNIPROT']
 
     print("Starting Validating IDs")
     all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup)

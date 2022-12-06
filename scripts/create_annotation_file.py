@@ -12,6 +12,10 @@ if snakemake.params.annotation_cols[0] != "accession":
 
     annotation_cols = ["accession"] + snakemake.params.annotation_cols
 
+else:
+    annotation_cols = snakemake.params.annotation_cols
+
+
 subset_df = align_df[[x for x in annotation_cols if x in align_df.columns]]
 
 subset_df = subset_df.fillna("None")

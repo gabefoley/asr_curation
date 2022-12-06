@@ -79,6 +79,9 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace("[()]", "",regex=False)
 
 
+    print ('printing lineage')
+    print (annot_df['lineage'])
+
     # seperate lineage columns ( after the new api changes)
     annot_df['lineage_superkingdom'],annot_df['lineage_kingdom'], \
     annot_df['lineage_subkingdom'],annot_df['lineage_superphylum'],annot_df['lineage_phylum'],\
@@ -89,7 +92,7 @@ def process_results(intermediate_tsv_file):
     annot_df['lineage_subfamily'],annot_df['lineage_tribe'],annot_df['lineage_subtribe'],\
     annot_df['lineage_genus'],annot_df['lineage_subgenus'],annot_df['lineage_species_group'],\
     annot_df['lineage_species_group'],annot_df['lineage_species_group'],annot_df['lineage_varietas'],\
-    annot_df['lineage_forma'] = zip(*annot_df['lineage'].map(split_lineage) if annot_df['lineage'])
+    annot_df['lineage_forma'] = zip(*annot_df['lineage'].map(split_lineage))
 
     return annot_df
 

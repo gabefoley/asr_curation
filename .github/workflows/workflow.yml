@@ -58,10 +58,6 @@ jobs:
           git add coverage.svg
           git commit -m "Updated coverage.svg"
           
-      - name: Pull coverage changes
-        if: steps.changed_files.outputs.files_changed == 'true'
-        run: |
-          git pull
 
       - name: Push changes
         if: steps.changed_files.outputs.files_changed == 'true'

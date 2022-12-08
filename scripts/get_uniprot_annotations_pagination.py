@@ -35,6 +35,10 @@ def get_batch(batch_url):
 def split_lineage(x):
     ''' function to split the lineage strings into seperate columns for use later '''
 
+    print ('x here')
+    print (x)
+    print (pd.isna(x))
+
     lineage_order = ['lineage_superkingdom','lineage_kingdom',\
                      'lineage_subkingdom','lineage_superphylum','lineage_phylum',\
                      'lineage_subphylum','lineage_superclass','lineage_class',\
@@ -46,8 +50,12 @@ def split_lineage(x):
                      'lineage_species_group','lineage_species_group','lineage_varietas',\
                      'lineage_forma']
 
-    # split lineage
-    lin_split = x.split(',')
+    # Split lineage. Return empty string if linage info not present
+    if pd.isna(x):
+        lin_split = ""
+    else:
+        lin_split = x.split(',')
+
     lineage_dict = {}
     lineage_list = []
 
@@ -57,7 +65,6 @@ def split_lineage(x):
             key = 'lineage_' + l.split('(')[1].split(')')[0]
             lineage_dict[key] = val
 
-    #print(lineage_dict)
     # return values in the order
     for l_o in lineage_order:
         try:

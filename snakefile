@@ -1,5 +1,10 @@
 import glob
 from collections import defaultdict
+import os
+
+# Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
+
+os.environ["SNAKEMAKE"] = 'True'
 
 
 # Collect config info from config file

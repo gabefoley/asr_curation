@@ -37,7 +37,7 @@ git clone https://github.com/gabefoley/asr_curation.git
 2. Create a conda environment
 
 ```
-conda env create -n asr_curation python=3.9
+conda create -n asr_curation python=3.9
 ```
 
 3. Activate the conda environment

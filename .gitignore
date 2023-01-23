@@ -11,3 +11,5 @@
 *.py[cod]
 *$py.class
 
+
+annotation_issues.log

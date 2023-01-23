@@ -6,36 +6,10 @@ annot_df = pd.read_csv(snakemake.input[0])
 
 # Add the thermostability checks for all data sets
 
-# thermo = open("./additional_data/20211118_als_ancestors/thermophilic_bacteria.txt")
-
-# thermo_species = [x.strip() for x in thermo.readlines() if len(x) > 1]
-
-# print (len(thermo_species))
-# print(thermo_species)
-# thermo_species
-
-# thermo_species_terms = ['therm', 'acid', 'sulfur', 'methan', 'pyro', ]
 
 
-def check_terms(check, terms):
-    for term in terms:
-        if term.lower() in check.lower():
-            return True
-    return False
 
 
-# thermo_split = [x.split(" ")[0] for x in thermo_species]
-
-# annot_df["thermo_bacteria_split"] = annot_df.apply(
-#         lambda row: True if row["Taxonomic_lineage_SPECIES"].split(" ")[0] in thermo_split else False, axis=1
-#     )
-
-# annot_df["thermo_bacteria"] = annot_df.apply(
-#         lambda row: True if row["Taxonomic_lineage_SPECIES"] in thermo_species else False, axis=1
-#     )
-
-# annot_df["thermo_terms"] = annot_df.apply(
-#         lambda row: True if check_terms(row["Taxonomic_lineage_SPECIES"], ['therm', 'acid', 'sulfur', 'methan', 'pyro', 'lividus']) else False, axis=1)
 
 
 if "uniprot_ec_4_2_1_9" in snakemake.wildcards.dataset:
@@ -178,6 +152,27 @@ if (
         axis=1,
     )
 
+    print ('Add lab results')
+
+    # Download file
+    # wget - -no - check - certificate 'https://docs.google.com/uc?export=download&id=1uF3hPq3AR42KA7uE6FkN3zR9r39ECoA9' - O hello.xlsx
+
+    # filepath = ""
+    #
+    # annot_df = an.add_lab_annotations(annot_df, filepath)
+    # Reads in a dataframe with lab-derived annotations and adds them to the main annotation dataframe
+
+
+
+
+    # Read in file
+
+    # If the ID exists
+
+    # Check that the sequence matches
+
+    # Add in extra columns
+
     # print("Adding loop length")
     # annot_df["Loop_Length"] = annot_df.apply(
     #     lambda row: an.classify_loop_length(
@@ -247,3 +242,4 @@ if (
     )
 
 annot_df.to_csv(snakemake.output[0], index=False)
+

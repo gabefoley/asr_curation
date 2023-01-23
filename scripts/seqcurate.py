@@ -18,11 +18,11 @@ def get_sequence_df(
 
     cols = ["accession", "truncated_info", "extracted_id", "extracted_name", "sequence", "original_fasta"]
 
-    if alignment:
+    if alignment or ancestor:
         cols.append("Sequence_aligned")
 
-    if ancestor:
-        cols.append("Sequence_aligned_ancestor")
+    # if ancestor:
+    #     cols.append("Sequence_aligned")
 
     for fasta_path in fasta_paths:
 
@@ -39,8 +39,6 @@ def get_sequence_df(
         # Add to annotation file
         for seq in seqs:
 
-            print (seq)
-
             #print(seq.name)
 
             if alignment == False:
@@ -56,7 +54,7 @@ def get_sequence_df(
                     seq.id.split(" ")[0],
                     seq.id.split("|")[1],
                     seq.id.split("|")[-1],
-                    seq.seq.replace("-", "") if len(seq.seq) > 0 else None,
+                    "".join(seq.seq.replace("-", "")) if len(seq.seq) > 0 else None,
                     fasta_path,
                 ]
 
@@ -66,13 +64,12 @@ def get_sequence_df(
             elif alignment:
 
                 for aligned_seq in seq:
-                    print (aligned_seq.id)
                     curr_seq = [
                         aligned_seq.id,
                         aligned_seq.id.split(" ")[0],
                         aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else  aligned_seq.id.split(" ")[0] ,
                         aligned_seq.id.split("|")[-1],
-                        aligned_seq.seq.replace("-", "")
+                        "".join(aligned_seq.seq.replace("-", ""))
                         if len(aligned_seq.seq) > 0
                         else None,
                         fasta_path,
@@ -81,8 +78,8 @@ def get_sequence_df(
                     seq_list.append(curr_seq)
 
 
-            if ancestor:
-                curr_seq.append("".join(aligned_seq.seq))
+            # if ancestor:
+            #     curr_seq.append("".join(aligned_seq.seq))
 
 
 
@@ -93,8 +90,6 @@ def get_sequence_df(
 
     # Drop the sequence column if there are no sequences (i.e. if we just added a list of identifiers)
     nan_value = float("NaN")
-
-    print (df)
 
     # df.replace("", nan_value, inplace=True)
 

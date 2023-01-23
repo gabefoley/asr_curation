@@ -6,6 +6,18 @@ import os
 
 os.environ["SNAKEMAKE"] = 'True'
 
+# Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
+if "PYTHONPATH" in os.environ:
+    os.environ["PYTHONPATH"] += "scripts"
+
+else:
+    os.environ["PYTHONPATH"] = "scripts"
+
+
+
+
+
+
 
 # Collect config info from config file
 WORKDIR = config['workdir'] + "/datasets"
@@ -13,11 +25,21 @@ FASTADIR = config['fastadir']
 SUBDIR = config['subdir']
 VERBOSE = True
 
-# path for custom annotation scripts
+# Path for custom annotation scripts. Defaults to scripts folder
 try:
-    CUSTOMDIR = config['customdir']
+    CUSTOM_DIR = config['custom_dir']
 except:
-    CUSTOMDIR = "scripts"
+    CUSTOM_DIR = "scripts"
+
+try:
+    CUSTOM_ALIGN_DIR = config['custom_align_dir']
+except:
+    CUSTOM_ALIGN_DIR = "scripts"
+
+try:
+    CUSTOM_ANCESTOR_DIR = config['custom_ancestor_dir']
+except:
+    CUSTOM_ANCESTOR_DIR = "scripts"
 
 # Collect config info from parameters passed from command line
 if 'BRENDA_RUN' in config.keys():
@@ -110,8 +132,9 @@ rule all:
         input:
             # files = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta' for dataset in DATASETS for subset in subsets[dataset]]
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt' for dataset in DATASETS for subset in subsets[dataset]],
-            summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
-            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
+#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
+#             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
+            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv' for dataset in DATASETS for subset in subsets[dataset]]
 
             # expand(WORKDIR + "/{dataset}/grasp_results/GRASP_ancestors.fasta",
             #     dataset=DATASETS)
@@ -200,7 +223,7 @@ rule add_custom_annotations:
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     script:
-        CUSTOMDIR + "/custom_annotations.py"
+        CUSTOM_DIR + "/custom_annotations.py"
 
 # Create the su
 rule create_column_summary_images:
@@ -260,16 +283,16 @@ rule add_annotations_from_alignment:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv"
 
     script:
-        CUSTOMDIR + "/add_annotations_from_alignment.py"
+        CUSTOM_ALIGN_DIR + "/add_annotations_from_alignment.py"
 
-# rule add_annotations_from_ancestors:
-#     input:
-#         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv",
-#         aln = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta",
-#     output:
-#         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
-#     script:
-#         "scripts/add_annotations_from_ancestors.py"
+rule add_annotations_from_ancestors:
+    input:
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv",
+        aln = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
+    output:
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
+    script:
+        CUSTOM_ANCESTOR_DIR + "/add_annotations_from_ancestors.py"
 
 
 rule create_annotation_file:

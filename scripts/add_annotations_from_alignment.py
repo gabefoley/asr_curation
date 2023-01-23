@@ -17,7 +17,7 @@ aln = AlignIO.read(snakemake.input.aln, format="fasta")
 
 # print (aln)
 
-# aln_dict = {seq.name: str(seq.seq) for seq in aln}
+aln_dict = {seq.name: str(seq.seq) for seq in aln}
 
 # align_df = pd.read_csv(snakemake.input.csv)
 
@@ -35,6 +35,32 @@ merged_df = pd.merge(
 merged_df.to_csv(snakemake.output.csv, index=False)
 
 
+# Add any positions to be tracked
+# TODO: Add this from a file
+
+seq_id = 'Q5HVD9'
+tag = 'activation_critical'
+unaligned_pos = [89, 296, 297]
+
+
+if seq_id in aln_dict:
+        print (f'adding {tag}')
+        aligned_seq = aln_dict[seq_id]
+        print ('aligned seq len')
+        print (len(aligned_seq))
+        align_df = an.track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos)
+
+        print ('is it there?')
+        print (f'{tag in align_df.columns}')
+seq_id = 'Q5HVD9'
+tag = 'stabilisation_critical'
+unaligned_pos = [258, 290, 294]
+
+if seq_id in aln_dict:
+        aligned_seq = aln_dict[seq_id]
+
+
+        align_df = an.track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos)
 
 
 # print (aln_dict)
@@ -143,6 +169,17 @@ merged_df.to_csv(snakemake.output.csv, index=False)
 
 # frames = [df, align_df]
 # merge_df = pd.concat(frames)
-
-
+#
+#
 # merge_df.to_csv(snakemake.output.csv, index=False)
+
+merged_df = pd.merge(
+        df,
+        align_df,
+        left_on=["accession"],
+        right_on=["accession"],
+        suffixes=["", "_r"],
+    )
+
+merged_df.to_csv(snakemake.output.csv, index=False)
+

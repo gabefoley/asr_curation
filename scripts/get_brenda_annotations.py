@@ -183,7 +183,7 @@ if ec_nums:
                                 print(f"WARNING {bc} is not implemented")
                                 print(attrib)
 
-        # Add the annotations from BRENDA dictionary to the annotation file
+        # tations from BRENDA dictionary to the annotation file
         for entry_id, bd in brenda_dict.items():
             print("Getting BRENDA DF")
             brenda_df = add_col_from_brenda_dict(original_df, entry_id, bd.keys(), bd)

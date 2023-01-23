@@ -4,6 +4,9 @@ import os
 import pytest
 import scripts.seqcurate as sc
 
+print ("running test annot")
+print (os.getcwd())
+
 def test_get_amino_acids():
 
     pos = an.get_amino_acids('PPGP', 0)
@@ -22,8 +25,8 @@ def test_get_binding_pos():
 def test_add_lab_annotations_correct():
     # Check that the column gets added okay
 
-    annot_df = pd.read_csv("./files/test_add_lab_annot_df.csv")
-    filepath = "./files/test_add_lab_correct_lab_df.csv"
+    annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
+    filepath = "files/test_add_lab_correct_lab_df.csv"
     annot_df = an.add_lab_annotations(annot_df, filepath)
 
     assert (annot_df.loc[annot_df['accession'] == 'P9XVRR', 'lab_km'].values[0] == 0.4)
@@ -31,7 +34,7 @@ def test_add_lab_annotations_correct():
 def test_add_lab_annotations_duplicate_column_between_annot_and_lab():
     # Should throw an error and not proceed
 
-    annot_df = pd.read_csv("./files/test_add_lab_annot_df.csv")
+    annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
     filepath = "./files/test_add_lab_dups_between_lab_df.csv"
     with pytest.raises(ValueError, match='Duplicate column between lab and existing annotations'):
         annot_df = an.add_lab_annotations(annot_df, filepath)
@@ -131,7 +134,7 @@ def test_create_annotated_alignment():
         os.remove(outpath)
 
 
-    align_df = pd.read_csv("files/test_annotated_alignment_df.csv")
+    align_df = pd.read_csv("./files/test_annotated_alignment_df.csv")
 
     align_df['combined_domain_bounds'] = align_df.apply(lambda x: an.create_domain_bounds(x.ft_domain), axis=1)
 
@@ -140,7 +143,7 @@ def test_create_annotated_alignment():
     # Assert the boundary dict contains a correct key
     assert ('Q02138' in boundary_dict.keys())
 
-    an.create_annotated_alignment(align_df, boundary_dict, "files/domains.html")
+    an.create_annotated_alignment(align_df, boundary_dict, "./files/domains.html")
 
     # Assert that the HTML alignment gets created
     assert (os.path.isfile(outpath))

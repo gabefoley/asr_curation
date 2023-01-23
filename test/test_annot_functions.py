@@ -117,3 +117,30 @@ def test_track_residues():
     align_df = an.track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos)
 
     assert(align_df.loc[align_df['accession'] == seq_id, tag].values[0] == 'DRR')
+
+
+# TEST ALIGNMENT ANNOTATION
+
+def test_create_annotated_alignment():
+
+    outpath = "files/domains.html"
+
+    # Delete output
+
+    if os.path.isfile(outpath):
+        os.remove(outpath)
+
+
+    align_df = pd.read_csv("files/test_annotated_alignment_df.csv")
+
+    align_df['combined_domain_bounds'] = align_df.apply(lambda x: an.create_domain_bounds(x.ft_domain), axis=1)
+
+    boundary_dict = pd.Series(align_df.combined_domain_bounds.values, index=align_df.accession).to_dict()
+
+    # Assert the boundary dict contains a correct key
+    assert ('Q02138' in boundary_dict.keys())
+
+    an.create_annotated_alignment(align_df, boundary_dict, "files/domains.html")
+
+    # Assert that the HTML alignment gets created
+    assert (os.path.isfile(outpath))

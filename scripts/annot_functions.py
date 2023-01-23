@@ -3,7 +3,10 @@ import numpy as np
 import seqcurate as sc
 import warnings
 import logging
+from collections import defaultdict
 logging.captureWarnings(True)
+import seaborn as sns
+from ast import literal_eval
 
 logging.basicConfig(filename='annotation_issues.log',level=logging.DEBUG)
 
@@ -62,15 +65,16 @@ def get_tracked_content(align_df, tag, *aligned_pos):
 def track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 
         # Map the positions to an index in the alignment
-        aligned_pos =get_aligned_positions(
+        aligned_pos = get_aligned_positions(
             align_df[align_df["accession"] == seq_id],
             aligned_seq,
             *unaligned_pos)
 
+
         # Add the aligned positions we want to track to the dataframe
         align_df = track_aligned_positions(align_df, seq_id, tag, aligned_pos)
 
-        align_df = get_tracked_content(align_df, tag, aligned_pos)
+        align_df = get_tracked_content(align_df, tag, *aligned_pos)
 
 
 
@@ -273,6 +277,157 @@ def add_thermo(annot_df, filepath):
 
     return annot_df
 
+
+def create_domain_bounds(domains):
+    positions = []
+
+    interval = None
+    domain_name = None
+
+    #     print (domains)
+
+    for domain in domains.split(";"):
+
+        #         print (domain)
+
+        if domain.strip().startswith("DOMAIN"):
+            pos = domain.split("DOMAIN ")[1].split("..")
+            #             print (pos)
+            interval = pd.Interval(int(pos[0]), int(pos[1]))
+        if domain.startswith(" /note="):
+            domain_name = domain.split('/note="')[1][0:-1]  # Domain name, minus the final quotation
+        #         print (interval)
+
+        if interval and domain_name:
+            positions.append((domain_name, interval))
+            interval = None
+            domain_name = None
+
+    return positions
+
+
+def create_ss_bounds(strand, helix, turn):
+    names = ['STRAND', 'HELIX', 'TURN']
+    positions = defaultdict(list)
+    for name, feats in zip(names, [strand, helix, turn]):
+        if type(feats) == float and np.isnan(feats):
+            pass
+        else:
+            for feat in feats.split(name):
+                if feat:
+                    pos = feat.strip().split(";")[0].split("..")
+                    interval = pd.Interval(int(pos[0]), int(pos[1]))
+                    positions[name].append(interval)
+                    print(positions)
+    return positions
+
+
+def create_combined_ss_bounds(strand, helix, turn):
+    names = ['STRAND', 'HELIX', 'TURN']
+    positions = []
+    for name, feats in zip(names, [strand, helix, turn]):
+        if type(feats) == float and np.isnan(feats):
+            pass
+        else:
+            for feat in feats.split(name):
+                if feat:
+                    pos = feat.strip().split(";")[0].split("..")
+                    interval = pd.Interval(int(pos[0]), int(pos[1]))
+                    positions.append((name, interval))
+                    print(positions)
+    return positions
+
+def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
+
+
+
+    # If we don't have a supplied colour_dict, lets make one
+    if not colour_dict:
+        boundary_labels = set([label[0] for entry in boundary_dict.values() for label in entry])
+        palette = sns.color_palette(None, len(boundary_labels)).as_hex()
+
+        colour_dict = {col : label for col, label in zip(boundary_labels, palette)}
+
+        print (colour_dict)
+
+
+    # Creating an HTML file
+    with open(outpath, "w") as align_html:
+
+        # Get the length needed
+        for acc, _bounds in boundary_dict.items():
+            aligned_seq = df.loc[df['accession'] == acc]['Sequence_aligned'].values[0]
+            alignment_length = str(len(aligned_seq) * 10)
+
+
+        align_html.write(
+            '<html>\n<head><style>  #container{    width : 20px;  }  .item{ overflow: hidden; white-space: nowrap; font-family:"Courier New";   float:left;    width: ' + alignment_length + 'px;    height: 20px;    padding 2px;    margin: 0px 2px;  }  .clearfix{    clear: both;  }</style>\n<title> \nOutput Data in an HTML file</title>\n</head> <body>  <div id="container">')
+
+        for acc, bounds in boundary_dict.items():
+            print (acc)
+            print ('and then')
+            print (bounds)
+            if bounds:
+                orig_seq = df.loc[df['accession'] == acc]['Sequence_aligned'].values[0]
+                formatted_sequence = df.loc[df['accession'] == acc]['Sequence_aligned'].values[0]
+                len_offset = 0
+
+                print (orig_seq)
+
+                bounds.sort(key=lambda x: x[1])
+                for bound in bounds:
+                    bound_name = bound[0]
+                    pos = bound[1]
+                    #                  for domain, pos in list_w_overlaps:
+                    gap_offset = 0
+                    first_gap_offset = 0
+                    second_gap_offset = 0
+
+                    count = 0
+                    for aa in orig_seq:
+                        if aa == "-":
+                            gap_offset += 1
+                        else:
+                            count += 1
+                            if count == pos.left:
+                                first_gap_offset = gap_offset
+
+                            if count == pos.right:
+                                second_gap_offset = gap_offset
+                                break
+                            else:
+                                continue
+
+
+                    prev_len = len(formatted_sequence)
+
+
+                    formatted_sequence = formatted_sequence[
+                                         0:pos.left - 1 + len_offset + first_gap_offset] + '<span style = "background-color:' + \
+                                         colour_dict[bound_name] + '">' \
+                                         + formatted_sequence[
+                                           pos.left - 1 + len_offset + first_gap_offset: pos.right + len_offset + second_gap_offset] + '</span>' \
+                                         + formatted_sequence[pos.right + len_offset + second_gap_offset:]
+
+                    len_offset = len(formatted_sequence) - len(orig_seq)
+
+
+
+
+            #             formatted_sequence = 'red'
+            else:
+
+                formatted_sequence = df.loc[df['accession'] == acc]['Sequence_aligned'].values[0]
+
+            print (acc)
+            print(formatted_sequence)
+            align_html.write(f'<br>>{acc}<br>')
+            align_html.write(f'<div class="item">{formatted_sequence}</div>')
+
+        align_html.write('</body></html>')
+        print ('done')
+
+
 ##### KARI SPECIFIC ####
 
 
@@ -330,10 +485,6 @@ def check_binding_for_acidic(seq, bind_pos):
 
 
 def classify_loop_length(bind_pos):
-
-    print ('bind pos')
-
-    print (bind_pos)
 
     # Offset accounts for the fact that we need to get the total number of positions and also account for the first position in the loop which isn't a binding position
 

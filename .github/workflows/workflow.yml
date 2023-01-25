@@ -41,7 +41,7 @@ jobs:
 #         run: |
 #           python -m pytest
       - name: Run coverage
-        run:  pytest --import-mode=append tests/  --cov-config="test/.coveragerc" --cov
+        run:  python -m pytest --cov-config="test/.coveragerc" --cov
       
       - name: coverage.py badge
         uses: tj-actions/coverage-badge-py@v1.8

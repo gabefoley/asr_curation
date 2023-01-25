@@ -1,0 +1,17 @@
+# Main working directory
+workdir: "files/test_workflow/example_workflow"
+
+# Store all FASTA files here
+fastadir: "files/test_workflow/fasta"
+
+# Each FASTA file needs an according .subset file in this folder (test1.fasta -> test1.subset)
+subdir: "files/test_workflow/subset_rules"
+
+# Which columns should we plot in the summary documents?
+annotation_cols: ['lineage_superkingdom', 'xref_supfam', 'xref_panther', 'KARI_Class', 'ec']
+
+# custom script
+customdir: "scripts"
+
+# Block a data set from being run (you can still keep the FASTA and .subset file in the fastadir and subdir)
+blocked_datasets : []

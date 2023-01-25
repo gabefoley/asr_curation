@@ -14,6 +14,9 @@ from xml.etree import ElementTree
 from urllib.parse import urlparse, parse_qs, urlencode
 import requests
 from requests.adapters import HTTPAdapter, Retry
+import click
+
+import os
 
 # configuration and api parameters
 POLLING_INTERVAL = 3
@@ -285,8 +288,37 @@ def create_output_file(data_df,to_id_lookup,output_file):
     output_df.to_csv(output_file,index=False)
 
 
-def all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup):
+@click.command()
+@click.option('--input_file', help='Path to input file')
+@click.option('--output_file', help='Path for output file')
+@click.option('--from_id_lookup', default= None, help='Outpath for annotation file')
+@click.option('--to_id_lookup', default=None, help='Outpath for annotation file')
+def all_ids_lookup_cmd(input_file,output_file,from_id_lookup = None,to_id_lookup = None):
+    df_data = all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup)
+    return df_data
+
+
+def all_ids_lookup(input_file,output_file,from_id_lookup = None,to_id_lookup = None):
     ''' main function to map input ids to different database specified in the id_lookup list '''
+
+    print (f'params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ')
+
+    if 'SNAKEMAKE' in os.environ:
+        input_file = snakemake.input[0]
+        output_file = snakemake.output[0]
+
+
+
+    # Set default from and to id lookups
+    if not from_id_lookup:
+        from_id_lookup = ['UNIPROT-FROM']  # ,'NCBI','EMBL']
+
+    if not to_id_lookup:
+        to_id_lookup = ['NCBI', 'EMBL', 'UNIPROT']
+
+    print (from_id_lookup)
+
+    print (to_id_lookup)
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
@@ -323,18 +355,13 @@ def all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup):
     create_output_file(df_data,to_id_lookup,output_file)
     return df_data
 
-# main function
+
+# Main function
 def main():
 
-    input_file  = snakemake.input[0]
-    output_file = snakemake.output[0]
-    #input_file  = 'kari_example_ec_1_1_1_86_original.csv'
-    #output_file = 'kari_example_ec_1_1_1_86_original_validated.csv'
-    from_id_lookup   = ['UNIPROT-FROM'] #,'NCBI','EMBL']
-    to_id_lookup     = ['NCBI','EMBL','UNIPROT']
-
     print("Starting Validating IDs")
-    all_ids_lookup(input_file,output_file,from_id_lookup,to_id_lookup)
+    all_ids_lookup_cmd()
+
 
 if __name__ == "__main__":
     main()

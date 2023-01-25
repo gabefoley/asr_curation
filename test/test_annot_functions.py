@@ -4,9 +4,6 @@ import os
 import pytest
 import scripts.seqcurate as sc
 
-print ("running test annot")
-print (os.getcwd())
-
 def test_get_amino_acids():
 
     pos = an.get_amino_acids('PPGP', 0)
@@ -24,6 +21,9 @@ def test_get_binding_pos():
 
 def test_add_lab_annotations_correct():
     # Check that the column gets added okay
+
+    print ("in here")
+    print(os.getcwd())
 
     annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
     filepath = "files/test_add_lab_correct_lab_df.csv"
@@ -147,3 +147,5 @@ def test_create_annotated_alignment():
 
     # Assert that the HTML alignment gets created
     assert (os.path.isfile(outpath))
+
+

@@ -172,7 +172,4 @@ def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-")
 
     seqs = SeqIO.parse(fasta_path, "fasta")
 
-    for seq in seqs:
-        print (seq)
-
     return [seq.name for seq in seqs]

@@ -52,7 +52,7 @@ def get_sequence_df(
                 curr_seq = [
                     seq.id,
                     seq.id.split(" ")[0],
-                    seq.id.split("|")[1],
+                    seq.id.split("|")[1] if len(seq.id.split("|")) > 1 else  seq.id.split(" ")[0],
                     seq.id.split("|")[-1],
                     "".join(seq.seq.replace("-", "")) if len(seq.seq) > 0 else None,
                     fasta_path,

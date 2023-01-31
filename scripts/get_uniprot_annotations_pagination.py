@@ -128,8 +128,11 @@ def fetch_annotations_in_batches(ids,intermediate_tsv_file,result_batch_size):
     ''' process uniprot api results in batches and load it in .tsv file on the disk'''
 
     cols = ",".join(full_uniprot_cols)
-    batch_url = API_URL + "format=tsv&" + "query=" +  ' OR '.join(ids) + "&fields=" + \
-                                                     cols + "&size=" + str(result_batch_size)
+    
+    batch_url = API_URL + "format=tsv&" + "query=accession:(" + ' OR '.join(ids) + ")&fields=" + \
+        cols + "&size=" + str(result_batch_size)
+
+
     progress = 0
 
     with open(intermediate_tsv_file, 'a') as f:

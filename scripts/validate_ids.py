@@ -223,17 +223,17 @@ def merge_results_to_main_data(main_df,add_df,from_db,to_db):
         main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
     main_df.drop(columns=['from','grouped_to'],inplace=True)
 
-    main_df = main_df.merge(add_df,left_on='Extracted_ID_2', right_on='from', how='left')
-    main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
-    if from_db != 'UNIPROT-FROM':
-        main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
-    main_df.drop(columns=['from','grouped_to'],inplace=True)
+    # main_df = main_df.merge(add_df,left_on='Extracted_ID_2', right_on='from', how='left')
+    # main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
+    # if from_db != 'UNIPROT-FROM':
+    #     main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
+    # main_df.drop(columns=['from','grouped_to'],inplace=True)
 
-    main_df = main_df.merge(add_df,left_on='Extracted_ID_3', right_on='from', how='left')
-    main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
-    if from_db != 'UNIPROT-FROM':
-        main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
-    main_df.drop(columns=['from','grouped_to'],inplace=True)
+    # main_df = main_df.merge(add_df,left_on='Extracted_ID_3', right_on='from', how='left')
+    # main_df[to_db]   = main_df[to_db].str.cat(main_df['grouped_to'], sep = " ",na_rep = '')
+    # if from_db != 'UNIPROT-FROM':
+    #     main_df[from_db] = main_df[from_db].str.cat(main_df['from'], sep = " ",na_rep = '')
+    # main_df.drop(columns=['from','grouped_to'],inplace=True)
 
     return main_df
 
@@ -301,7 +301,6 @@ def all_ids_lookup_cmd(input_file,output_file,from_id_lookup = None,to_id_lookup
 def all_ids_lookup(input_file,output_file,from_id_lookup = None,to_id_lookup = None):
     ''' main function to map input ids to different database specified in the id_lookup list '''
 
-    print (f'params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ')
 
     if 'SNAKEMAKE' in os.environ:
         input_file = snakemake.input[0]
@@ -315,17 +314,26 @@ def all_ids_lookup(input_file,output_file,from_id_lookup = None,to_id_lookup = N
 
     if not to_id_lookup:
         to_id_lookup = ['NCBI', 'EMBL', 'UNIPROT']
-
-    print (from_id_lookup)
-
-    print (to_id_lookup)
+    print (f'params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ')
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
 
+    print ('got here')
+
+    print(df_data['accession'].str.split('|', expand=True))
+
+
+
     # sepearate the ids if they are mulitple seperated by |
-    df_data[['Extracted_ID_1','Extracted_ID_2','Extracted_ID_3']]= df_data['accession'].str.split('|', expand=True)
+    # df_data[['Extracted_ID_1','Extracted_ID_2','Extracted_ID_3']]= df_data['accession'].str.split('|', expand=True)
+    df_data[['Extracted_ID_1']]= df_data['accession'].str.split('|', expand=True)
+
+    print (df_data)
+
     ids = list(df_data['accession'])
+
+    print (ids)
 
     # empty string for each of the lookup id columns
     for db in to_id_lookup:

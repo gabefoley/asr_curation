@@ -158,7 +158,7 @@ def get_uniprot_id_list(df):
         l_item = (str(l[1:-1])).replace(' ','')
         for m in l_item.split(','):
             uniprot_list_ids.append(m[1:-1])
-    return uniprot_list_ids
+    return [x for x in uniprot_list_ids if x]
 
 
 def uniprot_annotation_lkp(input_file,output_file,intermediate_tsv_file,id_batch_size,result_batch_size):
@@ -167,7 +167,7 @@ def uniprot_annotation_lkp(input_file,output_file,intermediate_tsv_file,id_batch
     # get all uniprot ids
     validated_df = pd.read_csv(input_file)
     uniprot_list_ids = get_uniprot_id_list(validated_df)
-    #print(uniprot_list_ids)
+    print(uniprot_list_ids)
 
     # create a new intermediate tsv file with header row for dumping results
     header = "\t".join(full_uniprot_cols)

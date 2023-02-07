@@ -21,7 +21,7 @@ def create_annotations(df, annot, outpath):
     
     else:
 
-        df = pd.read_csv(df)
+        df = pd.read_csv(df, dtype='object')
 
         with open(annot) as annot_file:
             annotation_cols = [line.strip() for line in annot_file]

@@ -158,7 +158,7 @@ rule validate_ids:
    output:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
    script:
-       "scripts/validate_ids.py"
+       "scripts/validate_ids_non_uniprot.py"
 
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:

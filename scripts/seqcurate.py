@@ -54,7 +54,7 @@ def get_sequence_df(
                     seq.id.split(" ")[0],
                     seq.id.split("|")[1] if len(seq.id.split("|")) > 1 else  seq.id.split(" ")[0],
                     seq.id.split("|")[-1],
-                    "".join(seq.seq.replace("-", "")) if len(seq.seq) > 0 else None,
+                    "".join(str(seq.seq).replace("-", "")) if len(seq.seq) > 0 else None,
                     fasta_path,
                 ]
 
@@ -69,7 +69,7 @@ def get_sequence_df(
                         aligned_seq.id.split(" ")[0],
                         aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else  aligned_seq.id.split(" ")[0] ,
                         aligned_seq.id.split("|")[-1],
-                        "".join(aligned_seq.seq.replace("-", ""))
+                        "".join(str(aligned_seq.seq).replace("-", ""))
                         if len(aligned_seq.seq) > 0
                         else None,
                         fasta_path,

@@ -1,5 +1,12 @@
 import scripts.seqcurate as sc
 
+def test_randstring():
+
+    default_rand = sc.randstring()
+    five_rand = sc.randstring(5)
+
+    assert(len(default_rand) == 10)
+    assert (len(five_rand) == 5)
 
 def test_get_sequence_df():
     path = "./files/test.fasta"

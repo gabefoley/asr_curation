@@ -1,0 +1,37 @@
+site_name: ASR Curation
+
+#nav:
+#    - Home: 'index.md'
+#    - 'Installation and quickstart':
+#        - 'Installation': 'install.md'
+#        - 'Styling yo': 'example.md'
+#    - About:
+#        - 'License': 'output.md'
+#        - 'Release Notes': 'detailed_explanation.md'
+nav:
+  - Home: 'index.md'
+  - 'Installation and quickstart':
+      - 'Installation': 'install.md'
+      - 'Running example data': 'example.md'
+      - 'Explanation of output' : 'output.md'
+  - 'Detailed explanation': 'detailed_explanation.md'
+  - Customisation:
+        - 'Defining files': 'defining_files.md'
+        - 'Customising workflow': 'customising_workflow.md'
+  - Visualisation: 'visualisation.md'
+  - Tips and tricks: 'tips_and_tricks.md'
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+
+  plugins:
+    - search
+

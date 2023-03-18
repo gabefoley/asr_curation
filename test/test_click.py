@@ -1,4 +1,5 @@
 import click
+from click.testing import CliRunner
 
 @click.command()
 @click.option('-w', '--width', type=int, default=0)
@@ -9,13 +10,10 @@ def app(width, option2, argument):
 
 
 def test_app():
+    # Shows an example of how to setup CliRunner(), invoke a command line app, and process the output
+    runner = CliRunner()
+    result = runner.invoke(app, ["-w", 3, "--option2", 4, "arg"])
+    assert result.exit_code == 0
+    assert result.output == 'params: 3 4 arg\n'
+    print ('done')
 
-    print ('now')
-
-    # app(["-w" 3, ])
-    print ('run')
-    # print (app(["arg", "--option2", "4", "-w", 3]))
-
-    # app(["arg", "-w", 3, "--option2", "4"])
-    #
-    app(["-w", 3, "--option2", "4", "arg"])

@@ -3,7 +3,6 @@ from collections import defaultdict
 import os
 
 # Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
-
 os.environ["SNAKEMAKE"] = 'True'
 
 # Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)

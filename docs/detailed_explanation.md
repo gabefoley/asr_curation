@@ -1,143 +1,55 @@
-import glob
-from collections import defaultdict
-import os
+# Detailed explanation
 
-# Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
+## 1. Create the annotation files
 
-os.environ["SNAKEMAKE"] = 'True'
+### create_annotations
 
-# Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
-if "PYTHONPATH" in os.environ:
-    os.environ["PYTHONPATH"] += "scripts"
+### validate_ids
 
-else:
-    os.environ["PYTHONPATH"] = "scripts"
+### get_uniprot_annotations
 
-# Collect config info from config file
-WORKDIR = config['workdir'] + "/datasets"
-FASTADIR = config['fastadir']
-SUBDIR = config['subdir']
-VERBOSE = True
+### get_brenda_annotations
 
-# Path for custom annotation scripts. Defaults to scripts folder
+### add_generic_annotations
 
-try:
-    CUSTOM_DIR = config['custom_dir']
-except:
-    CUSTOM_DIR = "scripts"
+### add_custom_annotations
 
-try:
-    CUSTOM_ALIGN_DIR = config['custom_align_dir']
-except:
-    CUSTOM_ALIGN_DIR = "scripts"
+### create_column_summary_images
 
-try:
-    CUSTOM_ANCESTOR_DIR = config['custom_ancestor_dir']
-except:
-    CUSTOM_ANCESTOR_DIR = "scripts"
+## 2. Make subsets of the data
 
-# Collect config info from parameters passed from command line
-if 'BRENDA_RUN' in config.keys():
-    BRENDA_RUN = config['BRENDA_RUN']
-else:
-    BRENDA_RUN = False
+### create_subsets
 
+## 3. Align subsets, infer trees, predict ancstors
 
+### align_seqs
 
-DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
+### infer_tree
 
-if VERBOSE:
+### run_grasp
 
-    print ("Running ASR curation pipeline with the following datasets:")
-    print (DATASETS)
+## 4. Add annotations derived from alignment and ancestors
 
-# for blocked in config['blocked_datasets']:
-#     if blocked in DATASETS:
-#         DATASETS.remove(blocked)
+### add_annotations_from_alignment
 
+### add_annotations_from_ancestors
 
-def get_col_val_name(col_val_dict):
-    name =  "_".join(str(k) + "_" +  str(v) for k,v in col_val_dict.items())
+## 5. Create annotation file (for FigTree viewing) and summary Jupyter notebooks
 
-    return name
+### create_annotation_file
 
+### create_dataset_summary
 
-def get_subset_names(subset_rules_dir):
-    subset_dict = defaultdict(list)
+### clean_summary_document
 
-    subsets = expand(os.path.basename(x).split('.')[0] for x in glob.glob(SUBDIR + "/*.subset"))
+### create_subset_summary
 
+### create_subset_document
 
+### compile_summary_document
 
-    for subset in subsets:
+### concat_ancestor_alignment
 
-        print ('subset is ')
-        print (subset)
-
-        # If a subset rule doesn't exist, then just write out the full data set
-        if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
-
-            subset_dict[subset].append('full_set')
-
-
-        for line in open(f"{SUBDIR}/{subset}.subset").read().splitlines():
-
-            if line and not line.startswith("#"):
-
-                print ('line is ')
-                print (line)
-
-
-                # Check to see if custom name exists
-                name = line.split("=")[0].strip()
-
-                # If no custom name make name based on values of dictionary
-                if len(name) < 3:
-                    name = get_col_val_name(col_val_dict)
-
-                subset_dict[subset].append(name)
-    print ('subset dict is')
-
-    print (subset_dict)
-    return subset_dict
-
-def get_ancestor_col_dict(ancestor_cols):
-    ancestor_col_dict = {}
-    for col_val in ancestor_cols:
-        print (col_val)
-        col = col_val.split(":")[0].strip()
-        val = col_val.split(":")[1].strip()
-        ancestor_col_dict[col] = val
-
-    print (ancestor_col_dict)
-    return ancestor_col_dict
-
-
-# subsets = get_subset_names(SUBDIR) {'uniprot-ec_1_1_1_86-filtered-reviewed_yes' : ['subset1']}
-
-subsets = get_subset_names(SUBDIR)
-
-print ('run it')
-print (WORKDIR)
-print (FASTADIR)
-
-
-rule all:
-        input:
-            # files = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta' for dataset in DATASETS for subset in subsets[dataset]]
-            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt' for dataset in DATASETS for subset in subsets[dataset]],
-#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
-#             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
-            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv' for dataset in DATASETS for subset in subsets[dataset]]
-
-
-
-            # expand(WORKDIR + "/{dataset}/grasp_results/GRASP_ancestors.fasta",
-            #     dataset=DATASETS)
-
-
-
-# Create the initial annotation file from the FASTA file or list of IDs
 rule create_annotations:
     input:
         FASTADIR + "/{dataset}.fasta"

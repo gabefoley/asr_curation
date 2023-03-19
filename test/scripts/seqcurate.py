@@ -6,13 +6,12 @@ from Bio.Seq import Seq
 
 
 def get_sequence_df(
-    *fasta_paths,
-    drop_duplicates=True,
-    alignment=False,
-    ancestor=False,
-    alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-",
+        *fasta_paths,
+        drop_duplicates=True,
+        alignment=False,
+        ancestor=False,
+        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-",
 ):
-
     seq_list = []
     duplicates = {}
 
@@ -50,7 +49,7 @@ def get_sequence_df(
                 curr_seq = [
                     seq.id,
                     seq.id.split(" ")[0],
-                    seq.id.split("|")[1] if len(seq.id.split("|")) > 1 else  seq.id.split(" ")[0],
+                    seq.id.split("|")[1] if len(seq.id.split("|")) > 1 else seq.id.split(" ")[0],
                     seq.id.split("|")[-1],
                     "".join(str(seq.seq).replace("-", "")) if len(seq.seq) > 0 else None,
                     fasta_path,
@@ -62,24 +61,16 @@ def get_sequence_df(
             elif alignment:
 
                 for aligned_seq in seq:
-                    curr_seq = [
-                        aligned_seq.id,
-                        aligned_seq.id.split(" ")[0],
-                        aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else  aligned_seq.id.split(" ")[0] ,
-                        aligned_seq.id.split("|")[-1],
-                        "".join(str(aligned_seq.seq).replace("-", ""))
-                        if len(aligned_seq.seq) > 0
-                        else None,
-                        fasta_path,
-                    ]
-                    curr_seq.append("".join(aligned_seq.seq))
+                    curr_seq = [aligned_seq.id, aligned_seq.id.split(" ")[0],
+                                aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else
+                                aligned_seq.id.split(" ")[0], aligned_seq.id.split("|")[-1],
+                                "".join(str(aligned_seq.seq).replace("-", ""))
+                                if len(aligned_seq.seq) > 0
+                                else None, fasta_path, "".join(aligned_seq.seq)]
                     seq_list.append(curr_seq)
-
 
             # if ancestor:
             #     curr_seq.append("".join(aligned_seq.seq))
-
-
 
     df = pd.DataFrame(seq_list, columns=cols)
 
@@ -143,7 +134,6 @@ def get_subset(df, *cols_dict, include=True):
 
 
 def write_to_fasta(df, outpath, trim=False):
-
     if trim:
         seq_list = [SeqRecord(Seq(r.sequence), id=r.accession) for r in df.itertuples()]
 
@@ -167,7 +157,6 @@ def add_from_csv(df, add_df, match="accession"):
 
 
 def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
-
     seqs = SeqIO.parse(fasta_path, "fasta")
 
     return [seq.name for seq in seqs]

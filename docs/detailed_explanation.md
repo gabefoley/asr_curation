@@ -1,54 +1,100 @@
-# Detailed explanation
+## **Snakemake diagram**
+The following diagram is the overall steps that have to be run by `snakemake` to generate the example data.
 
-## 1. Create the annotation files
+!!! note "Diagram"
+    Note that in this case, the KARI data had three subsets defined, so `create_subsets` and all of the other steps downstream from this step are run three times, while the ALS data only has one subset defined and so `create_subsets` is only run once.
 
-### create_annotations
+![snakemake directed acyclic graph](images/dag.png)
 
-### validate_ids
 
-### get_uniprot_annotations
+## **Explanation of steps**
 
-### get_brenda_annotations
+The following section explains all of the steps defined in the `snakefile` and explains broadly what they are doing, as well as the inputs and outputs.
 
-### add_generic_annotations
+A link to the exact output as per the example workflow in the `asr_curation` repository is also provided.
 
-### add_custom_annotations
+## **1. Create the annotation files**
 
-### create_column_summary_images
+### **create_annotations**
 
-## 2. Make subsets of the data
+Create the initial annotations file from a FASTA file containing sequences
 
-### create_subsets
+!!! note "Input / Output / Example output file"
+    * ***Input**  - FASTA file*
+    * ***Output** -*
+    * ***Example output file from `example_workflow`  -***
 
-## 3. Align subsets, infer trees, predict ancstors
 
-### align_seqs
 
-### infer_tree
+### **validate_ids**
 
-### run_grasp
+Use UniProt to validate the IDs that are present in the FASTA file and map between UniProt, NCBI, EMBL identifiers
 
-## 4. Add annotations derived from alignment and ancestors
+### **get_uniprot_annotations**
 
-### add_annotations_from_alignment
+Use the validated UniProt ID to retrive all of the annotations available for all of the sequences 
 
-### add_annotations_from_ancestors
+### **get_brenda_annotations**
 
-## 5. Create annotation file (for FigTree viewing) and summary Jupyter notebooks
+Use the EC Number to get the BRENDA annotations available for any of the sequences.
 
-### create_annotation_file
+Currently this requires the EC number/s to be hard coded in the original FASTA file. 
 
-### create_dataset_summary
+### **add_generic_annotations**
 
-### clean_summary_document
+Update the annotations file to contain generic annotations that are useful for all datasets - such as whether the sequence has non-amino acid characters
 
-### create_subset_summary
+### **add_custom_annotations**
 
-### create_subset_document
+Update the annotations file to add any custom annotations for your specific dataset. The location of add_custom_annotations.py can be set in the config file to allow for custom annotations.
 
-### compile_summary_document
+## **2. Make subsets of the data**
 
-### concat_ancestor_alignment
+### **create_subsets**
+
+Based on the subsets defined in the `subset` file, segment the data into multiple subsets. As this step comes after the 
+retrieval of annotations from UniProt and after the custom annotations these subset rules can refer to information from either of these steps.
+
+
+Steps 3 onwards will then be carried out for each defiend subset.
+
+
+## **3. Align subsets, infer trees, predict ancestors**
+
+### **align_seqs**
+
+Align the sequences identified in a subset.
+
+
+### **infer_tree**
+
+Infer a phylogenetic tree from the alignment identified in a subset
+
+### **run_grasp**
+
+Predict ancestors using a phylogenetic tree and alignment identified in a subset.
+
+## **4. Add annotations derived from alignment and ancestors**
+
+### **add_annotations_from_alignment**
+
+### **add_annotations_from_ancestors**
+
+## **5. Create annotation file (for FigTree viewing) and summary Jupyter notebooks**
+
+### **create_annotation_file**
+
+### **create_dataset_summary**
+
+### **clean_summary_document**
+
+### **create_subset_summary**
+
+### **create_subset_document**
+
+### **compile_summary_document**
+
+### **concat_ancestor_alignment**
 
 rule create_annotations:
     input:
@@ -333,3 +379,6 @@ rule concat_ancestor_alignment:
 #     #         column=config['annotation_cols'])
 #     shell:
 #         "python scripts/tree_annot.py -t {input.tree} -a {input.aln} -c {input.csv} --col '{wildcards.column}' --match_from 'Entry' -r 4425 -o {output}"
+
+
+# Reading snakemake files

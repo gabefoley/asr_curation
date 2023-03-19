@@ -1,3 +1,4 @@
+
 with open(snakemake.input[0], "r") as in_file:
     buf = in_file.readlines()
 

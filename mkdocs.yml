@@ -1,28 +1,23 @@
 site_name: ASR Curation
 
-#nav:
-#    - Home: 'index.md'
-#    - 'Installation and quickstart':
-#        - 'Installation': 'install.md'
-#        - 'Styling yo': 'example.md'
-#    - About:
-#        - 'License': 'output.md'
-#        - 'Release Notes': 'detailed_explanation.md'
 nav:
-  - Home: 'index.md'
+  - ASR curation: 'index.md'
   - 'Installation and quickstart':
       - 'Installation': 'install.md'
       - 'Running example data': 'example.md'
       - 'Explanation of output' : 'output.md'
-  - 'Detailed explanation': 'detailed_explanation.md'
+  - 'Detailed explanation':
+      - 'Basic snakemake': 'basic_snakemake.md'
+      - 'Explanation of steps': 'detailed_explanation.md'
   - Customisation:
         - 'Defining files': 'defining_files.md'
         - 'Customising workflow': 'customising_workflow.md'
-  - Visualisation: 'visualisation.md'
-  - Tips and tricks: 'tips_and_tricks.md'
+#  - Visualisation: 'visualisation.md'
+#  - Tips and tricks: 'tips_and_tricks.md'
 
 theme:
   name: material
+  logo: "images/tiny_logo.png"
   features:
     - navigation.instant
     - navigation.tracking
@@ -31,7 +26,13 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
-
+  palette:
+    primary: green
   plugins:
     - search
-
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html

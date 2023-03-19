@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-import scripts.get_uniprot_annotations_pagination
+import scripts.get_uniprot_annotations
 
 def test_split_lineage():
 

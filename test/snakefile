@@ -3,6 +3,7 @@ from collections import defaultdict
 import os
 
 # Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
+
 os.environ["SNAKEMAKE"] = 'True'
 
 # Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
@@ -66,8 +67,6 @@ def get_subset_names(subset_rules_dir):
 
     subsets = expand(os.path.basename(x).split('.')[0] for x in glob.glob(SUBDIR + "/*.subset"))
 
-
-
     for subset in subsets:
 
         print ('subset is ')
@@ -95,9 +94,7 @@ def get_subset_names(subset_rules_dir):
                     name = get_col_val_name(col_val_dict)
 
                 subset_dict[subset].append(name)
-    print ('subset dict is')
 
-    print (subset_dict)
     return subset_dict
 
 def get_ancestor_col_dict(ancestor_cols):
@@ -161,7 +158,7 @@ rule get_uniprot_annotations:
     output:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
     script:
-        "scripts/get_uniprot_annotations_pagination.py"
+        "scripts/get_uniprot_annotations.py"
 
 # # # Map the UniProt sequences to IDs we can query IPG with, and then query IPG to add genome information
 # rule get_genomes:
@@ -189,7 +186,7 @@ rule get_uniprot_annotations:
 #    output:
 #        WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
 #    script:
-#        "scripts/process_gtdb_annotations.py"
+#        "scripts/process_gtdpip b_annotations.py"
 
 
 # Map to BRENDA database to get all of the known BRENDA annotations

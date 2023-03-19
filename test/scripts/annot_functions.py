@@ -4,7 +4,6 @@ import seqcurate as sc
 import warnings
 import logging
 from collections import defaultdict
-
 logging.captureWarnings(True)
 import seaborn as sns
 from ast import literal_eval
@@ -77,6 +76,7 @@ def track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 
 
 def add_tag_if_in_fasta(annot_df, filepath, tag):
+
     seqs = sc.get_entry_ids_from_fasta(filepath)
 
     annot_df[tag] = annot_df.apply(
@@ -490,5 +490,3 @@ def classify_loop_length(bind_pos):
     else:
         return "No_binding_positions"
 
-# ref_df.apply(lambda row : get_binding_aa(row['Sequence'],
-#                      get_binding_pos(row['feature(BINDING SITE)'])), axis = 1)

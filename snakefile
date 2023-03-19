@@ -67,8 +67,6 @@ def get_subset_names(subset_rules_dir):
 
     subsets = expand(os.path.basename(x).split('.')[0] for x in glob.glob(SUBDIR + "/*.subset"))
 
-
-
     for subset in subsets:
 
         print ('subset is ')
@@ -96,9 +94,7 @@ def get_subset_names(subset_rules_dir):
                     name = get_col_val_name(col_val_dict)
 
                 subset_dict[subset].append(name)
-    print ('subset dict is')
 
-    print (subset_dict)
     return subset_dict
 
 def get_ancestor_col_dict(ancestor_cols):
@@ -112,30 +108,15 @@ def get_ancestor_col_dict(ancestor_cols):
     print (ancestor_col_dict)
     return ancestor_col_dict
 
-
-# subsets = get_subset_names(SUBDIR) {'uniprot-ec_1_1_1_86-filtered-reviewed_yes' : ['subset1']}
-
 subsets = get_subset_names(SUBDIR)
-
-print ('run it')
 print (WORKDIR)
 print (FASTADIR)
 
 
 rule all:
         input:
-            # files = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fasta' for dataset in DATASETS for subset in subsets[dataset]]
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt' for dataset in DATASETS for subset in subsets[dataset]],
-#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
-#             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa' for dataset in DATASETS for subset in subsets[dataset] for column in config['annotation_cols']]
             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv' for dataset in DATASETS for subset in subsets[dataset]]
-
-
-
-            # expand(WORKDIR + "/{dataset}/grasp_results/GRASP_ancestors.fasta",
-            #     dataset=DATASETS)
-
-
 
 # Create the initial annotation file from the FASTA file or list of IDs
 rule create_annotations:
@@ -162,36 +143,7 @@ rule get_uniprot_annotations:
     output:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
     script:
-        "scripts/get_uniprot_annotations_pagination.py"
-
-# # # Map the UniProt sequences to IDs we can query IPG with, and then query IPG to add genome information
-# rule get_genomes:
-#     input:
-#         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
-#     output:
-#         WORKDIR + "/{dataset}/csv/genome/{dataset}_genome.csv"
-#         #WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
-#     script:
-#         "scripts/get_genomes.py"
-
-# # Map the Genomes to GTDB
-# rule get_gtdb_annotations:
-#    input:
-#        WORKDIR + "/{dataset}/csv/genome/{dataset}_genome.csv"
-#    output:
-#        WORKDIR + "/{dataset}/csv/gtdb/{dataset}_gtdb.csv"
-#    script:
-#        "scripts/get_gtdb_annotations.py"
-
-# #Use GTDB to cross-check CheckM scores and GTDB taxonomy
-# rule process_gtdb_annotations:
-#    input:
-#        WORKDIR + "/{dataset}/csv/gtdb/{dataset}_gtdb.csv"
-#    output:
-#        WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
-#    script:
-#        "scripts/process_gtdb_annotations.py"
-
+        "scripts/get_uniprot_annotations.py"
 
 # Map to BRENDA database to get all of the known BRENDA annotations
 rule get_brenda_annotations:
@@ -210,7 +162,7 @@ rule add_generic_annotations:
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv"
     script:
-        "scripts/generic_annotations.py"
+        "scripts/add_generic_annotations.py"
 
 # Add any custom annotations
 rule add_custom_annotations:
@@ -219,9 +171,8 @@ rule add_custom_annotations:
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     script:
-        CUSTOM_DIR + "/custom_annotations.py"
+        CUSTOM_DIR + "/add_custom_annotations.py"
 
-# Create the su
 rule create_column_summary_images:
     input:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
@@ -302,90 +253,6 @@ rule create_annotation_file:
     script:
         "scripts/create_annotation_file.py"
 
-
-
-# Rules for creating the PDF summary files
-
-rule create_dataset_summary:
-    input:
-       WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv",
-    params:
-        annotation_cols = config['annotation_cols']
-    output:
-       summary = WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb",
-       # dir = directory(WORKDIR + "/{dataset}/dataset_summary")
-
-    log:
-       # optional path to the processed notebook
-       notebook=WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb"
-    notebook:
-       "notebooks/create_summary_document.py.ipynb"
-
-
-#Hide the first cell that snakemake adds to the notebook
-rule clean_summary_document:
-   input:
-       WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb"
-   output:
-       WORKDIR + "/{dataset}/dataset_summary/{dataset}_summary_cleaned.ipynb"
-
-   script:
-       "scripts/clean_summary_document.py"
-
-rule create_subset_summary:
-    input:
-       aln= WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
-       csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv"
-
-    params:
-        annotation_cols = config['annotation_cols']
-
-    output:
-       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_subset_summary.ipynb",
-    log:
-        #optional path to the processed notebook
-       notebook=WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_subset_summary.ipynb"
-    notebook:
-       "notebooks/create_subset_document.py.ipynb"
-
-
-#Hide the first cell that snakemake adds to the notebook
-rule clean_subset_summary:
-   input:
-       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_subset_summary.ipynb",
-   output:
-       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/{subset}_subset_summary_cleaned.ipynb",
-
-   script:
-       "scripts/clean_summary_document.py"
-
-        #expand("indelible_summaries/{{taxon}}/{rep}.csv", rep = [x for x in range(1, config['REPS'] + 1)])
-rule create_subset_document:
-   input:
-       pdf = WORKDIR + "/{dataset}/dataset_summary/{dataset}_summary_cleaned.ipynb",
-       subsets = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/{subset}_subset_summary_cleaned.ipynb"
-       # subsets = expand(WORKDIR + "/{{dataset}}/dataset_summary/{{dataset}}/subsets/{subset}/temp/{subset}_summary.ipynb", subset = [subset for subset in subsets[{{wildcards.dataset}}]])
-   output:
-       config = WORKDIR + "/{dataset}/dataset_summary/{subset}/_config.yml",
-       toc = WORKDIR + "/{dataset}/dataset_summary/{subset}/_toc.yml"
-
-   script:
-       "scripts/create_summary_document.py"
-
-rule compile_summary_document:
-   input:
-       # dir = WORKDIR + "/{dataset}/dataset_summary",
-       config = WORKDIR + "/{dataset}/dataset_summary/{subset}/_config.yml"
-
-   params:
-       dir = WORKDIR + "/{dataset}/dataset_summary/{subset}",
-   output:
-      config = WORKDIR + "/{dataset}/dataset_summary/{subset}/_build/html/index.html"
-   shell:
-       "jb build {params.dir}"
-
-
-
 rule concat_ancestor_alignment:
     input:
         extants = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
@@ -396,28 +263,3 @@ rule concat_ancestor_alignment:
     shell:
         "cat {input.extants} {input.ancestors} > {output}"
 
-# rule create_ancestor_image:
-#     input:
-#         tree = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.nwk",
-#         aln = WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln",
-#         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
-#     output:
-#         img = "{WORKDIR}/{dataset}/subsets/{subset}/ancestor_images/{anc_col}/{anc_val}.png"
-#     script:
-#         "scripts/create_ancestor_images.py"
-
-
-# rule create_tree_image:
-#     input:
-#         tree = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.nwk",
-#         aln = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
-#         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
-
-#     output:
-#         WORKDIR + "/{dataset}/subsets/{subset}/tree_images/{column}.png"
-#     # output:
-#     #     expand(WORKDIR + "/{dataset}/tree_images/{dataset}_{column}.png",
-#     #         dataset=DATASETS,
-#     #         column=config['annotation_cols'])
-#     shell:
-#         "python scripts/tree_annot.py -t {input.tree} -a {input.aln} -c {input.csv} --col '{wildcards.column}' --match_from 'Entry' -r 4425 -o {output}"

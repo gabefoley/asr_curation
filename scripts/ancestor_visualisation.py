@@ -11,10 +11,13 @@ from ete3 import (
     AttrFace,
 )
 
+flak
 
 def load_tree(tree_path, aln_path=None):
-    """
-    Load a tree, associate an alignment with it if given
+    """Load a tree, associate an alignment with it if given
+    :param str tree_path: filepath to the tree file
+    :param str
+
     """
     tree = PhyloTree(tree_path, alignment=aln_path, format=1, alg_format="fasta")
     return tree

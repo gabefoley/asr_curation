@@ -5,7 +5,7 @@
 
 
 <p align="center">
-	<img src="static/asr_curation.png?raw=true" alt="ASR Curation" height="300" />
+	<img src="docs/images/logo.png" alt="ASR Curation" width="400" />
 
 </p>
 

@@ -1,0 +1,4 @@
+accession	lineage_superkingdom	xref_supfam	xref_panther	ec
+Q04789	Bacteria	SSF52467;SSF52518;	PTHR18968;	2.2.1.6
+Q04524	Bacteria	SSF52467;SSF52518;	PTHR18968;	2.2.1.6
+P27696	Bacteria	SSF52467;SSF52518;	PTHR18968;	2.2.1.6

@@ -25,8 +25,8 @@ def test_add_lab_annotations_correct():
     print ("in here")
     print(os.getcwd())
 
-    annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
-    filepath = "files/test_add_lab_correct_lab_df.csv"
+    annot_df = pd.read_csv("test/files/test_add_lab_annot_df.csv")
+    filepath = "test/files/test_add_lab_correct_lab_df.csv"
     annot_df = an.add_lab_annotations(annot_df, filepath)
 
     assert (annot_df.loc[annot_df['accession'] == 'P9XVRR', 'lab_km'].values[0] == 0.4)

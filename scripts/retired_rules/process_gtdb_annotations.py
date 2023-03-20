@@ -4,7 +4,6 @@ from ast import literal_eval
 
 
 def check_for_gtdb_taxa_discrepency(gtdb_dict_list, taxa_rank="gtdb_phylum"):
-
     gtdb_taxa_discrepency_dict = {}
 
     gtdb_genomes_list = [
@@ -17,7 +16,6 @@ def check_for_gtdb_taxa_discrepency(gtdb_dict_list, taxa_rank="gtdb_phylum"):
     if len(gtdb_genomes_set) == 0:
         return None
     if len(gtdb_genomes_set) != 1:
-
         #         print ('Multiple species detected')
         #         print (gtdb_genomes_set)
         return gtdb_genomes_list
@@ -29,7 +27,6 @@ def check_for_gtdb_taxa_discrepency(gtdb_dict_list, taxa_rank="gtdb_phylum"):
 def check_consistency_of_uniprot_gtdb_taxa(
     entry, gtdb_dict_list, df_rank="Taxonomic_lineage_PHYLUM", gtdb_rank="gtdb_phylum"
 ):
-
     alias_dict = {
         "Actinobacteria": "Actinobacteriota",
         "Planctomycetes": "Planctomycetota",
@@ -56,14 +53,12 @@ def check_consistency_of_uniprot_gtdb_taxa(
         ):
             return "Consistent"
         else:
-
             return gtdb_phyla
     else:
         return None
 
 
 def get_highest_checkM_completeness(gtdb_dict_list):
-
     if len(gtdb_dict_list) > 0:
         highest_checkM_completeness = max(
             [gtdb_genome["checkm_completeness"] for gtdb_genome in gtdb_dict_list]
@@ -75,7 +70,6 @@ def get_highest_checkM_completeness(gtdb_dict_list):
 
 
 def add_to_df_from_dict(df, dict_to_add, col_name, add_name="Entry"):
-
     if col_name not in df.columns:
         df[col_name] = np.nan
 
@@ -95,7 +89,6 @@ def get_gtdb_rank(gtdb_dict_list, gtdb_rank="gtdb_phylum"):
     gtdb_phyla = [x for x in gtdb_phyla if len(x) > 0]
 
     if gtdb_phyla:
-
         most_freq_phyla = max(gtdb_phyla, key=gtdb_phyla.count)
 
         return most_freq_phyla
@@ -122,7 +115,6 @@ for row in df.itertuples():
     gtdb_dict_list = []
 
     if not pd.isna(row.GTDB_FULL_DICTS):
-
         #         print (row.GTDB_FULL_DICTS)
 
         for x in row.GTDB_FULL_DICTS.replace("'Not found',", "").split("},"):
@@ -138,7 +130,6 @@ for row in df.itertuples():
             #             print (remove_brackets)
 
             if remove_brackets.strip() != "'Not found'}":
-
                 gtdb_dict_list.append(str(remove_brackets.replace("}}", "}")))
 
     #         for x in gtdb_dict_list:

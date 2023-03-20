@@ -1,13 +1,12 @@
+"""Adds custom annotations to an annotation dataframe."""
+
 import annot_functions as an
-import seqcurate as sc
 import pandas as pd
 
 annot_df = pd.read_csv(snakemake.input[0])
 
 # Check if the KARI EC number is in the dataset we're currently looking at
-if (
-    "ec_1_1_1_86" in snakemake.wildcards.dataset
-):
+if "ec_1_1_1_86" in snakemake.wildcards.dataset:
     print("Adding KARI specific annotations")
     print("Adding KARI Class")
     annot_df["KARI_Class"] = annot_df.apply(
@@ -18,6 +17,4 @@ if (
     )
 
 
-
 annot_df.to_csv(snakemake.output[0], index=False)
-

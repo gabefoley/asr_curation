@@ -28,17 +28,13 @@ def layout(node):
 
 
 def get_example_tree(tree, color_dict=None, annot_dict=None, col=None, rotate=None):
-
     used_colours = set()
     for n in tree.traverse():
-
         if rotate and n.name in rotate:
             print("swapping")
             n.swap_children()
         if n.is_leaf():
-
             if n.name in annot_dict:
-
                 n.img_style["bgcolor"] = color_dict[annot_dict[n.name]]
 
                 used_colours.add(annot_dict[n.name])

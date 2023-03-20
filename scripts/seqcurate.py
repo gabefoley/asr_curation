@@ -6,16 +6,23 @@ from Bio.Seq import Seq
 
 
 def get_sequence_df(
-        *fasta_paths,
-        drop_duplicates=True,
-        alignment=False,
-        ancestor=False,
-        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-",
+    *fasta_paths,
+    drop_duplicates=True,
+    alignment=False,
+    ancestor=False,
+    alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-",
 ):
     seq_list = []
     duplicates = {}
 
-    cols = ["accession", "truncated_info", "extracted_id", "extracted_name", "sequence", "original_fasta"]
+    cols = [
+        "accession",
+        "truncated_info",
+        "extracted_id",
+        "extracted_name",
+        "sequence",
+        "original_fasta",
+    ]
 
     if alignment or ancestor:
         cols.append("Sequence_aligned")
@@ -24,7 +31,6 @@ def get_sequence_df(
     #     cols.append("Sequence_aligned")
 
     for fasta_path in fasta_paths:
-
         # Load FASTA file
         # seqs = sequence.readFastaFile(fasta_path, alpha)
 
@@ -32,12 +38,10 @@ def get_sequence_df(
             seqs = AlignIO.parse(open(fasta_path), format="fasta")
 
         else:
-
             seqs = SeqIO.parse(open(fasta_path), format="fasta")
 
         # Add to annotation file
         for seq in seqs:
-
             if alignment == False:
                 if seq.name in duplicates:
                     print(
@@ -49,24 +53,33 @@ def get_sequence_df(
                 curr_seq = [
                     seq.id,
                     seq.id.split(" ")[0],
-                    seq.id.split("|")[1] if len(seq.id.split("|")) > 1 else seq.id.split(" ")[0],
+                    seq.id.split("|")[1]
+                    if len(seq.id.split("|")) > 1
+                    else seq.id.split(" ")[0],
                     seq.id.split("|")[-1],
-                    "".join(str(seq.seq).replace("-", "")) if len(seq.seq) > 0 else None,
+                    "".join(str(seq.seq).replace("-", ""))
+                    if len(seq.seq) > 0
+                    else None,
                     fasta_path,
                 ]
 
                 seq_list.append(curr_seq)
 
-
             elif alignment:
-
                 for aligned_seq in seq:
-                    curr_seq = [aligned_seq.id, aligned_seq.id.split(" ")[0],
-                                aligned_seq.id.split("|")[1] if len(aligned_seq.id.split("|")) > 1 else
-                                aligned_seq.id.split(" ")[0], aligned_seq.id.split("|")[-1],
-                                "".join(str(aligned_seq.seq).replace("-", ""))
-                                if len(aligned_seq.seq) > 0
-                                else None, fasta_path, "".join(aligned_seq.seq)]
+                    curr_seq = [
+                        aligned_seq.id,
+                        aligned_seq.id.split(" ")[0],
+                        aligned_seq.id.split("|")[1]
+                        if len(aligned_seq.id.split("|")) > 1
+                        else aligned_seq.id.split(" ")[0],
+                        aligned_seq.id.split("|")[-1],
+                        "".join(str(aligned_seq.seq).replace("-", ""))
+                        if len(aligned_seq.seq) > 0
+                        else None,
+                        fasta_path,
+                        "".join(aligned_seq.seq),
+                    ]
                     seq_list.append(curr_seq)
 
             # if ancestor:
@@ -98,14 +111,15 @@ def add_col_from_up_dict(df, cols_to_add, up_dict):
             df[col] = ""
 
     for name, annots in up_dict.items():
-
         for key in annots.keys():
             df.loc[df["accession"].str.contains(name), key] = annots.get(key)
 
     return df
 
 
-def annotate_col_from_other_df(df, other_df, col, match_from="accession", match_to="accession"):
+def annotate_col_from_other_df(
+    df, other_df, col, match_from="accession", match_to="accession"
+):
     other_dict = dict(zip(other_df[match_from], other_df[col]))
 
     df = annotate_col_from_dict(df, col, other_dict, match_to)
@@ -119,7 +133,6 @@ def get_subset(df, *cols_dict, include=True):
             raise TypeError("col_dict must be a dictionary")
         for col, vals in col_dict.items():
             if vals == "*":  # Get all the entries with values that exist
-
                 if include:
                     df = df[~df[col].isna()]
                 else:

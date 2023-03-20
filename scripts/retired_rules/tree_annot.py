@@ -49,7 +49,6 @@ def parse_args(args):
 
 
 if __name__ == "__main__":
-
     print("\nRunning tree_annot")
     print("python version is ")
     print(sys.version)
@@ -95,7 +94,6 @@ if __name__ == "__main__":
 
     # Manually set the Clade (Mischko) colours to match Mischko et al. 2018
     if col == "Clade (Mischko)":
-
         color_dict[1] = "#f88485"
         color_dict[2] = "#96b9da"
         color_dict[3] = "#c4e0a4"

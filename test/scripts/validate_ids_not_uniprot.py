@@ -306,8 +306,6 @@ def all_ids_lookup(input_file,output_file,from_id_lookup = None,to_id_lookup = N
         input_file = snakemake.input[0]
         output_file = snakemake.output[0]
 
-
-
     # Set default from and to id lookups
     if not from_id_lookup:
         from_id_lookup = ['UNIPROT-FROM']  # ,'NCBI','EMBL']

@@ -33,7 +33,6 @@ def get_uniprot_ids(queries, from_id, to_id):
 
 
 def map_df_to_uniprot(chunk_df, try_ids, map_back, from_id, to_id, to_name):
-
     #     print ('variables')
     #     print(try_ids)
     #     print (map_back)
@@ -53,7 +52,6 @@ def map_df_to_uniprot(chunk_df, try_ids, map_back, from_id, to_id, to_name):
     #     print()
 
     if not up_df.empty:
-
         #         print("chunk here is ")
 
         #         print(chunk_df)
@@ -100,7 +98,6 @@ def map_df_to_uniprot(chunk_df, try_ids, map_back, from_id, to_id, to_name):
 
 
 def merge_dfs(chunk_df, add_df, map_back):
-
     # print ('check here')
     # print (chunk_df)
 
@@ -119,7 +116,6 @@ def merge_dfs(chunk_df, add_df, map_back):
     # print (chunk_df)
 
     if f"{map_back}_x" in chunk_df.columns:
-
         chunk_df[f"{map_back}"] = chunk_df[f"{map_back}_x"].fillna(
             chunk_df[f"{map_back}_y"]
         )
@@ -158,11 +154,9 @@ final_list = []
 # For each data base ID, try and get the set of UniProt IDs
 
 for chunk_df in list_df:
-
     # Map each sequence to a UniProt ID
 
     for db_id in chunk_df["Try"].unique():
-
         # Define which column we want to use to search and to map back the search results onto
         map_back = "Entry"
 

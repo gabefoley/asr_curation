@@ -1,7 +1,5 @@
-
 # output for making the summary documents
-#summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
-
+# summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}/_build/html/index.html' for dataset in DATASETS for subset in subsets[dataset]],
 
 
 ## Rules for creating the PDF summary files

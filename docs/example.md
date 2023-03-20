@@ -100,7 +100,5 @@ rm -rf workflows/example_workflow/datasets/
 
 Rerun the snakemake pipeline to re-generate the data
 
-!!! warning
-    Two important points here - 
-    This will retrigger calls to the UniProt and BRENDA databases, so the annotations may not be identical to those stored in this repository as these are live databases. This should be treated as just a test to check that it is working. 
-    Any changes you make to this files are excluded from the Git repository - so a fresh git pull will overwrite any regeneration of data or deleting of folders that you do.
+!!! warning 
+    This will retrigger calls to the UniProt and BRENDA databases, so the annotations may not be identical to those stored in this repository as sequences get updated in these databases. Any changes you make to this files are excluded from the Git repository - so a fresh git pull will overwrite any changes you make to the example data.

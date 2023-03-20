@@ -37,7 +37,6 @@ def count_uniprot_entries(ec_dict):
     totals = {}
 
     for ec, proteins in ec_dict.items():
-
         for k, v in proteins.items():
             if v.data["uniprot"]:
                 up_count += 1
@@ -59,11 +58,8 @@ def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
 
 
 def add_val(brenda_dict, protein, attrib, attrib_count):
-
     if "comment" not in attrib or "mutant" not in attrib["comment"]:
-
         if "substrate" in attrib:
-
             terms = ["units", "refs", "comment"]
 
             brenda_dict[protein.uniprot][
@@ -95,7 +91,6 @@ brenda_dict = defaultdict(lambda: defaultdict(list))
 ec_nums = get_ec_nums(snakemake.wildcards.dataset)
 original_df = pd.read_csv(snakemake.input[0])
 if ec_nums:
-
     for ec_num in ec_nums:
         ec_dict = parse_proteins_for_ec(ec_num)
 
@@ -109,11 +104,11 @@ if ec_nums:
         for prot_id, protein in sorted(ec_dict.items()):
             if protein.uniprot:
                 print("here are references")
-                #print(protein.references)
+                # print(protein.references)
 
                 # For all the references, add them as separate columns so we can search them
                 for refno, ref_dict in protein.references.items():
-                    #print(ref_dict)
+                    # print(ref_dict)
                     brenda_dict[protein.uniprot][f"BRENDA_REFERENCES_{refno}"].append(
                         ref_dict["info"]
                     )

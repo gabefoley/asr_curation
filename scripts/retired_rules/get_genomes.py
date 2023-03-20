@@ -18,7 +18,6 @@ Entrez.email = "g.foley@uq.edu.au"
 
 
 def add_to_df_from_dict(df, dict_to_add, col_name, add_name="Entry"):
-
     if col_name not in df.columns:
         df[col_name] = np.nan
 
@@ -52,7 +51,6 @@ def format_uniprot_params(ids):
 
 
 async def main(split):
-
     my_timeout = aiohttp.ClientTimeout(
         total=30,  # default value is 5 minutes, set to `None` for unlimited timeout
         sock_connect=30,  # How long to wait before an open socket allowed to connect
@@ -66,7 +64,6 @@ async def main(split):
     mysession = aiohttp.ClientSession()
     # async with aiohttp.ClientSession(timeout=my_timeout) as session:
     async with mysession as session:
-
         tasks = []
 
         chunks = np.array_split(np.array(split), max(1, round(len(split) / 800)))
@@ -98,12 +95,10 @@ async def main(split):
             pass
 
         finally:
-
             for i, task in enumerate(tasks):
                 task_count += 1
 
                 if task.done() and not task.cancelled():
-
                     name = ""
                     prot_id = ""
 
@@ -113,7 +108,6 @@ async def main(split):
                         if line.startswith("<name>"):
                             name = line.split("<name>")[1].split("</name")[0]
                         if line.startswith('<property type="protein sequence ID" '):
-
                             prot_id = line.split('value="')[1].split('"/>')[0]
                             # print ('prot id is ' + prot_id)
                         if len(name) > 1 and len(prot_id) > 1:
@@ -141,7 +135,6 @@ def get_assembly_dict(id_dict):
             nulls.append(entry_name)
 
         else:
-
             for accession in gene_ids.split(";"):
                 if len(accession) > 1:
                     added = False
@@ -156,17 +149,13 @@ def get_assembly_dict(id_dict):
                             pass
 
                         else:
-
                             for prot in mapping["IPGReport"]["ProteinList"]:
-
                                 print("prot")
 
                                 print(prot)
 
                                 for idx, elem in enumerate(prot):
-
                                     if "CDSList" in prot and len(prot["CDSList"]) > 0:
-
                                         print("wowzers")
                                         print(prot["CDSList"])
 

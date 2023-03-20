@@ -2,7 +2,6 @@ import sys
 import sequence
 
 if __name__ == "__main__":
-
     print("\nRemoving gaps")
 
     input_file = sys.argv[1]

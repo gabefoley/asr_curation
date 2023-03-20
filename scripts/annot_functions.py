@@ -306,7 +306,7 @@ def add_thermo(annot_df, filepath):
     return annot_df
 
 
-def create_domain_bounds(seq_id, domains):
+def create_domain_bounds(domains):
     positions = []
 
     interval = None
@@ -322,7 +322,6 @@ def create_domain_bounds(seq_id, domains):
             #             print (pos)
 
             print(domain)
-            print(seq_id)
             print(pos)
             print(pos[0])
             print(pos[1])

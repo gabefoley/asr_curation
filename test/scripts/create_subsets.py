@@ -4,7 +4,6 @@ import numpy as np
 
 
 def format_subset_val(col, col_val):
-
     if type(col_val) == str:
         # Check if it is a list of values
         if "," in col_val:
@@ -23,7 +22,6 @@ def format_subset_val(col, col_val):
 
 
 def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
-
     qry = " and ".join(
         [format_subset_val(col, col_val) for col, col_val in col_val_dict.items()]
     )
@@ -37,13 +35,11 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
-
         # If it is a list split it up
         for val in col_val.split(","):
             sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
 
     if req_col_val_dict:
-
         req_qry = " or ".join(
             [
                 format_subset_val(col, col_val)
@@ -90,17 +86,14 @@ def add_val_to_dict(term, add_val, add_dict):
 
 # If a subset rule doesn't exist, then just write out the full data set
 if snakemake.wildcards.subset == "full_set":
-
     sc.write_to_fasta(pd.read_csv(snakemake.input.csv), snakemake.output[0])
 
 
 for line in open(snakemake.input.rules).read().splitlines():
-
     # Reset the condition that we want to sample from the dataframe
     sample_from = None
 
     if line and not line.startswith("#"):
-
         col_val_dict = {}
         not_col_val_dict = {}
         req_col_val_dict = {}
@@ -115,13 +108,10 @@ for line in open(snakemake.input.rules).read().splitlines():
 
         # Wildcard for accepting all columns
         if dict_def != "*":
-
             for i in dict_def.split("$"):
-
                 term = i.split(":")[0].strip()
 
                 if term:
-
                     term_val = i.split(":")[1].strip()
 
                     # If it is instructions on how to sample from columns create the conditions
@@ -131,17 +121,17 @@ for line in open(snakemake.input.rules).read().splitlines():
                         sample_from = [x.strip() for x in term_val.split(",")]
 
                     else:
-
                         # If the value is a negation add it to the negation dictionary
                         if term_val.split(" ")[0].strip().lower() == "not":
-
                             add_val_to_dict(
                                 term, "".join(term_val.split(" ")[1:]), not_col_val_dict
                             )
 
                         # If the value is required to be there add it to the required dictionary
                         elif term_val.split(" ")[0].strip().lower() == "required":
-                            add_val_to_dict(term, term_val.split(" ")[1], req_col_val_dict)
+                            add_val_to_dict(
+                                term, term_val.split(" ")[1], req_col_val_dict
+                            )
 
                         # Else add the term value we want
                         else:
@@ -154,7 +144,6 @@ for line in open(snakemake.input.rules).read().splitlines():
             name = get_col_val_name(col_val_dict, not_col_val_dict)
 
         if name == snakemake.wildcards.subset:
-
             df = pd.read_csv(snakemake.input.csv)
 
             df = df.fillna("None")
@@ -194,7 +183,6 @@ for line in open(snakemake.input.rules).read().splitlines():
                 )
 
                 if req_qry:
-
                     req_df = df.query(req_qry)
 
                     frames = [sub_df, req_df]

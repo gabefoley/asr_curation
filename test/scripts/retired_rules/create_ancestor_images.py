@@ -23,7 +23,6 @@ seq_pos = (0, 3)
 # tree, ts = ancestral_trace(tree, seqs_to_trace_to, seq_pos)
 
 if snakemake.wildcards.anc_col in anc_df.columns:
-
     highlight_nodes = get_col_vals(
         anc_df, snakemake.wildcards.anc_col, snakemake.wildcards.anc_val
     )

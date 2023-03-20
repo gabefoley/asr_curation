@@ -43,7 +43,6 @@ def get_gtdb_dict(assembly_dict):
         print(entry_list)
 
         for entry in entry_list:
-
             print(name)
             print(entry)
 
@@ -63,11 +62,9 @@ def get_gtdb_dict(assembly_dict):
 
 
 def check_for_gtdb_taxa_discrepency(gtdb_dict, taxa_rank="gtdb_phylum"):
-
     gtdb_taxa_discrepency_dict = {}
 
     for prot_id, gtdb_genomes in gtdb_dict.items():
-
         print(gtdb_genomes)
 
         gtdb_genomes = [x for x in gtdb_genomes if x != "Not found"]
@@ -78,7 +75,6 @@ def check_for_gtdb_taxa_discrepency(gtdb_dict, taxa_rank="gtdb_phylum"):
 
         gtdb_genomes_set = set(gtdb_genomes_list)
         if len(gtdb_genomes_set) != 1:
-
             print("Multiple species detected")
             print(gtdb_genomes_set)
             gtdb_taxa_discrepency_dict[prot_id] = gtdb_genomes_list
@@ -92,11 +88,9 @@ def check_for_gtdb_taxa_discrepency(gtdb_dict, taxa_rank="gtdb_phylum"):
 def check_consistency_of_uniprot_gtdb_taxa(
     df, gtdb_dict, df_rank="Taxonomic_lineage_PHYLUM", gtdb_rank="gtdb_phylum"
 ):
-
     uniprot_gtdb_consistency_dict = {}
 
     for prot_id, gtdb_genomes in gtdb_dict.items():
-
         gtdb_genomes = [x for x in gtdb_genomes if x != "Not found"]
 
         print(gtdb_genomes)
@@ -113,7 +107,6 @@ def check_consistency_of_uniprot_gtdb_taxa(
         print(prot_id)
 
         if len(gtdb_genomes) > 1:
-
             print(gtdb_genomes[0])
 
             print(gtdb_genomes[0][gtdb_rank])
@@ -142,7 +135,6 @@ def check_consistency_of_uniprot_gtdb_taxa(
 
 
 def get_highest_checkM_completeness(gtdb_dict):
-
     highest_checkM_dict = {}
 
     for prot_id, gtdb_genomes in gtdb_dict.items():
@@ -151,7 +143,6 @@ def get_highest_checkM_completeness(gtdb_dict):
         gtdb_genomes = [x for x in gtdb_genomes if x != "Not found"]
 
         if len(gtdb_genomes) > 1:
-
             highest_checkM_completeness = max(
                 [gtdb_genome["checkm_completeness"] for gtdb_genome in gtdb_genomes]
             )
@@ -164,7 +155,6 @@ def get_highest_checkM_completeness(gtdb_dict):
 
 
 def add_to_df_from_dict(df, dict_to_add, col_name, add_name="Entry"):
-
     if col_name not in df.columns:
         df[col_name] = np.nan
 
@@ -179,7 +169,6 @@ def add_to_df_from_dict(df, dict_to_add, col_name, add_name="Entry"):
 
 
 for chunked_dict in chunks(assembly_dict):
-
     # assembly_dict = {'A0A2V7DB71_9BACT': ['GCA_003220fff655.1'], 'A0A1Q1G3S7_9STAP': ['GCF_001989575.1']}
 
     gtdb_dict = get_gtdb_dict(chunked_dict)

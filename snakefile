@@ -262,4 +262,3 @@ rule concat_ancestor_alignment:
         WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln"
     shell:
         "cat {input.extants} {input.ancestors} > {output}"
-

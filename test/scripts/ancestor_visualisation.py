@@ -11,10 +11,14 @@ from ete3 import (
     AttrFace,
 )
 
+flak
+
 
 def load_tree(tree_path, aln_path=None):
-    """
-    Load a tree, associate an alignment with it if given
+    """Load a tree, associate an alignment with it if given
+    :param str tree_path: filepath to the tree file
+    :param str
+
     """
     tree = PhyloTree(tree_path, alignment=aln_path, format=1, alg_format="fasta")
     return tree
@@ -34,7 +38,6 @@ def processable_node(node, highlight_nodes):
 
 
 def highlight_tree_nodes(tree, highlight_nodes=["N0"], seq_pos=False):
-
     ts = TreeStyle()
     # disable default PhyloTree Layout
     ts.layout_fn = lambda x: True

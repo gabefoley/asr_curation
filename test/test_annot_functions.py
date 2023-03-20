@@ -14,22 +14,22 @@ def test_get_amino_acids_multiple():
 
     pos = an.get_amino_acids('PPGP', 0, 2)
     assert pos == 'PG'
-#
-# def test_get_binding_pos():
-#     ft_binding = 'BINDING 123..130; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 156..161; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 195..199; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 309; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 309; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 313; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 486; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 490; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 512; /ligand="substrate"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198'
-#
-#
-# def test_add_lab_annotations_correct():
-#     # Check that the column gets added okay
-#
-#     print ("in here")
-#     print(os.getcwd())
-#
-#     annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
-#     filepath = "files/test_add_lab_correct_lab_df.csv"
-#     annot_df = an.add_lab_annotations(annot_df, filepath)
-#
-#     assert (annot_df.loc[annot_df['accession'] == 'P9XVRR', 'lab_km'].values[0] == 0.4)
+
+def test_get_binding_pos():
+    ft_binding = 'BINDING 123..130; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 156..161; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 195..199; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000250"; BINDING 309; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 309; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 313; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 486; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 490; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198"; BINDING 512; /ligand="substrate"; /evidence="ECO:0000255|PROSITE-ProRule:PRU01198'
+
+
+def test_add_lab_annotations_correct():
+    # Check that the column gets added okay
+
+    print ("in here")
+    print(os.getcwd())
+
+    annot_df = pd.read_csv("files/test_add_lab_annot_df.csv")
+    filepath = "files/test_add_lab_correct_lab_df.csv"
+    annot_df = an.add_lab_annotations(annot_df, filepath)
+
+    assert (annot_df.loc[annot_df['accession'] == 'P9XVRR', 'lab_km'].values[0] == 0.4)
 #
 # def test_add_lab_annotations_duplicate_column_between_annot_and_lab():
 #     # Should throw an error and not proceed

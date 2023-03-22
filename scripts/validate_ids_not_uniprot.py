@@ -346,7 +346,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # Set default from and to id lookups
     if not from_id_lookup:
-        from_id_lookup = ["UNIPROT-FROM"]  # ,'NCBI','EMBL']
+        from_id_lookup = ["UNIPROT-FROM", "NCBI", "EMBL"]  # ,'NCBI','EMBL']
 
     if not to_id_lookup:
         to_id_lookup = ["NCBI", "EMBL", "UNIPROT"]

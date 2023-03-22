@@ -63,7 +63,7 @@ rule add_annotations_from_ancestors:
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
     script:
-        CUSTOM_ANCESTOR_DIR + "/add_annotations_from_ancestors.py"
+        CUSTOM_ANCESTOR_DIR + "/add_annotations_from_ancestors_for_use_in_example_workflow.py"
 ```
 
 ## **Snakemake pipelines only rerun what is needed**

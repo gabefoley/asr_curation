@@ -18,10 +18,27 @@ The columns in these alignment files are used to subset the data by defining a s
 
 The annotations can be further used to visualise your data on phylogenetic trees and within sequence alignments.
 
+<figure markdown>
+  ![Image title](images/asr_curation_overview.png){ width="700" }
+  <figcaption>Figure 1: Overview of ASR curation.</figcaption>
+
+</figure>
+
+## **Subsets**
+A single dataset can have many subsets. 
+
+From Figure 1, there is one defined dataset (step 1) and so a master annotation file is built once (step 2). There are three defined subsets (step 3) and so alignment, tree inference, and ancestor prediction occurs three times - once per subset (step 4) resulting in three trees (step 5).
+This Figure defines three subsets (step 3) and so three trees are produced (step 5).
+
+Annotations can also be added after the alignment and ancestor stage, but currently these are just used for visualisation purposes, not for curation.
+
 The focus on subset rule files means that you can -
 
 - create many different subsets at once and 
 - have a list of understandable and reproducible rules for curating your data 
+
+
+
 
 ## **Documentation overview**
 
@@ -37,3 +54,23 @@ The focus on subset rule files means that you can -
      - *Customising workflows -* How to customise the workflow by adding custom annotations to be added to each dataset
 
 ## **Cool features**
+
+The focus on annotations allows us to directly visualise these annotations -
+
+<figure markdown>
+  ![Image title](images/domains.png){ width="400" }
+  <figcaption>Figure 2: Domains automatically retrieved from UniProt and overlaid on an alignment.</figcaption>
+
+</figure>
+
+<figure markdown>
+  ![Image title](images/figtree.png){ width="400" }
+  <figcaption>Figure 3: All annotations can be added to custom annotation files viewable in FigTree</figcaption>
+
+</figure>
+
+<figure markdown>
+  ![Image title](images/subset.png){ width="400" }
+  <figcaption>Figure 4: Patterns of specific annotations can be viewed across subsets.</figcaption>
+
+</figure>

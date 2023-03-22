@@ -346,7 +346,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # Set default from and to id lookups
     if not from_id_lookup:
-        from_id_lookup = ["UNIPROT-FROM"]  # ,'NCBI','EMBL']
+        from_id_lookup = ["UNIPROT-FROM", "NCBI", "EMBL"]
 
     if not to_id_lookup:
         to_id_lookup = ["NCBI", "EMBL", "UNIPROT"]
@@ -354,6 +354,8 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
+
+    print (from_id_lookup)
 
     print("got here")
 
@@ -404,6 +406,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 # Main function
 def main():
     print("Starting Validating IDs")
+    print ('in here')
     all_ids_lookup_cmd()
 
 

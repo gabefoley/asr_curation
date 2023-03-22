@@ -10,6 +10,11 @@ aln_dict = {seq.name: str(seq.seq) for seq in aln}
 
 align_df = sc.get_sequence_df(snakemake.input.aln, alignment=True, ancestor=True)
 
+
+# IF CUSTOMISING THIS FILE PLACE CUSTOM CODE HERE
+
+
+
 merged_df = pd.merge(
     df,
     align_df,

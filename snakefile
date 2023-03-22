@@ -8,10 +8,10 @@ os.environ["SNAKEMAKE"] = 'True'
 
 # Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
 if "PYTHONPATH" in os.environ:
-    os.environ["PYTHONPATH"] += "scripts"
+    os.environ["PYTHONPATH"] += f'{os.getcwd()}/scripts'
 
 else:
-    os.environ["PYTHONPATH"] = "scripts"
+    os.environ["PYTHONPATH"] = f'{os.getcwd()}/scripts'
 
 # Collect config info from config file
 WORKDIR = config['workdir'] + "/datasets"
@@ -135,6 +135,7 @@ rule validate_ids:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
    script:
        "scripts/validate_ids.py"
+#        "scripts/validate_ids_not_uniprot.py"
 
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:
@@ -235,7 +236,8 @@ rule add_annotations_from_alignment:
 rule add_annotations_from_ancestors:
     input:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv",
-        aln = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
+        aln = WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln",
+        tree = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.nwk",
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
     script:

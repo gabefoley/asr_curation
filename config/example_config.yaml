@@ -10,8 +10,10 @@ subdir: "workflows/example_workflow/subset_rules"
 # Which columns should we plot in the summary documents?
 annotation_cols: ['lineage_superkingdom', 'xref_supfam', 'xref_panther', 'KARI_Class', 'ec']
 
-# custom script
-customdir: "scripts"
+# Directories for custom annotations
+custom_dir : "scripts/example_custom_annotations"
+custom_align_dir: "scripts/example_custom_annotations"
+
 
 # Block a data set from being run (you can still keep the FASTA and .subset file in the fastadir and subdir)
 blocked_datasets : []

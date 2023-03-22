@@ -11,7 +11,6 @@ from ast import literal_eval
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
-
 def annotate_motif(df, motif):
     df[f"MOTIF_{motif}"] = df["sequence"].dropna().str.contains(motif)
 
@@ -321,10 +320,10 @@ def create_domain_bounds(domains):
             pos = domain.split("DOMAIN ")[1].split("..")
             #             print (pos)
 
-            print(domain)
-            print(pos)
-            print(pos[0])
-            print(pos[1])
+            # print(domain)
+            # print(pos)
+            # print(pos[0])
+            # print(pos[1])
             interval = pd.Interval(
                 int(pos[0].replace("<", "").replace(">", "")),
                 int(pos[1].replace("<", "").replace(">", "")),
@@ -385,8 +384,6 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
         colour_dict = {col: label for col, label in zip(boundary_labels, palette)}
 
-        print(colour_dict)
-
     # Creating an HTML file
     with open(outpath, "w") as align_html:
         # Get the length needed
@@ -401,17 +398,12 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
         )
 
         for acc, bounds in boundary_dict.items():
-            print(acc)
-            print("and then")
-            print(bounds)
             if bounds:
                 orig_seq = df.loc[df["accession"] == acc]["Sequence_aligned"].values[0]
                 formatted_sequence = df.loc[df["accession"] == acc][
                     "Sequence_aligned"
                 ].values[0]
                 len_offset = 0
-
-                print(orig_seq)
 
                 bounds.sort(key=lambda x: x[1])
                 for bound in bounds:
@@ -468,13 +460,10 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
                     "Sequence_aligned"
                 ].values[0]
 
-            print(acc)
-            print(formatted_sequence)
             align_html.write(f"<br>>{acc}<br>")
             align_html.write(f'<div class="item">{formatted_sequence}</div>')
 
         align_html.write("</body></html>")
-        print("done")
 
 
 ##### KARI SPECIFIC ####
@@ -495,7 +484,7 @@ def classify_KARI(features):
 
 
 def get_binding_pos(accession, binding_sites, ligand=None):
-    print(accession)
+    # print(accession)
     print(binding_sites)
     if pd.notnull(binding_sites):
         bp = []
@@ -518,7 +507,7 @@ def get_binding_pos(accession, binding_sites, ligand=None):
 
 
 def get_amino_acids(seq, *pos):
-    print(pos)
+    # print(pos)
     return "".join([seq[int(bp)] for bp in pos])
 
 
@@ -543,3 +532,5 @@ def classify_loop_length(bind_pos):
         return bind_pos[-1] - bind_pos[0] + offset
     else:
         return "No_binding_positions"
+
+

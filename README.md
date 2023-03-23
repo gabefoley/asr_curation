@@ -10,6 +10,7 @@
 Snakemake pipeline for annotating sequences to be used in ancestral sequence reconstruction.
 
 
+
 # Documentation
 
 [Read the full documentation here](http://gabefoley.github.io/asr_curation)

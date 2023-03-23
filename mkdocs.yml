@@ -8,7 +8,7 @@ nav:
       - 'Explanation of output' : 'output.md'
   - 'Detailed explanation':
       - 'Basic snakemake': 'basic_snakemake.md'
-      - 'Explanation of steps': 'detailed_explanation.md'
+      - 'Snakemake diagram': 'detailed_explanation.md'
   - Customisation:
         - 'Defining files': 'defining_files.md'
         - 'Customising workflow': 'customising_workflow.md'

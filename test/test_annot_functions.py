@@ -149,3 +149,26 @@ def test_create_annotated_alignment():
     assert (os.path.isfile(outpath))
 
 
+def test_unaligned_positions_align():
+    # If we have a set of positions derived from an annotation, check that for a given alignment they actually align
+    # This tests when they do align
+    align_df = pd.read_csv("test/files/annot_functions/test_positions_in_alignment.csv")
+
+    correct_align_ids = ['P05793', 'P9WKJ7']
+
+    incorrect_align_ids = []
+
+    correctly_aligning_df = align_df[align_df['accession'].isin(correct_align_ids)]
+
+    print (correctly_aligning_df)
+
+    # print (align_df)
+
+
+    target_pos = align_df.query("accession=='P05793'")['Binding_positions_extracted']
+
+    print(target_pos)
+
+    align_df['aligned_pos'] = align_df.apply(lambda x: an.check_if_positions_align_with_target(x.ft_domain), axis=1)
+
+

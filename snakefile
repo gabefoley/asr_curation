@@ -36,6 +36,13 @@ try:
 except:
     CUSTOM_ANCESTOR_DIR = "scripts"
 
+
+try:
+    ALIGNMENT_TOOL = config['alignment_tool']
+except:
+    ALIGNMENT_TOOL = "mafft"
+
+
 # Collect config info from parameters passed from command line
 if 'BRENDA_RUN' in config.keys():
     BRENDA_RUN = config['BRENDA_RUN']
@@ -192,13 +199,23 @@ rule create_subsets:
     script:
         "scripts/create_subsets.py"
 
-rule align_seqs:
-    input:
-        WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta"
-    output:
-        WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
-    shell:
-        "mafft --reorder {input} > {output}"
+if ALIGNMENT_TOOL == 'mafft':
+    rule align_seqs_dash:
+        input:
+            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta"
+        output:
+            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
+        shell:
+            "mafft {input} > {output}"
+
+elif ALIGNMENT_TOOL == 'mafft-dash':
+    rule align_seqs:
+        input:
+            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta"
+        output:
+            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
+        shell:
+            "mafft --dash {input} > {output}"
 
 rule infer_tree:
     input:

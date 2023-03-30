@@ -12,8 +12,10 @@ from ast import literal_eval
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
 def annotate_motif(df, motif):
-    df[f"MOTIF_{motif}"] = df["sequence"].dropna().str.contains(motif)
+    df[f"MOTIF_{motif.replace('.', 'x')}"] = df["sequence"].dropna().str.contains(motif)
 
+    print (motif)
+    print (f"MOTIF_{motif.replace('.', 'x')}")
     return df
 
 
@@ -59,6 +61,8 @@ def get_tracked_content(align_df, tag, *aligned_pos):
 
 
 def track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
+
+    print (*unaligned_pos)
     # Map the positions to an index in the alignment
     aligned_pos = get_aligned_positions(
         align_df[align_df["accession"] == seq_id], aligned_seq, *unaligned_pos
@@ -119,16 +123,16 @@ def get_final_pos(sequence, pos, curr_idx, next_idx):
 
 
 def get_aligned_positions(entry, sequence, *positions):
-    # print (f'\nSeq name is {entry}')
+    print (f'\nSeq name is {entry}')
     sequence = "".join(sequence)
-    # print(sequence)
-    # print(len(sequence))
+    print(sequence)
+    print(len(sequence))
     aligned_positions = []
 
     # print (f'\nSequence is {sequence}')
 
     for pos in positions:
-        # print(pos)
+        print(pos)
         # Get the current index
         curr_idx = pos
 
@@ -484,8 +488,6 @@ def classify_KARI(features):
 
 
 def get_binding_pos(accession, binding_sites, ligand=None):
-    # print(accession)
-    print(binding_sites)
     if pd.notnull(binding_sites):
         bp = []
 
@@ -534,3 +536,6 @@ def classify_loop_length(bind_pos):
         return "No_binding_positions"
 
 
+def check_if_positions_align_with_target(target_pos, seq_pos):
+    if target_pos == seq_pos:
+        return True

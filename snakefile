@@ -206,7 +206,7 @@ if ALIGNMENT_TOOL == 'mafft':
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
         shell:
-            "mafft {input} > {output}"
+            "mafft --reorder {input} > {output}"
 
 elif ALIGNMENT_TOOL == 'mafft-dash':
     rule align_seqs:
@@ -215,7 +215,7 @@ elif ALIGNMENT_TOOL == 'mafft-dash':
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
         shell:
-            "mafft --dash {input} > {output}"
+            "mafft --dash --reorder {input} > {output}"
 
 rule infer_tree:
     input:

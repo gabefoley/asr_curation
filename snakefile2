@@ -8,7 +8,7 @@ os.environ["SNAKEMAKE"] = 'True'
 
 # Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
 if "PYTHONPATH" in os.environ:
-    os.environ["PYTHONPATH"] += f':{os.getcwd()}/scripts'
+    os.environ["PYTHONPATH"] += f'{os.getcwd()}/scripts'
 
 else:
     os.environ["PYTHONPATH"] = f'{os.getcwd()}/scripts'

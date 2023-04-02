@@ -28,7 +28,7 @@
 #        WORKDIR + "/{dataset}/dataset_summary/{dataset}_summary_cleaned.ipynb"
 #
 #    script:
-#        "scripts/clean_summary_document.py"
+#        "scripts2/clean_summary_document.py"
 #
 # rule create_subset_summary:
 #     input:
@@ -55,7 +55,7 @@
 #        summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/{subset}_subset_summary_cleaned.ipynb",
 #
 #    script:
-#        "scripts/clean_summary_document.py"
+#        "scripts2/clean_summary_document.py"
 #
 #         #expand("indelible_summaries/{{taxon}}/{rep}.csv", rep = [x for x in range(1, config['REPS'] + 1)])
 # rule create_subset_document:
@@ -68,7 +68,7 @@
 #        toc = WORKDIR + "/{dataset}/dataset_summary/{subset}/_toc.yml"
 #
 #    script:
-#        "scripts/create_summary_document.py"
+#        "scripts2/create_summary_document.py"
 #
 # rule compile_summary_document:
 #    input:
@@ -92,7 +92,7 @@
 #         WORKDIR + "/{dataset}/csv/genome/{dataset}_genome.csv"
 #         #WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
 #     script:
-#         "scripts/get_genomes.py"
+#         "scripts2/get_genomes.py"
 
 # # Map the Genomes to GTDB
 # rule get_gtdb_annotations:
@@ -101,7 +101,7 @@
 #    output:
 #        WORKDIR + "/{dataset}/csv/gtdb/{dataset}_gtdb.csv"
 #    script:
-#        "scripts/get_gtdb_annotations.py"
+#        "scripts2/get_gtdb_annotations.py"
 
 # #Use GTDB to cross-check CheckM scores and GTDB taxonomy
 # rule process_gtdb_annotations:
@@ -110,7 +110,7 @@
 #    output:
 #        WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
 #    script:
-#        "scripts/process_gtdb_annotations.py"
+#        "scripts2/process_gtdb_annotations.py"
 
 
 # rule create_ancestor_image:
@@ -121,7 +121,7 @@
 #     output:
 #         img = "{WORKDIR}/{dataset}/subsets/{subset}/ancestor_images/{anc_col}/{anc_val}.png"
 #     script:
-#         "scripts/create_ancestor_images.py"
+#         "scripts2/create_ancestor_images.py"
 
 
 # rule create_tree_image:
@@ -137,4 +137,4 @@
 #     #         dataset=DATASETS,
 #     #         column=config['annotation_cols'])
 #     shell:
-#         "python scripts/tree_annot.py -t {input.tree} -a {input.aln} -c {input.csv} --col '{wildcards.column}' --match_from 'Entry' -r 4425 -o {output}"
+#         "python scripts2/tree_annot.py -t {input.tree} -a {input.aln} -c {input.csv} --col '{wildcards.column}' --match_from 'Entry' -r 4425 -o {output}"

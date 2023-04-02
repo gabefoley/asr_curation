@@ -87,7 +87,7 @@ rule validate_ids:
    output:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
    script:
-       "scripts/validate_ids.py"
+       "scripts2/validate_ids.py"
 
 ```
 

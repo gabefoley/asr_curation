@@ -11,8 +11,8 @@ subdir: "workflows/example_workflow/subset_rules"
 annotation_cols: ['lineage_superkingdom', 'xref_supfam', 'xref_panther', 'KARI_Class', 'ec']
 
 # Directories for custom annotations
-custom_dir : "scripts/example_custom_annotations"
-custom_align_dir: "scripts/example_custom_annotations"
+custom_dir : "scripts2/example_custom_annotations"
+custom_align_dir: "scripts2/example_custom_annotations"
 
 
 # Block a data set from being run (you can still keep the FASTA and .subset file in the fastadir and subdir)

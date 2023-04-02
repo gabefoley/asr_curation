@@ -5,7 +5,7 @@ import scripts.seqcurate as sc
 from Bio import AlignIO
 
 
-print ("Adding custom annotations from ancestors")
+print("Adding custom annotations from ancestors")
 
 
 align_df = pd.read_csv(snakemake.input.csv)

@@ -49,6 +49,8 @@ if 'BRENDA_RUN' in config.keys():
 else:
     BRENDA_RUN = False
 
+cluster_threshes = ["1", "0.7", "0.8", "0.9"]
+
 
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
@@ -122,8 +124,9 @@ print (FASTADIR)
 
 rule all:
         input:
-            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt' for dataset in DATASETS for subset in subsets[dataset]],
-            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv' for dataset in DATASETS for subset in subsets[dataset]]
+            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
 
 # Create the initial annotation file from the FASTA file or list of IDs
 rule create_annotations:
@@ -141,8 +144,8 @@ rule validate_ids:
    output:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
    script:
-       "scripts/validate_ids.py"
-#        "scripts/validate_ids_not_uniprot.py"
+#        "scripts/validate_ids.py"
+       "scripts/validate_ids_not_uniprot.py"
 
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:
@@ -199,85 +202,99 @@ rule create_subsets:
     script:
         "scripts/create_subsets.py"
 
-if ALIGNMENT_TOOL == 'mafft':
-    rule align_seqs_dash:
+rule cluster_sequences:
         input:
             WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta"
+
         output:
-            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
+
+        shell:
+            "cd-hit -i {input} -o {output} -c {wildcards.cluster_thresh}"
+
+
+
+
+if ALIGNMENT_TOOL == 'mafft':
+    rule align_seqs:
+        input:
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
+        output:
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
             "mafft --reorder {input} > {output}"
 
 elif ALIGNMENT_TOOL == 'mafft-dash':
-    rule align_seqs:
+    rule align_seqs_dash:
         input:
-            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
         output:
-            WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
             "mafft --dash --reorder {input} > {output}"
 
 rule infer_tree:
     input:
-        WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
 
     output:
-        WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.nwk"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk"
 
     shell:
         "FastTree {input} > {output}"
 
 rule run_grasp:
     input:
-        aln= WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
-        tree= WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.nwk"
+        aln=  WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
+        tree= WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk"
+
 
     output:
-        dir= directory(WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/"),
-        aln= WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
-        tree = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.nwk"
+        dir= directory(WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/"),
+        aln= WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.fa",
+        tree = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.nwk"
 
     shell:
         "grasp -a {input.aln} -n {input.tree} -s LG -o {output.dir} -i BEP -j --save-as FASTA TREE -pre GRASP -t 2"
 
 rule add_annotations_from_alignment:
     input:
-        aln= WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
+        aln = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
     output:
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
 
     script:
         CUSTOM_ALIGN_DIR + "/add_annotations_from_alignment.py"
 
 rule add_annotations_from_ancestors:
     input:
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv",
-        aln = WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln",
-        tree = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.nwk",
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv",
+        aln= WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.fa",
+        tree = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.nwk"
     output:
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_ancestors.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
     script:
         CUSTOM_ANCESTOR_DIR + "/add_annotations_from_ancestors.py"
 
 
 rule create_annotation_file:
     input:
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_alignment.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
 
     params:
         annotation_cols = config['annotation_cols']
     output:
-        tsv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}_annotations.txt"
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_annotations.txt",
     script:
         "scripts/create_annotation_file.py"
 
 rule concat_ancestor_alignment:
     input:
-        extants = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.aln",
-        ancestors = WORKDIR + "/{dataset}/subsets/{subset}/grasp_results/GRASP_ancestors.fa",
+        extants =  WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
+        ancestors = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.fa",
 
     output:
-        WORKDIR + "/{dataset}/subsets/{subset}/concatenated_seqs/{dataset}_{subset}_ancestors.aln"
+        WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln"
     shell:
         "cat {input.extants} {input.ancestors} > {output}"

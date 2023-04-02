@@ -242,9 +242,7 @@ def merge_results_to_main_data(main_df, add_df, from_db, to_db):
     """merge the result processed output with main master data"""
 
     # left join on all extracted ids to check if they match on the returned result
-    main_df = main_df.merge(
-        add_df, left_on="Extracted_ID_1", right_on="from", how="left"
-    )
+    main_df = main_df.merge(add_df, left_on="extracted_id", right_on="from", how="left")
     main_df[to_db] = main_df[to_db].str.cat(main_df["grouped_to"], sep=" ", na_rep="")
 
     # to be done only if it is not uniprot id
@@ -312,19 +310,32 @@ def create_output_file(data_df, to_id_lookup, output_file):
 
     # drop duplicates by sequence
     cols_output_file = ["sequence", "accession_all"] + [db for db in to_id_lookup]
-    output_df = data_df[cols_output_file].drop_duplicates().reset_index(drop=True)
+    data_df = data_df.drop_duplicates().reset_index(drop=True)
 
     # remove duplicates in id each column themselves
     for db in to_id_lookup:
-        output_df[db] = output_df[db].apply(lambda x: list(set(x.strip().split(" "))))
+        data_df[db] = data_df[db].apply(lambda x: list(set(x.strip().split(" "))))
 
     # remove duplicates in the entry column
-    output_df["accession_all"] = output_df["accession_all"].apply(
+    data_df["accession_all"] = data_df["accession_all"].apply(
         lambda x: list(set(x.strip().split(" ")))
     )
 
+    # print (output_df)
+    print(data_df)
+    #
+    # print ('gonna write')
+    #
+    # print (output_df.columns)
+    print(data_df.columns)
+    #
+    # output_df = pd.merge(
+    #     data_df,
+    #     output_df
+    # )
+
     # save as csv and return
-    output_df.to_csv(output_file, index=False)
+    data_df.to_csv(output_file, index=False)
 
 
 @click.command()
@@ -346,7 +357,11 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # Set default from and to id lookups
     if not from_id_lookup:
-        from_id_lookup = ["UNIPROT-FROM", "NCBI", "EMBL"]  # ,'NCBI','EMBL']
+        from_id_lookup = [
+            "UNIPROT-FROM",
+            "NCBI",
+            "EMBL",
+        ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
 
     if not to_id_lookup:
         to_id_lookup = ["NCBI", "EMBL", "UNIPROT"]
@@ -354,19 +369,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
-
-    print("got here")
-
-    print(df_data["accession"].str.split("|", expand=True))
-
-    # sepearate the ids if they are mulitple seperated by |
-    # df_data[['Extracted_ID_1','Extracted_ID_2','Extracted_ID_3']]= df_data['accession'].str.split('|', expand=True)
-    # df_data[['Extracted_ID_1']]= df_data['accession'].str.split('|', expand=True)
-    df_data[["Extracted_ID_1"]] = df_data["accession"].str.split("|", expand=True)
-
-    print(df_data)
-
-    ids = list(df_data["accession"])
+    ids = list(df_data["extracted_id"])
 
     print(ids)
 

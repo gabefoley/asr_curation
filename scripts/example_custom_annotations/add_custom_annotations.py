@@ -3,7 +3,7 @@
 import scripts.annot_functions as an
 import pandas as pd
 
-print ("Adding custom annotations")
+print("Adding custom annotations")
 
 annot_df = pd.read_csv(snakemake.input[0])
 

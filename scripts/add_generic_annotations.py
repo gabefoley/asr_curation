@@ -1,4 +1,4 @@
-""" generic python scripts to add common annotations before alignment of sequences """
+""" generic python scripts2 to add common annotations before alignment of sequences """
 
 import annot_functions as an
 import pandas as pd

@@ -4,6 +4,7 @@ import seqcurate as sc
 import warnings
 import logging
 from collections import defaultdict
+import regex as re
 
 logging.captureWarnings(True)
 import seaborn as sns
@@ -11,12 +12,16 @@ from ast import literal_eval
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
-def annotate_motif(df, motif):
-    df[f"MOTIF_{motif.replace('.', 'x')}"] = df["sequence"].dropna().str.contains(motif)
 
-    print (motif)
-    print (f"MOTIF_{motif.replace('.', 'x')}")
+def annotate_motif(df, motif):
+    # For a dataframe, check if the sequence column contains a certain motif
+    df[f"MOTIF_{motif.replace('.', 'x')}"] = df["sequence"].dropna().str.contains(motif)
     return df
+
+
+def get_motif_indexes(str, motif):
+    # Returns the start and end positions of a motif
+    return [[m.start(), m.end()] for m in re.finditer(rf"{motif}" "", str, overlapped=True)]
 
 
 def annotate_nonAA(df):
@@ -31,38 +36,41 @@ def annotate_nonAA(df):
 def annotate_AA(df):
     # Does the sequences have non amino acid characters in it
 
-    # print ('lets check')
-    # print (df['Sequence'])
     non_AA = "B|J|O|U|X|Z"
     df["AA_Character"] = ~(df["sequence"].dropna().str.contains(non_AA, na=None))
-
-    # booleanDictionary = {True: 'TRUE', False: 'FALSE'}
-    # df = df.replace(booleanDictionary)
-
-    # print (df['Non_AA_Character'])
 
     return df
 
 
-def track_aligned_positions(align_df, seq_id, tag, aligned_pos):
-    seq_index = align_df.index[align_df["accession"] == seq_id].tolist()[0]
-    align_df.at[seq_index, f"tracked_{tag}"] = ",".join(str(x) for x in aligned_pos)
-    align_df.at[seq_index, f"tracked_{tag}"] = aligned_pos
 
-    return align_df
+def get_pos(align_df, seq_id, col_name, pos_type="list"):
+    if not literal_eval(align_df.query(f"accession=='{seq_id}'")[col_name].tolist()[0]):
+        return
+
+    pos = literal_eval(align_df.query(f"accession=='{seq_id}'")[col_name].tolist()[0])[0]
+
+    if pos_type == "list":
+        pos = [x for x in pos]
+        pos[0] += 1
+
+    elif pos_type == "range":
+        pos = [x + 1 for x in range(pos[0], pos[1])]
+
+    else:
+        raise(NameError("Not a valid position type"))
+
+    return pos
 
 
-def get_tracked_content(align_df, tag, *aligned_pos):
-    align_df[tag] = align_df.apply(
-        lambda row: get_amino_acids(row["Sequence_aligned"], *aligned_pos),
-        axis=1,
-    )
-    return align_df
+# def add_tag_relative_to_seq(align_df, seq_id, tag, unaligned_pos, aln_dict):
+#         print(f"Add in {tag}")
+#         if seq_id in aln_dict:
+#             aligned_seq = aln_dict[seq_id]
+#             align_df = track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos)
+#         return align_df
 
 
-def track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
-
-    print (*unaligned_pos)
+def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
     # Map the positions to an index in the alignment
     aligned_pos = get_aligned_positions(
         align_df[align_df["accession"] == seq_id], aligned_seq, *unaligned_pos
@@ -73,6 +81,125 @@ def track_residues(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 
     align_df = get_tracked_content(align_df, tag, *aligned_pos)
 
+    return align_df
+
+
+# def track_residues(seq_id, aligned_)
+
+def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
+    """"""
+
+    print ('positions in here')
+    print (pos_set)
+    print (type(pos_set))
+    print (len(pos_set))
+
+
+    aligned_pos_set = []
+    content_set = []
+
+    for pos in pos_set:
+        print('pos')
+        print(pos)
+
+        aligned_pos = get_aligned_positions(seq_map_from, *pos)
+        content = get_content_at_pos(seq_map_to, *aligned_pos)
+
+        aligned_pos_set.append(aligned_pos)
+        content_set.append([content])
+    return pd.Series([aligned_pos_set, content_set])
+
+def get_aligned_positions(sequence, *positions):
+    """
+    Take position/s and return the equivalent positions/s in an alignment - accounting for gap characters added
+
+    Args:
+        sequence (str): The aligned sequence to map the position/s to
+        positions (int): The unaligned position/s to create a mapping from
+
+    Returns:
+        List of the equivalent positions in the aligned sequence
+    """
+
+    sequence = "".join(sequence)
+
+    print (sequence)
+
+    print (positions)
+
+    aligned_positions = []
+
+    for pos in positions:
+
+        print (pos)
+        # Get the current index
+        curr_idx = pos
+
+        # Get offset implied by first position
+        offset = sequence[0:curr_idx].count("-")
+
+        # Get next position based on the first position and the gap offset
+        next_idx = curr_idx + offset
+
+        # Search to find the final position
+
+        final_pos = get_final_pos(sequence, pos, curr_idx, next_idx)
+        aligned_positions.append(final_pos)
+
+    # Update the indexes
+    aligned_positions = [x - 1 for x in aligned_positions]
+
+    return aligned_positions
+
+
+def get_final_pos(sequence, pos, curr_idx, next_idx):
+    # Need to find the position that 1) isn't a gap and 2) takes into account all of the
+    # offset implied by previous gaps in the sequence
+
+    # If the content at this index is a gap, proceed to the next actual position
+    while curr_idx < len(sequence) and sequence[curr_idx - 1] == "-":
+        curr_idx += 1
+
+    # Get the offset implied by the number of gaps in the preceeding sequence
+
+    offset = sequence[0:curr_idx].count("-")
+
+    # Add the offset implied by the gaps in the previous positions
+    next_idx = pos + offset
+
+    # If the offset is the same as previous offset we are at our final position
+    if curr_idx == next_idx:
+        return curr_idx
+    else:
+        # Keep searching
+        return get_final_pos(sequence, pos, next_idx, next_idx)
+
+
+def get_content_at_pos(seq, *pos):
+    print (pos)
+
+    return "".join([seq[int(p)] for p in pos])
+
+
+# def get_content_from_position(align_df, tag, *pos):
+#     align_df[tag] = align_df.apply(
+#         lambda row: get_amino_acids(row["Sequence_aligned"], *aligned_pos),
+#         axis=1,
+#     )
+#     return align_df
+def track_aligned_positions(align_df, seq_id, tag, aligned_pos):
+    seq_index = align_df.index[align_df["accession"] == seq_id].tolist()[0]
+    # align_df.at[seq_index, f"tracked_{tag}"] = ",".join(str(x) for x in aligned_pos)
+    align_df.at[seq_index, f"tracked_{tag}"] = aligned_pos
+
+    return align_df
+
+
+def get_tracked_content(align_df, tag, *aligned_pos):
+    align_df[tag] = align_df.apply(
+        lambda row: get_amino_acids(row["Sequence_aligned"], *aligned_pos),
+        axis=1,
+    )
     return align_df
 
 
@@ -94,63 +221,33 @@ def annotate_sp_tr(df):
     return df
 
 
-def get_final_pos(sequence, pos, curr_idx, next_idx):
-    # Need to find the position that 1) isn't a gap and 2) takes into account all of the
-    # offset implied by previous gaps in the sequence
+# def get_aligned_positions(entry, sequence, *positions):
+#     # print(f"\nSeq name is {entry}")
+#     sequence = "".join(sequence)
+#
+#     aligned_positions = []
+#
+#     for pos in positions:
+#         # Get the current index
+#         curr_idx = pos
+#
+#         # Get offset implied by first position
+#         offset = sequence[0:curr_idx].count("-")
+#
+#         # Get next position based on the first position and the gap offset
+#         next_idx = curr_idx + offset
+#
+#         # Search to find the final position
+#
+#         final_pos = get_final_pos(sequence, pos, curr_idx, next_idx)
+#         aligned_positions.append(final_pos)
+#
+#     # Update the indexes
+#     aligned_positions = [x - 1 for x in aligned_positions]
+#
+#     return aligned_positions
 
-    # print (sequence)
-    # print (curr_idx)
 
-    # If the content at this index is a gap, proceed to the next actual position
-    while curr_idx < len(sequence) and sequence[curr_idx - 1] == "-":
-        curr_idx += 1
-
-    tammo = sequence[curr_idx]
-
-    # Get the offset implied by the number of gaps in the preceeding sequence
-
-    offset = sequence[0:curr_idx].count("-")
-
-    # Add the offset implied by the gaps in the previous positions
-    next_idx = pos + offset
-
-    # If the offset is the same as previous offset we are at our final position
-    if curr_idx == next_idx:
-        return curr_idx
-    else:
-        # Keep searching
-        return get_final_pos(sequence, pos, next_idx, next_idx)
-
-
-def get_aligned_positions(entry, sequence, *positions):
-    print (f'\nSeq name is {entry}')
-    sequence = "".join(sequence)
-    print(sequence)
-    print(len(sequence))
-    aligned_positions = []
-
-    # print (f'\nSequence is {sequence}')
-
-    for pos in positions:
-        print(pos)
-        # Get the current index
-        curr_idx = pos
-
-        # Get offset implied by first position
-        offset = sequence[0:curr_idx].count("-")
-
-        # Get next position based on the first position and the gap offset
-        next_idx = curr_idx + offset
-
-        # Search to find the final position
-
-        final_pos = get_final_pos(sequence, pos, curr_idx, next_idx)
-        aligned_positions.append(final_pos)
-
-    # Update the indexes
-    aligned_positions = [x - 1 for x in aligned_positions]
-
-    return aligned_positions
 
 
 def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
@@ -322,12 +419,7 @@ def create_domain_bounds(domains):
     for domain in domains.split(";"):
         if domain.strip().startswith("DOMAIN"):
             pos = domain.split("DOMAIN ")[1].split("..")
-            #             print (pos)
 
-            # print(domain)
-            # print(pos)
-            # print(pos[0])
-            # print(pos[1])
             interval = pd.Interval(
                 int(pos[0].replace("<", "").replace(">", "")),
                 int(pos[1].replace("<", "").replace(">", "")),
@@ -336,7 +428,6 @@ def create_domain_bounds(domains):
             domain_name = domain.split('/note="')[1][
                 0:-1
             ]  # Domain name, minus the final quotation
-        #         print (interval)
 
         if interval and domain_name:
             positions.append((domain_name, interval))
@@ -358,7 +449,6 @@ def create_ss_bounds(strand, helix, turn):
                     pos = feat.strip().split(";")[0].split("..")
                     interval = pd.Interval(int(pos[0]), int(pos[1]))
                     positions[name].append(interval)
-                    print(positions)
     return positions
 
 
@@ -374,7 +464,6 @@ def create_combined_ss_bounds(strand, helix, turn):
                     pos = feat.strip().split(";")[0].split("..")
                     interval = pd.Interval(int(pos[0]), int(pos[1]))
                     positions.append((name, interval))
-                    print(positions)
     return positions
 
 
@@ -474,7 +563,6 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
 
 def classify_KARI(features):
-    # print (features)
     if "Domain" in features:
         domain_num = features.split("Domain")[1].split(";")[0]
         if "2" in domain_num:
@@ -503,14 +591,19 @@ def get_binding_pos(accession, binding_sites, ligand=None):
             ):
                 bp.append(int(found_pos))
 
-        return bp
+
+        return [bp]
     else:
         return []
 
 
 def get_amino_acids(seq, *pos):
-    # print(pos)
-    return "".join([seq[int(bp)] for bp in pos])
+
+    print ('in get_amino_acids')
+    print (seq)
+    print (pos)
+
+    return ["".join([seq[int(bp)] for bp in pos])]
 
 
 def check_sequence_for_acidic(seq):
@@ -526,14 +619,20 @@ def check_binding_for_acidic(seq, bind_pos):
         return check_sequence_for_acidic(binding_aa)
 
 
-def classify_loop_length(bind_pos):
+def classify_loop_length(bind_pos_set):
     # Offset accounts for the fact that we need to get the total number of positions and also account for the first position in the loop which isn't a binding position
 
-    if bind_pos and bind_pos != "No_binding_positions":
-        offset = 2
-        return bind_pos[-1] - bind_pos[0] + offset
-    else:
-        return "No_binding_positions"
+    for bind_pos in bind_pos_set:
+
+        if bind_pos and bind_pos != "No_binding_positions":
+            offset = 2
+            print ('bind pos is')
+            print (bind_pos)
+            print (bind_pos[-1])
+
+            return bind_pos[-1] - bind_pos[0] + offset
+        else:
+            return "No_binding_positions"
 
 
 def check_if_positions_align_with_target(target_pos, seq_pos):

@@ -355,7 +355,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     # read data and get ids
     df_data = pd.read_csv(input_file)
 
-    print (from_id_lookup)
+    print(from_id_lookup)
 
     print("got here")
 
@@ -406,7 +406,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 # Main function
 def main():
     print("Starting Validating IDs")
-    print ('in here')
+    print("in here")
     all_ids_lookup_cmd()
 
 

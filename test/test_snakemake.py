@@ -7,7 +7,7 @@
 #     # Move the snakefile into the test directory
 #     snakefile_dest = "test/snakefile"
 #
-#     scripts_dest = "test/scripts"
+#     scripts_dest = "test/scripts2"
 #     snakemake_output = "test/files/test_workflow/example_workflow"
 #
 #     # Remove snakefile
@@ -20,10 +20,10 @@
 #     if os.path.exists(snakemake_output):
 #         shutil.rmtree(snakemake_output)
 #
-#     print ("Copy snakefile and scripts folder into test directory")
+#     print ("Copy snakefile and scripts2 folder into test directory")
 #
 #     shutil.copyfile("snakefile", snakefile_dest)
-#     shutil.copytree("scripts", scripts_dest)
+#     shutil.copytree("scripts2", scripts_dest)
 #
 #     os.system("snakemake --cores 1 --configfile test/files/config/test_config.yaml")
 #
@@ -45,7 +45,7 @@
 #     # Move the snakefile into the test directory
 #     snakefile_dest = "test/snakefile"
 #
-#     scripts_dest = "test/scripts"
+#     scripts_dest = "test/scripts2"
 #
 #     subset_output = "test/files/test_workflow/keep_annotations/datasets/test_ec_1_1_1_86/subsets"
 #     summary_output = "test/files/test_workflow/keep_annotations/datasets/test_ec_1_1_1_86/dataset_summary"
@@ -65,10 +65,10 @@
 #
 #
 #
-#     print("Copy snakefile and scripts folder into test directory")
+#     print("Copy snakefile and scripts2 folder into test directory")
 #
 #     shutil.copyfile("snakefile", snakefile_dest)
-#     shutil.copytree("scripts", scripts_dest)
+#     shutil.copytree("scripts2", scripts_dest)
 #
 #     os.system("snakemake --cores 1 --configfile test/files/config/test_config_keep_annotations.yaml")
 #

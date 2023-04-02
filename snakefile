@@ -49,7 +49,7 @@ if 'BRENDA_RUN' in config.keys():
 else:
     BRENDA_RUN = False
 
-cluster_threshes = ["1", "0.7", "0.8", "0.9"]
+cluster_threshes = ["0.6"]
 
 
 

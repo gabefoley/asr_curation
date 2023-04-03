@@ -1,4 +1,4 @@
-import scripts.seqcurate as sc
+import seqcurate as sc
 import pandas as pd
 
 print ('inside add key seqs')

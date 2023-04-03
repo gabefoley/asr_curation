@@ -31,6 +31,7 @@ session.mount("https://", HTTPAdapter(max_retries=retries))
 from_id_db_lookup = {
     "NCBI": "RefSeq_Protein",
     "EMBL": "EMBL-GenBank-DDBJ",
+    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
     "UNIPROT-FROM": "UniProtKB_AC-ID",
     "UNIPARC": "UniParc",
 }
@@ -39,6 +40,7 @@ from_id_db_lookup = {
 to_id_db_lookup = {
     "NCBI": "RefSeq_Protein",
     "EMBL": "EMBL-GenBank-DDBJ",
+    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
     "UNIPROT": "UniProtKB",
     "UNIPARC": "UniParc",
 }
@@ -49,6 +51,7 @@ db_response_format = {
     "NCBI": "short",
     "UNIPARC": "long",
     "EMBL": "short",
+    "EMBL-CDS" : "short"
 }
 
 # response key to be used in JSON format is the response format is long.
@@ -300,7 +303,7 @@ def create_output_file(data_df, to_id_lookup, output_file):
     """function is create a clean output file with sequence as the primary key"""
 
     # combine entry column,id columns by sequence
-    data_df["accession_all"] = data_df.groupby(["sequence"])["accession"].transform(
+    data_df["accession_all"] = data_df.groupby(["sequence"])["info"].transform(
         lambda x: " ".join(x)
     )
     for db in to_id_lookup:
@@ -361,10 +364,11 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
             "UNIPROT-FROM",
             "NCBI",
             "EMBL",
+            "EMBL-CDS"
         ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
 
     if not to_id_lookup:
-        to_id_lookup = ["NCBI", "EMBL", "UNIPROT"]
+        to_id_lookup = ["NCBI", "EMBL", "EMBL-CDS", "UNIPROT"]
     print(f"params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ")
 
     # read data and get ids

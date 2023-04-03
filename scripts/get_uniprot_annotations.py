@@ -241,7 +241,11 @@ def uniprot_annotation_lkp(
 
     # save in .csv file
     print("Creating .csv output file")
-    results_df.to_csv(output_file, index=False)
+
+    merged_df = validated_df.merge(results_df,left_on='sequence', right_on='sequence', how='left')
+
+
+    merged_df.to_csv(output_file, index=False)
     print("Completed Uniprot Annotations Job")
 
     if os.path.exists(intermediate_tsv_file):

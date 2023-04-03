@@ -49,9 +49,9 @@ if 'BRENDA_RUN' in config.keys():
 else:
     BRENDA_RUN = False
 
-cluster_threshes = ["0.6"]
+cluster_threshes = ["0.7"]
 
-
+KEY_SEQUENCES = config['key_sequences']
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 
@@ -212,13 +212,28 @@ rule cluster_sequences:
         shell:
             "cd-hit -i {input} -o {output} -c {wildcards.cluster_thresh}"
 
+rule add_key_sequences:
+    input:
+        fasta = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta",
+        key_sequences = KEY_SEQUENCES,
+        full_csv = WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv",
+        subset_csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
+
+
+    output:
+        fasta = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.fasta",
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
+
+    script:
+        "scripts/add_key_sequences.py"
+
 
 
 
 if ALIGNMENT_TOOL == 'mafft':
     rule align_seqs:
         input:
-            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.fasta"
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
@@ -227,7 +242,7 @@ if ALIGNMENT_TOOL == 'mafft':
 elif ALIGNMENT_TOOL == 'mafft-dash':
     rule align_seqs_dash:
         input:
-            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.fasta"
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
@@ -260,9 +275,10 @@ rule run_grasp:
 rule add_annotations_from_alignment:
     input:
         aln = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
+
 
     script:
         CUSTOM_ALIGN_DIR + "/add_annotations_from_alignment.py"

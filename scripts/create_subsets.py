@@ -30,15 +30,34 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
 
     print(f"Creating a subset with {qry}")
 
+    # qry = "gene_primary.str.contains('ilvC', na=False)"
+    # qry = "Length_2.str.contains('None')"
+
+
+    print (qry)
+
+
     sub_df = df.query(qry)
+
+    print ('got here')
+
+    print (sub_df)
+
+    sub_df = sub_df.fillna("None")
 
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
+
+        print (col)
         # If it is a list split it up
         for val in col_val.split(","):
+            print (val)
             sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
 
+
+
+    print ('now')
     if req_col_val_dict:
         req_qry = " or ".join(
             [
@@ -46,6 +65,8 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
                 for col, col_val in req_col_val_dict.items()
             ]
         )
+
+        print (sub_df)
 
         req_df = df.query(req_qry)
 
@@ -146,7 +167,7 @@ for line in open(snakemake.input.rules).read().splitlines():
         if name == snakemake.wildcards.subset:
             df = pd.read_csv(snakemake.input.csv)
 
-            df = df.fillna("None")
+            # df = df.fillna("None")
 
             # Subset the annotation file
             if dict_def == "*":

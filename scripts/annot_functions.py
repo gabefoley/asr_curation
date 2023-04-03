@@ -4,8 +4,8 @@ import seqcurate as sc
 import warnings
 import logging
 from collections import defaultdict
-import regex as re
-
+# import regex as re
+import re
 logging.captureWarnings(True)
 import seaborn as sns
 from ast import literal_eval
@@ -19,9 +19,13 @@ def annotate_motif(df, motif):
     return df
 
 
-def get_motif_indexes(str, motif):
+def get_motif_indexes(string, motif):
     # Returns the start and end positions of a motif
-    return [[m.start(), m.end()] for m in re.finditer(rf"{motif}" "", str, overlapped=True)]
+
+    if (type(string) == str):
+        return [[m.start(), m.end()] for m in re.finditer(rf"{motif}" "", string, overlapped=True)]
+    else:
+        return None
 
 
 def annotate_nonAA(df):
@@ -44,10 +48,10 @@ def annotate_AA(df):
 
 
 def get_pos(align_df, seq_id, col_name, pos_type="list"):
-    if not literal_eval(align_df.query(f"accession=='{seq_id}'")[col_name].tolist()[0]):
+    if not literal_eval(align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0]):
         return
 
-    pos = literal_eval(align_df.query(f"accession=='{seq_id}'")[col_name].tolist()[0])[0]
+    pos = literal_eval(align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0])[0]
 
     if pos_type == "list":
         pos = [x for x in pos]
@@ -73,7 +77,7 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
 def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
     # Map the positions to an index in the alignment
     aligned_pos = get_aligned_positions(
-        align_df[align_df["accession"] == seq_id], aligned_seq, *unaligned_pos
+        align_df[align_df["id"] == seq_id], aligned_seq, *unaligned_pos
     )
 
     # Add the aligned positions we want to track to the dataframe
@@ -188,7 +192,7 @@ def get_content_at_pos(seq, *pos):
 #     )
 #     return align_df
 def track_aligned_positions(align_df, seq_id, tag, aligned_pos):
-    seq_index = align_df.index[align_df["accession"] == seq_id].tolist()[0]
+    seq_index = align_df.index[align_df["id"] == seq_id].tolist()[0]
     # align_df.at[seq_index, f"tracked_{tag}"] = ",".join(str(x) for x in aligned_pos)
     align_df.at[seq_index, f"tracked_{tag}"] = aligned_pos
 
@@ -207,7 +211,7 @@ def add_tag_if_in_fasta(annot_df, filepath, tag):
     seqs = sc.get_entry_ids_from_fasta(filepath)
 
     annot_df[tag] = annot_df.apply(
-        lambda row: True if row["accession"] in seqs else False, axis=1
+        lambda row: True if row["id"] in seqs else False, axis=1
     )
 
     return annot_df
@@ -215,8 +219,8 @@ def add_tag_if_in_fasta(annot_df, filepath, tag):
 
 def annotate_sp_tr(df):
     # Is the sequence from SwissProt or TrEMBL
-    df.loc[df["accession"].str.startswith("sp"), "UniProt_DB"] = "SwissProt"
-    df.loc[df["accession"].str.startswith("tr"), "UniProt_DB"] = "TrEMBL"
+    df.loc[df["info"].str.startswith("sp"), "UniProt_DB"] = "SwissProt"
+    df.loc[df["info"].str.startswith("tr"), "UniProt_DB"] = "TrEMBL"
 
     return df
 
@@ -256,35 +260,35 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
     annot_df.columns = annot_df.columns.str.replace(" ", "")
     lab_df.columns = lab_df.columns.str.replace(" ", "")
 
-    if "accession" not in lab_df.columns:
-        raise ValueError("Lab annotations are missing accession field")
+    if "id" not in lab_df.columns:
+        raise ValueError("Lab annotations are missing id field")
 
     if "sequence" not in lab_df.columns:
         raise ValueError("Lab annotations are missing sequence field")
-    # Get the columns for accession / sequence that are different
+    # Get the columns for id / sequence that are different
     df_diff = pd.concat(
-        [annot_df[["accession", seq_col]], lab_df[["accession", "sequence"]]]
+        [annot_df[["id", seq_col]], lab_df[["id", "sequence"]]]
     ).drop_duplicates(keep=False)
 
-    # Get the accessions from df_diff, if an accession is in both then the sequence might be different - need to raise an error
+    # Get the ids from df_diff, if an id is in both then the sequence might be different - need to raise an error
 
     if not df_diff.empty:
-        for val in df_diff["accession"].values:
+        for val in df_diff["id"].values:
             if (
-                val in annot_df["accession"].values
-                and val in lab_df["accession"].values
+                val in annot_df["id"].values
+                and val in lab_df["id"].values
             ):
-                annot_seq = annot_df.loc[annot_df["accession"] == val, seq_col].values[
+                annot_seq = annot_df.loc[annot_df["id"] == val, seq_col].values[
                     0
                 ]
-                lab_seq = lab_df.loc[lab_df["accession"] == val, "sequence"].values[0]
+                lab_seq = lab_df.loc[lab_df["id"] == val, "sequence"].values[0]
                 if annot_seq != lab_seq:
                     raise ValueError(
                         "Lab annotations contain different sequence to existing annotations"
                     )
 
     for col in [x for x in lab_df.columns if not x.strip().startswith("lab")]:
-        if col not in ["accession", "sequence"] and col in annot_df.columns:
+        if col not in ["id", "sequence"] and col in annot_df.columns:
             raise ValueError("Duplicate column between lab and existing annotations")
 
     if len(lab_df.columns) != len(
@@ -294,12 +298,12 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
 
     # existing_lab_annotations =  [x for x in annot_df if x.strip().startswith("lab")]
 
-    # annot_df['accession'] = annot_df['accession'].astype(object)
-    merge_on = ["accession", "sequence"]
+    # annot_df['id'] = annot_df['id'].astype(object)
+    merge_on = ["id", "sequence"]
 
     # merged_df = pd.concat([annot_df, lab_df], axis=1)
 
-    # merged_df = annot_df.join(lab_df, on='accession', how='left', lsuffix='_dup', rsuffix='_dup1')
+    # merged_df = annot_df.join(lab_df, on='id', how='left', lsuffix='_dup', rsuffix='_dup1')
 
     merged_df = pd.merge(
         annot_df,
@@ -324,7 +328,7 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
     return merged_df
 
 
-def merge_lab_annotation_cells(accession, first_cell, second_cell):
+def merge_lab_annotation_cells(id, first_cell, second_cell):
     if pd.isnull(first_cell):
         return second_cell
 
@@ -339,7 +343,7 @@ def merge_lab_annotation_cells(accession, first_cell, second_cell):
             for pos, val in enumerate(first_list):
                 if pos > len(second_list):
                     warnings.warn(
-                        f"Lab annotations have missing values - {accession}",
+                        f"Lab annotations have missing values - {id}",
                         UserWarning,
                     )
 
@@ -348,13 +352,13 @@ def merge_lab_annotation_cells(accession, first_cell, second_cell):
                 else:
                     overwritten = True
                     warnings.warn(
-                        f"Lab annotations are overwriting values - {accession}",
+                        f"Lab annotations are overwriting values - {id}",
                         UserWarning,
                     )
 
             if not overwritten:
                 warnings.warn(
-                    f"Lab annotations are adding to values - {accession}", UserWarning
+                    f"Lab annotations are adding to values - {id}", UserWarning
                 )
 
     return second_cell
@@ -481,7 +485,8 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
     with open(outpath, "w") as align_html:
         # Get the length needed
         for acc, _bounds in boundary_dict.items():
-            aligned_seq = df.loc[df["accession"] == acc]["Sequence_aligned"].values[0]
+            print (acc)
+            aligned_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[0]
             alignment_length = str(len(aligned_seq) * 10)
 
         align_html.write(
@@ -492,8 +497,8 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
         for acc, bounds in boundary_dict.items():
             if bounds:
-                orig_seq = df.loc[df["accession"] == acc]["Sequence_aligned"].values[0]
-                formatted_sequence = df.loc[df["accession"] == acc][
+                orig_seq = df.loc[df["id"] == acc]["Sequence_aligned"].values[0]
+                formatted_sequence = df.loc[df["info"] == acc][
                     "Sequence_aligned"
                 ].values[0]
                 len_offset = 0
@@ -549,7 +554,7 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
             #             formatted_sequence = 'red'
             else:
-                formatted_sequence = df.loc[df["accession"] == acc][
+                formatted_sequence = df.loc[df["info"] == acc][
                     "Sequence_aligned"
                 ].values[0]
 
@@ -575,7 +580,7 @@ def classify_KARI(features):
         return "No_domain_info"
 
 
-def get_binding_pos(accession, binding_sites, ligand=None):
+def get_binding_pos(id, binding_sites, ligand=None):
     if pd.notnull(binding_sites):
         bp = []
 

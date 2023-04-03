@@ -50,7 +50,7 @@ def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
     for name, annots in brenda_dict.items():
         print(name)
         print(annots)
-        df.loc[df["accession"].str.contains(entry_id), name] = ";".join(
+        df.loc[df["info"].str.contains(entry_id), name] = ";".join(
             str(x) for x in annots
         )
 

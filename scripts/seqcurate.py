@@ -16,7 +16,7 @@ def get_sequence_df(
     duplicates = {}
 
     cols = [
-        "accession",
+        "info",
         "truncated_info",
         "extracted_id",
         "extracted_name",
@@ -25,6 +25,8 @@ def get_sequence_df(
     ]
 
     if alignment or ancestor:
+        print ('is alignment')
+        cols.append('original_alignment')
         cols.append("Sequence_aligned")
 
     # if ancestor:
@@ -77,6 +79,7 @@ def get_sequence_df(
                         "".join(str(aligned_seq.seq).replace("-", ""))
                         if len(aligned_seq.seq) > 0
                         else None,
+                        None,
                         fasta_path,
                         "".join(aligned_seq.seq),
                     ]
@@ -88,7 +91,7 @@ def get_sequence_df(
     df = pd.DataFrame(seq_list, columns=cols)
 
     if drop_duplicates:
-        df = df.drop_duplicates(subset="accession", keep="first")
+        df = df.drop_duplicates(subset="info", keep="first")
 
     # Drop the sequence column if there are no sequences (i.e. if we just added a list of identifiers)
     nan_value = float("NaN")
@@ -147,18 +150,23 @@ def get_subset(df, *cols_dict, include=True):
 
 
 def write_to_fasta(df, outpath, trim=False):
+
+    print ('writing')
+    print (outpath)
     if trim:
         seq_list = [
-            SeqRecord(Seq(r.sequence), id=r.accession, description="")
+            SeqRecord(Seq(r.sequence), id=r.info, description=r.info)
             for r in df.itertuples()
         ]
 
     else:
         seq_list = [
-            SeqRecord(Seq(r.sequence), id=r.accession, description="")
+            SeqRecord(Seq(r.sequence), id=r.info, description=r.info)
             for r in df.itertuples()
         ]
     # sequence.writeFastaFile(outpath, seq_list)
+
+    print (seq_list)
 
     SeqIO.write(seq_list, outpath, "fasta")
 
@@ -168,7 +176,7 @@ def randstring(length=10):
     return "".join((random.choice(valid_letters) for i in range(length)))
 
 
-def add_from_csv(df, add_df, match="accession"):
+def add_from_csv(df, add_df, match="info"):
     add_df = pd.read_csv(add_df)
     merged_df = pd.merge(df, add_df, how="left", on=[match], suffixes=["", "_r"])
 

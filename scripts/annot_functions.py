@@ -4,8 +4,7 @@ import seqcurate as sc
 import warnings
 import logging
 from collections import defaultdict
-# import regex as re
-import re
+import regex as re
 logging.captureWarnings(True)
 import seaborn as sns
 from ast import literal_eval
@@ -93,24 +92,26 @@ def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
     """"""
 
-    print ('positions in here')
-    print (pos_set)
-    print (type(pos_set))
-    print (len(pos_set))
 
 
     aligned_pos_set = []
     content_set = []
 
     for pos in pos_set:
-        print('pos')
-        print(pos)
+
 
         aligned_pos = get_aligned_positions(seq_map_from, *pos)
+
         content = get_content_at_pos(seq_map_to, *aligned_pos)
+
+
 
         aligned_pos_set.append(aligned_pos)
         content_set.append([content])
+
+        print ('and here we go')
+        print (aligned_pos_set)
+        print (content_set)
     return pd.Series([aligned_pos_set, content_set])
 
 def get_aligned_positions(sequence, *positions):
@@ -127,6 +128,7 @@ def get_aligned_positions(sequence, *positions):
 
     sequence = "".join(sequence)
 
+    print ('sequence')
     print (sequence)
 
     print (positions)
@@ -135,6 +137,7 @@ def get_aligned_positions(sequence, *positions):
 
     for pos in positions:
 
+        print ('pos is')
         print (pos)
         # Get the current index
         curr_idx = pos
@@ -485,7 +488,6 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
     with open(outpath, "w") as align_html:
         # Get the length needed
         for acc, _bounds in boundary_dict.items():
-            print (acc)
             aligned_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[0]
             alignment_length = str(len(aligned_seq) * 10)
 
@@ -497,8 +499,8 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
         for acc, bounds in boundary_dict.items():
             if bounds:
-                orig_seq = df.loc[df["id"] == acc]["Sequence_aligned"].values[0]
-                formatted_sequence = df.loc[df["info"] == acc][
+                orig_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[0]
+                formatted_sequence = df.loc[df["extracted_id"] == acc][
                     "Sequence_aligned"
                 ].values[0]
                 len_offset = 0
@@ -554,7 +556,7 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
             #             formatted_sequence = 'red'
             else:
-                formatted_sequence = df.loc[df["info"] == acc][
+                formatted_sequence = df.loc[df["extracted_id"] == acc][
                     "Sequence_aligned"
                 ].values[0]
 
@@ -604,10 +606,6 @@ def get_binding_pos(id, binding_sites, ligand=None):
 
 def get_amino_acids(seq, *pos):
 
-    print ('in get_amino_acids')
-    print (seq)
-    print (pos)
-
     return ["".join([seq[int(bp)] for bp in pos])]
 
 
@@ -631,9 +629,7 @@ def classify_loop_length(bind_pos_set):
 
         if bind_pos and bind_pos != "No_binding_positions":
             offset = 2
-            print ('bind pos is')
-            print (bind_pos)
-            print (bind_pos[-1])
+
 
             return bind_pos[-1] - bind_pos[0] + offset
         else:

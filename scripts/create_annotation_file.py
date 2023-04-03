@@ -22,8 +22,8 @@ def create_annotations(df, annot, outpath):
             annotation_cols = [line.strip() for line in annot_file]
 
     # Accession needs to be the first column so if it isn't requested, add it in.
-    if annotation_cols[0] != "accession":
-        annotation_cols = ["accession"] + annotation_cols
+    if annotation_cols[0] != "truncated_info":
+        annotation_cols = ["truncated_info"] + annotation_cols
 
     # Subset the columns
     subset_df = df[[x for x in annotation_cols if x in df.columns]]

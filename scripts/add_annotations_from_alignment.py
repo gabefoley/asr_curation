@@ -17,8 +17,8 @@ align_df = sc.get_sequence_df(snakemake.input.aln, alignment=True, ancestor=True
 merged_df = pd.merge(
     df,
     align_df,
-    left_on=["accession"],
-    right_on=["accession"],
+    left_on=["info"],
+    right_on=["info"],
     suffixes=["", "_r"],
 )
 

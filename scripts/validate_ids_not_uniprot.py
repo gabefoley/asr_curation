@@ -360,15 +360,17 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # Set default from and to id lookups
     if not from_id_lookup:
-        from_id_lookup = [
-            "UNIPROT-FROM",
-            "NCBI",
-            "EMBL",
-            "EMBL-CDS"
-        ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
+        from_id_lookup = ["UNIPROT-FROM"]
+        # from_id_lookup = [
+        #     "UNIPROT-FROM",
+        #     "NCBI",
+        #     "EMBL",
+        #     "EMBL-CDS"
+        # ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
 
     if not to_id_lookup:
-        to_id_lookup = ["NCBI", "EMBL", "EMBL-CDS", "UNIPROT"]
+        to_id_lookup = ["UNIPROT"]
+        # to_id_lookup = ["NCBI", "EMBL", "EMBL-CDS", "UNIPROT"]
     print(f"params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ")
 
     # read data and get ids

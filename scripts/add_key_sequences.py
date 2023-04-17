@@ -24,9 +24,9 @@ key_df_info = key_df["info"].values
 print("key df info")
 print(key_df_info)
 
-seqs_df_info = seqs_df["info"].values
-print("seqs df info")
-print(seqs_df_info)
+# seqs_df_info = seqs_df["info"].values
+# print("seqs df info")
+# print(seqs_df_info)
 
 # If we find a sequence in the key sequences that isn't in the sequences that remain we need to add it back in
 add_info = [x for x in key_df_info if x not in seqs_df_info]

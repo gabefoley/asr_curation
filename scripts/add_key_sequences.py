@@ -24,7 +24,7 @@ key_df_info = key_df["info"].values
 print("key df info")
 print(key_df_info)
 
-# seqs_df_info = seqs_df["info"].values
+seqs_df_info = seqs_df["info"].values
 # print("seqs df info")
 # print(seqs_df_info)
 

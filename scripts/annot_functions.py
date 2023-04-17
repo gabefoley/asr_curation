@@ -164,7 +164,7 @@ def get_final_pos(sequence, pos, curr_idx, next_idx):
     # offset implied by previous gaps in the sequence
 
     # If the content at this index is a gap, proceed to the next actual position
-    while curr_idx < len(sequence) and sequence[curr_idx - 1] == "-":
+    while curr_idx < len(sequence) and sequence[max(curr_idx - 1, 0)] == "-":
         curr_idx += 1
 
     # Get the offset implied by the number of gaps in the preceeding sequence

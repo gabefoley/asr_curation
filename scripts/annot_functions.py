@@ -109,9 +109,6 @@ def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
         aligned_pos_set.append(aligned_pos)
         content_set.append([content])
 
-        print ('and here we go')
-        print (aligned_pos_set)
-        print (content_set)
     return pd.Series([aligned_pos_set, content_set])
 
 def get_aligned_positions(sequence, *positions):
@@ -128,17 +125,11 @@ def get_aligned_positions(sequence, *positions):
 
     sequence = "".join(sequence)
 
-    print ('sequence')
-    print (sequence)
-
-    print (positions)
 
     aligned_positions = []
 
     for pos in positions:
 
-        print ('pos is')
-        print (pos)
         # Get the current index
         curr_idx = pos
 
@@ -183,7 +174,6 @@ def get_final_pos(sequence, pos, curr_idx, next_idx):
 
 
 def get_content_at_pos(seq, *pos):
-    print (pos)
 
     return "".join([seq[int(p)] for p in pos])
 

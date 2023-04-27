@@ -42,6 +42,11 @@ try:
 except:
     ALIGNMENT_TOOL = "mafft"
 
+try:
+    KEY_SEQUENCES = config['key_sequences']
+except:
+    KEY_SEQUENCES = "scripts/blank_key_seqs.fasta"
+
 
 # Collect config info from parameters passed from command line
 if 'BRENDA_RUN' in config.keys():
@@ -49,9 +54,9 @@ if 'BRENDA_RUN' in config.keys():
 else:
     BRENDA_RUN = False
 
-cluster_threshes = ["0.7", "0.9"]
 
-KEY_SEQUENCES = config['key_sequences']
+
+cluster_threshes = ["1"]
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 

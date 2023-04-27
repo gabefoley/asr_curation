@@ -204,7 +204,7 @@ def add_tag_if_in_fasta(annot_df, filepath, tag):
     seqs = sc.get_entry_ids_from_fasta(filepath)
 
     annot_df[tag] = annot_df.apply(
-        lambda row: True if row["id"] in seqs else False, axis=1
+        lambda row: True if row["info"] in seqs else False, axis=1
     )
 
     return annot_df

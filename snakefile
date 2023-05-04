@@ -56,7 +56,7 @@ else:
 
 
 
-cluster_threshes = ["1"]
+cluster_threshes = ["1", "0.9", "0.7"]
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 

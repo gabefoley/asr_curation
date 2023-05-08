@@ -15,14 +15,15 @@ seqs_df = sc.get_sequence_df(snakemake.input.fasta)
 key_df = sc.get_sequence_df(snakemake.input.key_sequences)
 
 # Get the subset of sequence info
-subset_df = pd.read_csv(snakemake.input.subset_csv)
+# subset_df = pd.read_csv(snakemake.input.subset_csv)
 
 # Get the full set of sequence info
 full_df = pd.read_csv(snakemake.input.full_csv)
+
 if "info" in key_df.columns:
     key_df_info = key_df["info"].values
-    print("key df info")
-    print(key_df_info)
+    # print("key df info")
+    # print(key_df_info)
 
     seqs_df_info = seqs_df["info"].values
     # print("seqs df info")
@@ -30,29 +31,37 @@ if "info" in key_df.columns:
 
     # If we find a sequence in the key sequences that isn't in the sequences that remain we need to add it back in
     add_info = [x for x in key_df_info if x not in seqs_df_info]
-    print("add info")
-    print(add_info)
+    # print("add info")
+    # print(add_info)
 
     add_df = full_df[full_df["info"].isin(add_info)]
 
-    concat_df = pd.concat([subset_df, add_df])
+
+
+    concat_df = pd.concat([seqs_df, add_df])
+
+    print ('len of concat df')
+
+    print (len(concat_df))
 
     concat_df = concat_df.drop_duplicates(subset="info", keep="first")
 
+    print (len(concat_df))
+
+
     sc.write_to_fasta(concat_df, snakemake.output.fasta, trim=True)
 
-    print("caterpillar")
+    # print("caterpillar")
 
-    print(concat_df)
-
+    # print(concat_df)
 
     # Write the subset to its own csv file
     concat_df.to_csv(snakemake.output.csv, index=False)
 
 else: # No sequences found in the key sequence file, just write out the subset again
-    sc.write_to_fasta(subset_df, snakemake.output.fasta, trim=True)
+    sc.write_to_fasta(seqs_df, snakemake.output.fasta, trim=True)
 
-    subset_df.to_csv(snakemake.output.csv, index=False)
+    seqs_df.to_csv(snakemake.output.csv, index=False)
 # print (halo)
 
 # sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)

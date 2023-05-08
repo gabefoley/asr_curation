@@ -151,8 +151,8 @@ def get_subset(df, *cols_dict, include=True):
 
 def write_to_fasta(df, outpath, trim=False):
 
-    print ('writing')
-    print (outpath)
+    # print ('writing')
+    # print (outpath)
     if trim:
         seq_list = [
             SeqRecord(Seq(r.sequence), id=r.info, description=r.info)
@@ -166,7 +166,7 @@ def write_to_fasta(df, outpath, trim=False):
         ]
     # sequence.writeFastaFile(outpath, seq_list)
 
-    print (seq_list)
+    # print (seq_list)
 
     SeqIO.write(seq_list, outpath, "fasta")
 

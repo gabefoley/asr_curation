@@ -8,13 +8,48 @@ import regex as re
 logging.captureWarnings(True)
 import seaborn as sns
 from ast import literal_eval
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from collections import Counter
+
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
+def exact_match(df, col, match):
+    return df[col] == match
+
+
+import pandas as pd
+import requests
+
+import requests
+import pandas as pd
+
+# Function to query InterPro API and retrieve names for multiple IDs
+def retrieve_interpro_name(interpro_id):
+    api_url = 'https://www.ebi.ac.uk/interpro/api/entry/interpro/'
+
+    url = api_url + interpro_id
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        interpro_name = data['metadata']['name']['name']
+        print (interpro_name)
+        return interpro_name
+    else:
+        return 'Unknown'
+
+def add_interpro_name_column(row, interpro_mapping):
+    if isinstance(row['xref_interpro'], float):
+        row['interpro_name'] = None
+    else:
+        unique_entries = row['xref_interpro'].split(';')
+        row['interpro_name'] = ';'.join(interpro_mapping.get(ids, 'Unknown') for ids in unique_entries)
+    return row
 
 def annotate_motif(df, motif):
     # For a dataframe, check if the sequence column contains a certain motif
-    df[f"MOTIF_{motif.replace('.', 'x')}"] = df["sequence"].dropna().str.contains(motif)
+    df[f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}"] = df["sequence"].dropna().str.contains(motif)
     return df
 
 
@@ -25,6 +60,13 @@ def get_motif_indexes(string, motif):
         return [[m.start(), m.end()] for m in re.finditer(rf"{motif}" "", string, overlapped=True)]
     else:
         return None
+
+def find_value(keyword, possible_words):
+
+    for word in possible_words:
+        if word in keyword:
+            return word
+    return 'not found'
 
 
 def annotate_nonAA(df):
@@ -89,6 +131,70 @@ def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 
 # def track_residues(seq_id, aligned_)
 
+
+
+def assign_labels(row):
+    proteins = row['protein_name']
+    
+    # Create a TF-IDF vectorizer to convert protein names into numerical representations
+    vectorizer = TfidfVectorizer()
+    proteins_tfidf = vectorizer.fit_transform(proteins)
+
+    # Calculate pairwise cosine similarity between proteins
+    cosine_similarities = cosine_similarity(proteins_tfidf, proteins_tfidf)
+
+    # Define a similarity threshold to determine group membership
+    similarity_threshold = 0.5
+
+    # Group proteins based on cosine similarity
+    groups = []
+    assigned = [False] * len(proteins)  # Track whether a protein has been assigned to a group
+
+    for i in range(len(proteins)):
+        if not assigned[i]:
+            group = [proteins[i]]  # Start a new group
+            assigned[i] = True
+
+            for j in range(i + 1, len(proteins)):
+                if not assigned[j] and cosine_similarities[i, j] >= similarity_threshold:
+                    group.append(proteins[j])
+                    assigned[j] = True
+
+            groups.append(group)
+
+    # Define labels for each group
+    labels = []
+
+    # Iterate over each group
+    for group in groups:
+        # Concatenate all protein names into a single string
+        all_names = " ".join(group)
+
+        # Extract individual keywords from the concatenated string
+        keywords = all_names.split()
+
+        # Count the occurrence of each keyword
+        keyword_counts = Counter(keywords)
+
+        # Find the most common keywords
+        most_common_keywords = keyword_counts.most_common()
+
+        # Concatenate the most common keywords into a string
+        label = " ".join(keyword[0] for keyword in most_common_keywords[:4])  # Limit to four words
+
+        # Assign the concatenated string as the label
+        labels.append(label)
+
+    # Return the labels
+    return labels
+
+
+
+
+
+
+
+
 def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
     """"""
 
@@ -100,9 +206,12 @@ def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
     for pos in pos_set:
 
 
+
         aligned_pos = get_aligned_positions(seq_map_from, *pos)
 
+
         content = get_content_at_pos(seq_map_to, *aligned_pos)
+
 
 
 
@@ -175,6 +284,11 @@ def get_final_pos(sequence, pos, curr_idx, next_idx):
 
 def get_content_at_pos(seq, *pos):
 
+    # print ('get content at pos')
+
+    # print (seq)
+    # print (pos)
+
     return "".join([seq[int(p)] for p in pos])
 
 
@@ -204,11 +318,19 @@ def add_tag_if_in_fasta(annot_df, filepath, tag):
     seqs = sc.get_entry_ids_from_fasta(filepath)
 
     annot_df[tag] = annot_df.apply(
-        lambda row: True if row["info"] in seqs else False, axis=1
+        lambda row: 1 if row["info"] in seqs else 0, axis=1
     )
 
     return annot_df
 
+def add_tag_if_sequence_matches(annot_df, filepath, tag):
+    seqs = sc.get_sequence_content_from_fasta(filepath)
+
+    annot_df[tag] = annot_df.apply(
+        lambda row: True if row["sequence"] in seqs else False, axis=1
+    )
+
+    return annot_df
 
 def annotate_sp_tr(df):
     # Is the sequence from SwissProt or TrEMBL
@@ -358,6 +480,8 @@ def merge_lab_annotation_cells(id, first_cell, second_cell):
 
 
 def check_terms(check, terms):
+
+
     if pd.isnull(check):
         return
     for term in terms:
@@ -372,6 +496,7 @@ def add_thermo(annot_df, filepath):
     thermo_species = [x.strip() for x in thermo.readlines() if len(x) > 1]
     thermo_split = [x.split(" ")[0] for x in thermo_species]
     thermo_species_terms = ["therm", "acid", "sulfur", "methan", "pyro", "lividus"]
+    thermo_species_terms_no_methan = ["therm", "acid", "sulfur", "pyro", "lividus"]
 
     annot_df["thermo_bacteria_split"] = annot_df.apply(
         lambda row: (
@@ -400,6 +525,25 @@ def add_thermo(annot_df, filepath):
         axis=1,
     )
 
+
+    annot_df["lineage_thermo"] = annot_df.apply(
+        lambda row: True
+        if check_terms(row["lineage"], thermo_species_terms + thermo_species)
+        else False
+        if pd.notnull(row["lineage"])
+        else False,
+        axis=1,
+    )
+
+
+    annot_df["lineage_thermo_no_metha"] = annot_df.apply(
+        lambda row: True
+        if check_terms(row["lineage"], thermo_species + thermo_species_terms_no_methan)
+        else False
+        if pd.notnull(row["lineage"])
+        else False,
+        axis=1,
+    )
     return annot_df
 
 
@@ -599,11 +743,28 @@ def get_amino_acids(seq, *pos):
     return ["".join([seq[int(bp)] for bp in pos])]
 
 
+def check_sequence_for_loop_length(seq):
+    print (seq[0][0].replace("-",""))
+    return len(seq[0][0].replace("-",""))
+
+
 def check_sequence_for_acidic(seq):
-    if "E" in seq or "D" in seq:
+    print (seq)
+    print (seq[0][0])
+    if "E" in seq[0][0] or "D" in seq[0][0]:
         return "Acidic_residue"
     else:
         return "No_Acidic_residue"
+
+
+def check_sequence_for_charged(seq):
+    print (seq)
+    print (seq[0][0])
+    if "R" in seq[0][0] or "K" in seq[0][0]:
+        return "Charged_residue"
+    else:
+        return "No_charged_residue"
+
 
 
 def check_binding_for_acidic(seq, bind_pos):
@@ -624,6 +785,7 @@ def classify_loop_length(bind_pos_set):
             return bind_pos[-1] - bind_pos[0] + offset
         else:
             return "No_binding_positions"
+
 
 
 def check_if_positions_align_with_target(target_pos, seq_pos):

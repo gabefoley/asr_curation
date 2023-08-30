@@ -15,36 +15,46 @@ def format_subset_val(col, col_val):
 
         # If it is a string encase it in quotation marks
         # return f"{col.strip()} == '{col_val.strip()}'"
-        return f"{col.strip()}.str.contains('{col_val.strip()}')"
+        return f"{col.strip()}.str.contains('{col_val.strip()}', na=False)"
 
     else:
-        print (col.strip())
         return f"{col.strip()} == {col_val}"
 
 
 def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
-    qry = " and ".join(
-        [format_subset_val(col, col_val) for col, col_val in col_val_dict.items()]
-    )
 
-    # sub_df = df.loc[(df[list(col_val_dict)] == pd.Series(col_val_dict)).all(axis=1)]
+    # for col, col_val in col_val_dict.items():
+        # qry = format_subset_val(col, col_val)
 
-    print(f"Creating a subset with {qry}")
+    print ('format the queries')
+    # df = df.applymap(str) 
 
-    # qry = "gene_primary.str.contains('ilvC', na=False)"
-    # qry = "Length_2.str.contains('None')"
+    formatted_queries = [format_subset_val(col, col_val) for col, col_val in col_val_dict.items()]
 
-
-    print (qry)
-
-    print ('hello')
+    with open(snakemake.output.subset_log, "w+") as subset_log:
+        for formatted_qry in formatted_queries:
 
 
-    sub_df = df.query(qry)
+                print (formatted_qry)
+                print (df.columns)
+                print (df['ft_domain'])
+                check_df = df.query(formatted_qry)
+                print ('done the query')
 
-    print ('got here')
+                excluded_df = df[~df.index.isin(check_df.index)]
 
-    print (sub_df)
+                print ('checked the query')
+                excluded_entries = excluded_df.values.tolist()
+                subset_log.write(f"Formatted query {formatted_qry} excluded {len(excluded_entries)} entries - {excluded_entries}\n")
+
+    print ('done all this')
+
+    full_qry = " and ".join(formatted_queries)
+
+    print(f"Creating a subset with {full_qry}")
+
+
+    sub_df = df.query(full_qry)
 
     sub_df = sub_df.fillna("None")
 
@@ -52,15 +62,19 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
 
     for col, col_val in not_col_val_dict.items():
 
-        print (col)
         # If it is a list split it up
         for val in col_val.split(","):
-            print (val)
             sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
+            removed_df = sub_df[sub_df[col].str.contains(val.strip(), na=False)]
+
+    with open(snakemake.output.subset_log, "w+") as subset_log:
+        excluded_entries = removed_df.values.tolist()
+        subset_log.write(f"Formatted query {col_val} excluded {len(excluded_entries)} entries - {x for x in excluded_entries}\n")
 
 
 
-    print ('now')
+
+
     if req_col_val_dict:
         req_qry = " or ".join(
             [
@@ -80,8 +94,6 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
 
         return merge_df
     else:
-        print ('sub df')
-        print (sub_df)
         sub_df = sub_df.drop_duplicates(subset="accession")
         return sub_df
 
@@ -170,7 +182,12 @@ for line in open(snakemake.input.rules).read().splitlines():
             name = get_col_val_name(col_val_dict, not_col_val_dict)
 
         if name == snakemake.wildcards.subset:
-            df = pd.read_csv(snakemake.input.csv)
+            df = pd.read_csv(snakemake.input.csv, dtype=str)
+
+            for int_col in ['length', 'Length_2']:
+                if int_col in df:
+                    df[int_col] = pd.to_numeric(df[int_col])
+ 
 
             # df = df.fillna("None")
 
@@ -218,14 +235,9 @@ for line in open(snakemake.input.rules).read().splitlines():
 
             # Write the subset to a fasta
             # TODO: Currently this is just working for one subset file (not multiple)
-
-            sub_df = sub_df.replace("None", np.NaN)
-
-            print (sub_df)
             sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
 
-
-            print ('write to csv')
+            sub_df = sub_df.replace("None", np.NaN)
 
             # Write the subset to its own csv file
             sub_df.to_csv(snakemake.output.csv, index=False)

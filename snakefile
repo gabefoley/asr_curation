@@ -56,7 +56,10 @@ else:
 
 
 
-cluster_threshes = ["1", "0.9", "0.7"]
+# cluster_threshes = ["1", "0.9", "0.7"]
+# cluster_threshes = ["0.65", "0.7"]
+cluster_threshes = ["1"]
+
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 
@@ -129,9 +132,12 @@ print (FASTADIR)
 
 rule all:
         input:
+            # brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            # reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+
             trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            # ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             # extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
 
 # Create the initial annotation file from the FASTA file or list of IDs
@@ -204,7 +210,8 @@ rule create_subsets:
         csv=WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     output:
         fasta = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta",
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv",
+        # subset_log = WORKDIR + "/{dataset}/subsets/{subset}/{subset}.log"
     script:
         "scripts/create_subsets.py"
 
@@ -214,21 +221,29 @@ rule cluster_sequences:
 
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
-
         shell:
             "cd-hit -i {input} -o {output} -c {wildcards.cluster_thresh}"
+
+# rule create_clustered_subset
+#         input:
+#             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta",
+#         output:
+#             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}.csv"
+#         script:
+#         "scripts/create_clustered_subset.py"
+#
+
 
 rule add_key_sequences:
     input:
         fasta = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta",
         key_sequences = KEY_SEQUENCES,
         full_csv = WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv",
-        subset_csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
-
+        align_csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv"
 
     output:
         fasta = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.fasta",
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
 
     script:
         "scripts/add_key_sequences.py"
@@ -252,7 +267,7 @@ elif ALIGNMENT_TOOL == 'mafft-dash':
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
-            "mafft --dash --reorder {input} > {output}"
+            "mafft --dash --reorder --originalseqonly {input} > {output}"
 
 rule infer_tree:
     input:
@@ -281,13 +296,24 @@ rule run_grasp:
 rule add_annotations_from_alignment:
     input:
         aln = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
 
 
     script:
         CUSTOM_ALIGN_DIR + "/add_annotations_from_alignment.py"
+
+rule reorder_alignment_annotations:
+    input:
+        aln = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
+    output:
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv"
+
+    script:
+        CUSTOM_ALIGN_DIR + "/reorder_alignment_annotations.py"
+
 
 rule add_annotations_from_ancestors:
     input:
@@ -302,7 +328,7 @@ rule add_annotations_from_ancestors:
 
 rule create_annotation_file:
     input:
-        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
 
     params:
         annotation_cols = config['annotation_cols']

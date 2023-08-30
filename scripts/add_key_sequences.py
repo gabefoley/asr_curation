@@ -15,7 +15,7 @@ seqs_df = sc.get_sequence_df(snakemake.input.fasta)
 key_df = sc.get_sequence_df(snakemake.input.key_sequences)
 
 # Get the subset of sequence info
-# subset_df = pd.read_csv(snakemake.input.subset_csv)
+align_df = pd.read_csv(snakemake.input.align_csv)
 
 # Get the full set of sequence info
 full_df = pd.read_csv(snakemake.input.full_csv)
@@ -36,9 +36,20 @@ if "info" in key_df.columns:
 
     add_df = full_df[full_df["info"].isin(add_info)]
 
+    subset_df = align_df[align_df["info"].isin(seqs_df_info)]
 
 
-    concat_df = pd.concat([seqs_df, add_df])
+    print ('len of subset df')
+
+
+    print (len(subset_df))
+
+    print ('len of add df')
+
+
+    print (len(add_df))
+
+    concat_df = pd.concat([subset_df, add_df])
 
     print ('len of concat df')
 
@@ -51,17 +62,16 @@ if "info" in key_df.columns:
 
     sc.write_to_fasta(concat_df, snakemake.output.fasta, trim=True)
 
-    # print("caterpillar")
-
-    # print(concat_df)
-
     # Write the subset to its own csv file
     concat_df.to_csv(snakemake.output.csv, index=False)
 
 else: # No sequences found in the key sequence file, just write out the subset again
+
+    add_df = full_df[full_df["info"].isin(seqs_df["info"].values)]
+
     sc.write_to_fasta(seqs_df, snakemake.output.fasta, trim=True)
 
-    seqs_df.to_csv(snakemake.output.csv, index=False)
+    add_df.to_csv(snakemake.output.csv, index=False)
 # print (halo)
 
 # sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)

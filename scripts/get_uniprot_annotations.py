@@ -244,8 +244,10 @@ def uniprot_annotation_lkp(
 
     merged_df = validated_df.merge(results_df,left_on='sequence', right_on='sequence', how='left')
 
-
+    merged_df = merged_df.drop_duplicates(subset="info", keep="first")
     merged_df.to_csv(output_file, index=False)
+
+
     print("Completed Uniprot Annotations Job")
 
     if os.path.exists(intermediate_tsv_file):

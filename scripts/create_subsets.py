@@ -138,7 +138,10 @@ for line in open(snakemake.input.rules).read().splitlines():
                 term = i.split(":")[0].strip()
 
                 if term:
+                    print (i)
                     term_val = i.split(":")[1].strip()
+
+                    print (term_val)
 
                     # If it is instructions on how to sample from columns create the conditions
 

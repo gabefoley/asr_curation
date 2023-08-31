@@ -11,6 +11,7 @@ from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from collections import Counter
+import os
 
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
@@ -22,8 +23,167 @@ def exact_match(df, col, match):
 import pandas as pd
 import requests
 
-import requests
-import pandas as pd
+# Map between a 
+def map_interpro_ids(ids, result_dict):
+    if pd.isnull(ids):
+        return None
+    ids_list = ids.split(';')
+    summary_list = [result_dict.get(i, '') for i in ids_list if i in result_dict]
+    return ';'.join(summary_list)
+
+
+
+
+# Function to get OrthoDB names and level names from a dataframe with a column containing OrthoDB IDs
+def get_orthodb_names(df, output_dir):
+    existing_mapping = output_dir + "/orthodb_mappings.txt"
+
+    print("Fetching OrthoDB names and levels")
+
+    unique_orthodb_ids = get_list_of_unique_orthodb_ids(df)
+
+    # Check for an existing mapping generated from a previous run
+    name_mapping = read_to_dict(existing_mapping)
+
+    print (name_mapping)
+
+    print (unique_orthodb_ids)
+
+    for orthodb_id in unique_orthodb_ids:
+        # If it already exists we don't need to retrieve it again
+        if orthodb_id not in name_mapping:
+            name, level_name = retrieve_orthodb_data(orthodb_id)
+            name_mapping[orthodb_id] = name + '|' + level_name
+
+    # Update the name mapping .txt in the annotations folder to reuse
+    write_from_dict(existing_mapping, name_mapping)
+
+    # Apply the add_orthodb_columns function to each row of the DataFrame
+    df = df.apply(lambda row: add_orthodb_columns(row, name_mapping), axis=1)
+
+    return df
+
+def get_list_of_unique_orthodb_ids(df):
+    # Get all unique OrthoDB IDs
+    unique_orthodb_ids = set(x.replace(";","") for x in df['xref_orthodb'].dropna())
+    return list(unique_orthodb_ids)
+
+# Function to query OrthoDB API
+def retrieve_orthodb_data(orthodb_id):
+    api_url = "https://data.orthodb.org/current/group"
+    params = {"id": orthodb_id}
+
+    print (orthodb_id)
+
+
+    response = requests.get(api_url, params=params)
+    
+    if response.status_code == 200:
+        print (response)
+        data = response.json()
+        print (data)
+        print (data['data']['name'])
+
+        name = data['data'].get('name', 'Unknown')
+        level_name = data['data'].get('level_name', 'Unknown')
+
+        print ('hello')
+        print (name)
+        print (level_name)
+
+
+        return name, level_name
+    else:
+        return 'Unknown', 'Unknown'
+
+def add_orthodb_columns(row, orthodb_mapping):
+
+    if pd.isnull(row['xref_orthodb']):
+        row['orthodb_name'] = 'Unknown'
+        row['orthodb_level_name'] = 'Unknown'
+        row['orthodb_name_level_name'] = 'Unknown Unknown'
+        return row
+
+    print ('here is ')
+    print (row['xref_orthodb'])
+
+    orthodb_ids = row['xref_orthodb'].strip(';').split(';')
+    
+    # Use list comprehensions to extract the details
+    names = [orthodb_mapping.get(oid, 'Unknown|Unknown').split('|')[0] for oid in orthodb_ids]
+    level_names = [orthodb_mapping.get(oid, 'Unknown|Unknown').split('|')[1] for oid in orthodb_ids]
+    
+    # Using zip to combine the corresponding names and level names
+    name_level_names = [f"{n} {ln}" for n, ln in zip(names, level_names)]
+
+    row['orthodb_name'] = ';'.join(names)
+    row['orthodb_level_name'] = ';'.join(level_names)
+    row['orthodb_name_level_name'] = ';'.join(name_level_names)
+    
+    return row
+
+# Load in dictionary file stored as plain text locally
+def read_to_dict(filename):
+    data_dict = {}
+
+    if not os.path.exists(filename):
+        return data_dict
+
+
+    with open(filename, 'r') as file:
+        for line in file:
+            if ':' in line:
+                key, value = line.strip().split(':', 1)
+                data_dict[key.strip()] = value.strip()
+    return data_dict
+
+def write_from_dict(filename, data_dict):
+    existing_data = read_to_dict(filename)
+    
+    # Merge dictionaries. If there are overlaps, data_dict will overwrite existing_data
+    merged_data = {**existing_data, **data_dict}
+
+    with open(filename, 'w') as file:
+        for key, value in merged_data.items():
+            file.write(f"{key} : {value}\n")
+
+# Function to get interpro names from a dataframe with a column containing a list of interpro IDs
+def get_interpro_names(df, output_dir):
+
+    existing_mapping = output_dir + "/interpro_mappings.txt"
+
+    print ("Add the actual InterPro names")
+
+    unique_interpro_ids = get_list_of_unique_interpro_ids(df)
+
+    # Check for an existing mapping generated from a previous run
+    name_mapping = read_to_dict(existing_mapping)
+
+    for interpro_id in unique_interpro_ids:
+        # If it already exists we don't need to retrieve it again
+        if interpro_id not in name_mapping:
+            name_mapping[interpro_id] = retrieve_interpro_name(interpro_id)
+
+    # Update the name mapping .txt in the annotations folder to be able to reuse this
+    write_from_dict(existing_mapping, name_mapping)
+    # Apply the add_interpro_name_column function to each row of the DataFrame
+    df = df.apply(lambda row: add_interpro_name_column(row, name_mapping), axis=1)
+
+    return df
+
+
+def  get_list_of_unique_interpro_ids(df):
+
+        # Get all unique InterPro IDs
+    unique_interpro_ids = set()
+    for entry in df['xref_interpro']:
+        if isinstance(entry, str):
+            unique_interpro_ids.update(entry.split(';'))
+
+    unique_interpro_ids = [x for x in unique_interpro_ids if x]
+
+    return unique_interpro_ids
+
 
 # Function to query InterPro API and retrieve names for multiple IDs
 def retrieve_interpro_name(interpro_id):

@@ -133,11 +133,11 @@ print (FASTADIR)
 rule all:
         input:
             # brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
-            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            # reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
 
             trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            # ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             # extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
 
 # Create the initial annotation file from the FASTA file or list of IDs
@@ -190,7 +190,8 @@ rule add_generic_annotations:
 # Add any custom annotations
 rule add_custom_annotations:
     input:
-        WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv"
+        csv = WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv",
+        custom_dir = CUSTOM_DIR
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     script:
@@ -314,6 +315,17 @@ rule reorder_alignment_annotations:
     script:
         CUSTOM_ALIGN_DIR + "/reorder_alignment_annotations.py"
 
+rule create_alignment_annotation_file:
+    input:
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
+
+    params:
+        annotation_cols = config['annotation_cols']
+    output:
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt",
+    script:
+        "scripts/create_annotation_file.py"
+
 
 rule add_annotations_from_ancestors:
     input:
@@ -326,14 +338,14 @@ rule add_annotations_from_ancestors:
         CUSTOM_ANCESTOR_DIR + "/add_annotations_from_ancestors.py"
 
 
-rule create_annotation_file:
+rule create_ancestor_annotation_file:
     input:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
 
     params:
         annotation_cols = config['annotation_cols']
     output:
-        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_annotations.txt",
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestor_annotations.txt",
     script:
         "scripts/create_annotation_file.py"
 

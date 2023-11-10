@@ -132,7 +132,9 @@ print (FASTADIR)
 
 rule all:
         input:
-            # brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
+            brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+            custom =     [f'{WORKDIR}/{dataset}/csv/custom/{dataset}_annotated.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
 
@@ -156,7 +158,7 @@ rule validate_ids:
    output:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
    script:
-#        "scripts/validate_ids.py"
+       # "scripts/validate_ids.py"
        "scripts/validate_ids_not_uniprot.py"
 
 # Map to UniProt to get all of the known UniProt annotations
@@ -300,8 +302,6 @@ rule add_annotations_from_alignment:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
-
-
     script:
         CUSTOM_ALIGN_DIR + "/add_annotations_from_alignment.py"
 
@@ -353,7 +353,6 @@ rule concat_ancestor_alignment:
     input:
         extants =  WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
         ancestors = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.fa",
-
     output:
         WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln"
     shell:

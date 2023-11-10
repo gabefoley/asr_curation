@@ -184,6 +184,8 @@ def fetch_annotations_in_batches(ids, intermediate_tsv_file, result_batch_size):
         + str(result_batch_size)
     )
 
+    print (batch_url)
+
     progress = 0
 
     with open(intermediate_tsv_file, "a") as f:

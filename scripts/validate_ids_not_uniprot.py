@@ -15,7 +15,8 @@ from urllib.parse import urlparse, parse_qs, urlencode
 import requests
 from requests.adapters import HTTPAdapter, Retry
 import click
-
+from itertools import islice
+import math
 import os
 
 # configuration and api parameters
@@ -341,6 +342,16 @@ def create_output_file(data_df, to_id_lookup, output_file):
     data_df.to_csv(output_file, index=False)
 
 
+def chunk_it(iterable, size):
+    it = iter(iterable)
+    while True:
+        chunk = tuple(islice(it, size))
+        if not chunk:
+            return
+        yield chunk
+
+
+
 @click.command()
 @click.option("--input_file", help="Path to input file")
 @click.option("--output_file", help="Path for output file")
@@ -351,9 +362,70 @@ def all_ids_lookup_cmd(input_file, output_file, from_id_lookup=None, to_id_looku
     return df_data
 
 
-def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
+# def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
 
+    # if "SNAKEMAKE" in os.environ:
+    #     input_file = snakemake.input[0]
+    #     output_file = snakemake.output[0]
+
+    # # Set default from and to id lookups
+    # if not from_id_lookup:
+    #     from_id_lookup = ["UNIPROT-FROM"]
+    #     # from_id_lookup = [
+    #     #     "UNIPROT-FROM",
+    #     #     "NCBI",
+    #     #     "EMBL",
+    #     #     "EMBL-CDS"
+    #     # ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
+
+    # if not to_id_lookup:
+    #     to_id_lookup = ["UNIPROT"]
+    #     # to_id_lookup = ["NCBI", "EMBL", "EMBL-CDS", "UNIPROT"]
+    # print(f"params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ")
+
+    # # read data and get ids
+    # df_data = pd.read_csv(input_file)
+    # ids = list(df_data["extracted_id"])
+    # print (len(ids))
+
+
+
+    # # empty string for each of the lookup id columns
+    # for db in to_id_lookup:
+    #     df_data[db] = ""
+
+    # # process mapping from uniprot to "to ids list"
+    # for from_db_short in from_id_lookup:
+    #     print("Finding the ids from database:", from_db_short)
+
+    #     for to_db_short in to_id_lookup:
+    #         if from_db_short != to_db_short:
+    #             print("Finding the ids to database:", to_db_short)
+
+    #             # call uniport
+    #             results_uniprot = try_map_all_ids(ids, from_db_short, to_db_short)
+
+    #             # check if any results returned
+    #             if results_uniprot:
+    #                 # process the results
+    #                 print("OUTCOME :: Results Returned")
+    #                 df_data = process_results(
+    #                     df_data, results_uniprot, from_db_short, to_db_short
+    #                 )
+    #                 print("Results Processed")
+    #             else:
+    #                 print("OUTCOME :: No Results Returned")
+
+    # # create final clean output file - sequence as primary key
+    # create_output_file(df_data, to_id_lookup, output_file)
+    # return df_data
+
+CHUNK_SIZE = 5000  # Adjust based on your requirements
+
+def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
+    """main function to map input ids to different database specified in the id_lookup list"""
+    
     if "SNAKEMAKE" in os.environ:
         input_file = snakemake.input[0]
         output_file = snakemake.output[0]
@@ -361,53 +433,58 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     # Set default from and to id lookups
     if not from_id_lookup:
         from_id_lookup = ["UNIPROT-FROM"]
-        # from_id_lookup = [
-        #     "UNIPROT-FROM",
-        #     "NCBI",
-        #     "EMBL",
-        #     "EMBL-CDS"
-        # ]  # "EMBL-GenBank-DDBJ","EMBL-GenBank-DDBJ_CDS"
 
     if not to_id_lookup:
         to_id_lookup = ["UNIPROT"]
-        # to_id_lookup = ["NCBI", "EMBL", "EMBL-CDS", "UNIPROT"]
+
     print(f"params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ")
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
     ids = list(df_data["extracted_id"])
+    print(len(ids))
 
-    print(ids)
+    # Create an empty DataFrame to hold concatenated results
+    df_final = pd.DataFrame()
 
     # empty string for each of the lookup id columns
     for db in to_id_lookup:
         df_data[db] = ""
 
-    # process mapping from uniprot to "to ids list"
-    for from_db_short in from_id_lookup:
-        print("Finding the ids from database:", from_db_short)
+    total_chunks = math.ceil(len(ids) / CHUNK_SIZE)
 
-        for to_db_short in to_id_lookup:
-            if from_db_short != to_db_short:
-                print("Finding the ids to database:", to_db_short)
+    # process mapping from uniprot to "to ids list" using chunked IDs
+    for chunk_num, chunked_ids in enumerate(chunk_it(ids, CHUNK_SIZE), start=1):
+        print(f"Processing chunk {chunk_num} of {total_chunks}")
 
-                # call uniport
-                results_uniprot = try_map_all_ids(ids, from_db_short, to_db_short)
+        for from_db_short in from_id_lookup:
+            print("Finding the ids from database:", from_db_short)
 
-                # check if any results returned
-                if results_uniprot:
-                    # process the results
-                    print("OUTCOME :: Results Returned")
-                    df_data = process_results(
-                        df_data, results_uniprot, from_db_short, to_db_short
-                    )
-                    print("Results Processed")
-                else:
-                    print("OUTCOME :: No Results Returned")
+            for to_db_short in to_id_lookup:
+                if from_db_short != to_db_short:
+                    print("Finding the ids to database:", to_db_short)
+
+                    # call uniprot API with chunked IDs
+                    results_uniprot = try_map_all_ids(chunked_ids, from_db_short, to_db_short)
+
+                    # check if any results returned
+                    if results_uniprot:
+                        # process the results
+                        print("OUTCOME :: Results Returned")
+                        df_data = process_results(
+                            df_data, results_uniprot, from_db_short, to_db_short
+                        )
+                        print("Results Processed")
+                    else:
+                        print("OUTCOME :: No Results Returned")
+
+        # After processing the results for a chunk, concatenate it to the final DataFrame
+        df_final = pd.concat([df_final, df_data[df_data['extracted_id'].isin(chunked_ids)]], ignore_index=True)
 
     # create final clean output file - sequence as primary key
-    create_output_file(df_data, to_id_lookup, output_file)
-    return df_data
+    create_output_file(df_final, to_id_lookup, output_file)
+
+    return df_final
 
 
 # Main function

@@ -876,31 +876,42 @@ def classify_KARI(features):
         return "No_domain_info"
 
 
+def get_amino_acids(seq, *pos):
+    return ["".join([seq[int(bp)] for bp in pos])]
+
+
+
 def get_binding_pos(id, binding_sites, ligand=None):
     if pd.notnull(binding_sites):
-        bp = []
+        results = []
+        
+        # Split by "BINDING" to get the chunks
+        segments = re.split(r'BINDING\s*\d+;', binding_sites)
+        binding_positions = re.findall(r'BINDING\s*(\d+);', binding_sites)
+        
+        for pos, segment in zip(binding_positions, segments[1:]): # Ignore the first split as it will be empty
+            data = {}
+            data['binding_pos'] = int(pos) - 1
+            
+            # Extract ligand, ligand_id, and evidence
+            ligand_match = re.search(r'/ligand="([^"]+)"', segment)
+            ligand_id_match = re.search(r'/ligand_id="([^"]+)"', segment)
+            evidence_match = re.search(r'/evidence="([^"]+)"', segment)
 
-        for site in binding_sites.split(";"):
-            if site.strip().startswith("BINDING"):
-                found_pos = site.split("BINDING")[1]
+            if ligand_match:
+                data['binding_ligand'] = ligand_match.group(1)
+            if ligand_id_match:
+                data['binding_ligand_id'] = ligand_id_match.group(1)
+            if evidence_match:
+                data['binding_evidence'] = evidence_match.group(1)
 
-            if (
-                site.strip().startswith("/ligand=")
-                and site.split("/ligand=")[1].startswith('"NADP')
-                and ".." not in found_pos
-                and int(found_pos) < 100
-            ):
-                bp.append(int(found_pos))
-
-
-        return [bp]
+            # If a specific ligand is provided, filter based on that
+            if not ligand or (ligand and 'ligand' in data and data['ligand'] == ligand):
+                results.append(data)
+        
+        return results
     else:
         return []
-
-
-def get_amino_acids(seq, *pos):
-
-    return ["".join([seq[int(bp)] for bp in pos])]
 
 
 def check_sequence_for_loop_length(seq):

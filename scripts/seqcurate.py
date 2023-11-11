@@ -25,8 +25,8 @@ def get_sequence_df(
     ]
 
     if alignment or ancestor:
-        print ('is alignment')
-        cols.append('original_alignment')
+        print("is alignment")
+        cols.append("original_alignment")
         cols.append("Sequence_aligned")
 
     # if ancestor:
@@ -150,21 +150,20 @@ def get_subset(df, *cols_dict, include=True):
 
 
 def write_to_fasta(df, outpath, trim=False):
-
-
-
     # print ('writing')
     # print (outpath)
     if trim:
         seq_list = [
             SeqRecord(Seq(r.sequence), id=r.info, description=r.info)
-            for r in df.itertuples() if r.sequence
+            for r in df.itertuples()
+            if r.sequence
         ]
 
     else:
         seq_list = [
             SeqRecord(Seq(r.sequence), id=r.info, description=r.info)
-            for r in df.itertuples() if r.sequence
+            for r in df.itertuples()
+            if r.sequence
         ]
     # sequence.writeFastaFile(outpath, seq_list)
 
@@ -190,10 +189,8 @@ def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-")
 
     return [seq.name for seq in seqs]
 
+
 def get_sequence_content_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
     seqs = SeqIO.parse(fasta_path, "fasta")
 
     return [seq.seq for seq in seqs]
-
-
-

@@ -22,37 +22,37 @@ def format_subset_val(col, col_val):
 
 
 def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
-
     # for col, col_val in col_val_dict.items():
-        # qry = format_subset_val(col, col_val)
+    # qry = format_subset_val(col, col_val)
 
-    print ('format the queries')
-    # df = df.applymap(str) 
+    print("format the queries")
+    # df = df.applymap(str)
 
-    formatted_queries = [format_subset_val(col, col_val) for col, col_val in col_val_dict.items()]
+    formatted_queries = [
+        format_subset_val(col, col_val) for col, col_val in col_val_dict.items()
+    ]
 
     with open(snakemake.output.subset_log, "w+") as subset_log:
         for formatted_qry in formatted_queries:
+            print(formatted_qry)
+            print(df.columns)
+            print(df["ft_domain"])
+            check_df = df.query(formatted_qry)
+            print("done the query")
 
+            excluded_df = df[~df.index.isin(check_df.index)]
 
-                print (formatted_qry)
-                print (df.columns)
-                print (df['ft_domain'])
-                check_df = df.query(formatted_qry)
-                print ('done the query')
+            print("checked the query")
+            excluded_entries = excluded_df.values.tolist()
+            subset_log.write(
+                f"Formatted query {formatted_qry} excluded {len(excluded_entries)} entries - {excluded_entries}\n"
+            )
 
-                excluded_df = df[~df.index.isin(check_df.index)]
-
-                print ('checked the query')
-                excluded_entries = excluded_df.values.tolist()
-                subset_log.write(f"Formatted query {formatted_qry} excluded {len(excluded_entries)} entries - {excluded_entries}\n")
-
-    print ('done all this')
+    print("done all this")
 
     full_qry = " and ".join(formatted_queries)
 
     print(f"Creating a subset with {full_qry}")
-
 
     sub_df = df.query(full_qry)
 
@@ -61,7 +61,6 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
-
         # If it is a list split it up
         for val in col_val.split(","):
             sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
@@ -69,11 +68,9 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
 
     with open(snakemake.output.subset_log, "w+") as subset_log:
         excluded_entries = removed_df.values.tolist()
-        subset_log.write(f"Formatted query {col_val} excluded {len(excluded_entries)} entries - {x for x in excluded_entries}\n")
-
-
-
-
+        subset_log.write(
+            f"Formatted query {col_val} excluded {len(excluded_entries)} entries - {x for x in excluded_entries}\n"
+        )
 
     if req_col_val_dict:
         req_qry = " or ".join(
@@ -83,7 +80,7 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
             ]
         )
 
-        print (sub_df)
+        print(sub_df)
 
         req_df = df.query(req_qry)
 
@@ -184,10 +181,9 @@ for line in open(snakemake.input.rules).read().splitlines():
         if name == snakemake.wildcards.subset:
             df = pd.read_csv(snakemake.input.csv, dtype=str)
 
-            for int_col in ['length', 'Length_2']:
+            for int_col in ["length", "Length_2"]:
                 if int_col in df:
                     df[int_col] = pd.to_numeric(df[int_col])
- 
 
             # df = df.fillna("None")
 

@@ -2,6 +2,7 @@ import pandas as pd
 from Bio import AlignIO
 import seqcurate as sc
 
+
 def main():
     df = pd.read_csv(snakemake.input.csv)
 
@@ -19,6 +20,7 @@ def main():
 
     # Write the merged DataFrame to a CSV file
     merged_df.to_csv(snakemake.output.csv, index=False)
+
 
 # Check if this script is being run as the main program
 if __name__ == "__main__":

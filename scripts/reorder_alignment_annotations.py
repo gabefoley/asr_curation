@@ -10,7 +10,7 @@ msa_order = [record.id for record in aln]
 # Read the DataFrame from the CSV file
 df = pd.read_csv(snakemake.input.csv)
 
-df.set_index('info', inplace=True)
+df.set_index("info", inplace=True)
 
 
 # # Create a dictionary to map sequence identifiers to their position in MSA
@@ -29,6 +29,6 @@ df.set_index('info', inplace=True)
 # Reorder the DataFrame based on the custom sorting index
 df_reordered = df.reindex(msa_order)
 
-print (df_reordered.index)
+print(df_reordered.index)
 
 df_reordered.to_csv(snakemake.output.csv, index=False)

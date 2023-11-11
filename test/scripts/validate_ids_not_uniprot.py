@@ -52,7 +52,7 @@ db_response_format = {
     "NCBI": "short",
     "UNIPARC": "long",
     "EMBL": "short",
-    "EMBL-CDS" : "short"
+    "EMBL-CDS": "short",
 }
 
 # response key to be used in JSON format is the response format is long.
@@ -351,7 +351,6 @@ def chunk_it(iterable, size):
         yield chunk
 
 
-
 @click.command()
 @click.option("--input_file", help="Path to input file")
 @click.option("--output_file", help="Path for output file")
@@ -361,8 +360,7 @@ def all_ids_lookup_cmd(input_file, output_file, from_id_lookup=None, to_id_looku
     df_data = all_ids_lookup(input_file, output_file, from_id_lookup, to_id_lookup)
     return df_data
 
-
-# def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
+    # def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
 
     # if "SNAKEMAKE" in os.environ:
@@ -388,8 +386,6 @@ def all_ids_lookup_cmd(input_file, output_file, from_id_lookup=None, to_id_looku
     # df_data = pd.read_csv(input_file)
     # ids = list(df_data["extracted_id"])
     # print (len(ids))
-
-
 
     # # empty string for each of the lookup id columns
     # for db in to_id_lookup:
@@ -421,11 +417,13 @@ def all_ids_lookup_cmd(input_file, output_file, from_id_lookup=None, to_id_looku
     # create_output_file(df_data, to_id_lookup, output_file)
     # return df_data
 
+
 CHUNK_SIZE = 5000  # Adjust based on your requirements
+
 
 def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
-    
+
     if "SNAKEMAKE" in os.environ:
         input_file = snakemake.input[0]
         output_file = snakemake.output[0]
@@ -465,7 +463,9 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
                     print("Finding the ids to database:", to_db_short)
 
                     # call uniprot API with chunked IDs
-                    results_uniprot = try_map_all_ids(chunked_ids, from_db_short, to_db_short)
+                    results_uniprot = try_map_all_ids(
+                        chunked_ids, from_db_short, to_db_short
+                    )
 
                     # check if any results returned
                     if results_uniprot:
@@ -479,7 +479,10 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
                         print("OUTCOME :: No Results Returned")
 
         # After processing the results for a chunk, concatenate it to the final DataFrame
-        df_final = pd.concat([df_final, df_data[df_data['extracted_id'].isin(chunked_ids)]], ignore_index=True)
+        df_final = pd.concat(
+            [df_final, df_data[df_data["extracted_id"].isin(chunked_ids)]],
+            ignore_index=True,
+        )
 
     # create final clean output file - sequence as primary key
     create_output_file(df_final, to_id_lookup, output_file)

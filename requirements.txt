@@ -127,6 +127,7 @@ requests-file
 requests-toolbelt
 retry
 rich
+scikit-learn
 seaborn
 Send2Trash
 six

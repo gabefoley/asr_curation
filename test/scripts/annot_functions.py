@@ -5,6 +5,7 @@ import warnings
 import logging
 from collections import defaultdict
 import regex as re
+
 logging.captureWarnings(True)
 import seaborn as sns
 from ast import literal_eval
@@ -16,6 +17,7 @@ import os
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
+
 def exact_match(df, col, match):
     return df[col] == match
 
@@ -23,15 +25,14 @@ def exact_match(df, col, match):
 import pandas as pd
 import requests
 
-# Map between a 
+
+# Map between a
 def map_interpro_ids(ids, result_dict):
     if pd.isnull(ids):
         return None
-    ids_list = ids.split(';')
-    summary_list = [result_dict.get(i, '') for i in ids_list if i in result_dict]
-    return ';'.join(summary_list)
-
-
+    ids_list = ids.split(";")
+    summary_list = [result_dict.get(i, "") for i in ids_list if i in result_dict]
+    return ";".join(summary_list)
 
 
 # Function to get OrthoDB names and level names from a dataframe with a column containing OrthoDB IDs
@@ -45,15 +46,15 @@ def get_orthodb_names(df, output_dir):
     # Check for an existing mapping generated from a previous run
     name_mapping = read_to_dict(existing_mapping)
 
-    print (name_mapping)
+    print(name_mapping)
 
-    print (unique_orthodb_ids)
+    print(unique_orthodb_ids)
 
     for orthodb_id in unique_orthodb_ids:
         # If it already exists we don't need to retrieve it again
         if orthodb_id not in name_mapping:
             name, level_name = retrieve_orthodb_data(orthodb_id)
-            name_mapping[orthodb_id] = name + '|' + level_name
+            name_mapping[orthodb_id] = name + "|" + level_name
 
     # Update the name mapping .txt in the annotations folder to reuse
     write_from_dict(existing_mapping, name_mapping)
@@ -63,64 +64,69 @@ def get_orthodb_names(df, output_dir):
 
     return df
 
+
 def get_list_of_unique_orthodb_ids(df):
     # Get all unique OrthoDB IDs
-    unique_orthodb_ids = set(x.replace(";","") for x in df['xref_orthodb'].dropna())
+    unique_orthodb_ids = set(x.replace(";", "") for x in df["xref_orthodb"].dropna())
     return list(unique_orthodb_ids)
+
 
 # Function to query OrthoDB API
 def retrieve_orthodb_data(orthodb_id):
     api_url = "https://data.orthodb.org/current/group"
     params = {"id": orthodb_id}
 
-    print (orthodb_id)
-
+    print(orthodb_id)
 
     response = requests.get(api_url, params=params)
-    
+
     if response.status_code == 200:
-        print (response)
+        print(response)
         data = response.json()
-        print (data)
-        print (data['data']['name'])
+        print(data)
+        print(data["data"]["name"])
 
-        name = data['data'].get('name', 'Unknown')
-        level_name = data['data'].get('level_name', 'Unknown')
+        name = data["data"].get("name", "Unknown")
+        level_name = data["data"].get("level_name", "Unknown")
 
-        print ('hello')
-        print (name)
-        print (level_name)
-
+        print("hello")
+        print(name)
+        print(level_name)
 
         return name, level_name
     else:
-        return 'Unknown', 'Unknown'
+        return "Unknown", "Unknown"
+
 
 def add_orthodb_columns(row, orthodb_mapping):
-
-    if pd.isnull(row['xref_orthodb']):
-        row['orthodb_name'] = 'Unknown'
-        row['orthodb_level_name'] = 'Unknown'
-        row['orthodb_name_level_name'] = 'Unknown Unknown'
+    if pd.isnull(row["xref_orthodb"]):
+        row["orthodb_name"] = "Unknown"
+        row["orthodb_level_name"] = "Unknown"
+        row["orthodb_name_level_name"] = "Unknown Unknown"
         return row
 
-    print ('here is ')
-    print (row['xref_orthodb'])
+    print("here is ")
+    print(row["xref_orthodb"])
 
-    orthodb_ids = row['xref_orthodb'].strip(';').split(';')
-    
+    orthodb_ids = row["xref_orthodb"].strip(";").split(";")
+
     # Use list comprehensions to extract the details
-    names = [orthodb_mapping.get(oid, 'Unknown|Unknown').split('|')[0] for oid in orthodb_ids]
-    level_names = [orthodb_mapping.get(oid, 'Unknown|Unknown').split('|')[1] for oid in orthodb_ids]
-    
+    names = [
+        orthodb_mapping.get(oid, "Unknown|Unknown").split("|")[0] for oid in orthodb_ids
+    ]
+    level_names = [
+        orthodb_mapping.get(oid, "Unknown|Unknown").split("|")[1] for oid in orthodb_ids
+    ]
+
     # Using zip to combine the corresponding names and level names
     name_level_names = [f"{n} {ln}" for n, ln in zip(names, level_names)]
 
-    row['orthodb_name'] = ';'.join(names)
-    row['orthodb_level_name'] = ';'.join(level_names)
-    row['orthodb_name_level_name'] = ';'.join(name_level_names)
-    
+    row["orthodb_name"] = ";".join(names)
+    row["orthodb_level_name"] = ";".join(level_names)
+    row["orthodb_name_level_name"] = ";".join(name_level_names)
+
     return row
+
 
 # Load in dictionary file stored as plain text locally
 def read_to_dict(filename):
@@ -129,30 +135,30 @@ def read_to_dict(filename):
     if not os.path.exists(filename):
         return data_dict
 
-
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         for line in file:
-            if ':' in line:
-                key, value = line.strip().split(':', 1)
+            if ":" in line:
+                key, value = line.strip().split(":", 1)
                 data_dict[key.strip()] = value.strip()
     return data_dict
 
+
 def write_from_dict(filename, data_dict):
     existing_data = read_to_dict(filename)
-    
+
     # Merge dictionaries. If there are overlaps, data_dict will overwrite existing_data
     merged_data = {**existing_data, **data_dict}
 
-    with open(filename, 'w') as file:
+    with open(filename, "w") as file:
         for key, value in merged_data.items():
             file.write(f"{key} : {value}\n")
 
+
 # Function to get interpro names from a dataframe with a column containing a list of interpro IDs
 def get_interpro_names(df, output_dir):
-
     existing_mapping = output_dir + "/interpro_mappings.txt"
 
-    print ("Add the actual InterPro names")
+    print("Add the actual InterPro names")
 
     unique_interpro_ids = get_list_of_unique_interpro_ids(df)
 
@@ -172,13 +178,12 @@ def get_interpro_names(df, output_dir):
     return df
 
 
-def  get_list_of_unique_interpro_ids(df):
-
-        # Get all unique InterPro IDs
+def get_list_of_unique_interpro_ids(df):
+    # Get all unique InterPro IDs
     unique_interpro_ids = set()
-    for entry in df['xref_interpro']:
+    for entry in df["xref_interpro"]:
         if isinstance(entry, str):
-            unique_interpro_ids.update(entry.split(';'))
+            unique_interpro_ids.update(entry.split(";"))
 
     unique_interpro_ids = [x for x in unique_interpro_ids if x]
 
@@ -187,46 +192,55 @@ def  get_list_of_unique_interpro_ids(df):
 
 # Function to query InterPro API and retrieve names for multiple IDs
 def retrieve_interpro_name(interpro_id):
-    api_url = 'https://www.ebi.ac.uk/interpro/api/entry/interpro/'
+    api_url = "https://www.ebi.ac.uk/interpro/api/entry/interpro/"
 
     url = api_url + interpro_id
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        interpro_name = data['metadata']['name']['name']
-        print (interpro_name)
+        interpro_name = data["metadata"]["name"]["name"]
+        print(interpro_name)
         return interpro_name
     else:
-        return 'Unknown'
+        return "Unknown"
+
 
 def add_interpro_name_column(row, interpro_mapping):
-    if isinstance(row['xref_interpro'], float):
-        row['interpro_name'] = None
+    if isinstance(row["xref_interpro"], float):
+        row["interpro_name"] = None
     else:
-        unique_entries = row['xref_interpro'].split(';')
-        row['interpro_name'] = ';'.join(interpro_mapping.get(ids, 'Unknown') for ids in unique_entries)
+        unique_entries = row["xref_interpro"].split(";")
+        row["interpro_name"] = ";".join(
+            interpro_mapping.get(ids, "Unknown") for ids in unique_entries
+        )
     return row
+
 
 def annotate_motif(df, motif):
     # For a dataframe, check if the sequence column contains a certain motif
-    df[f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}"] = df["sequence"].dropna().str.contains(motif)
+    df[f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}"] = (
+        df["sequence"].dropna().str.contains(motif)
+    )
     return df
 
 
 def get_motif_indexes(string, motif):
     # Returns the start and end positions of a motif
 
-    if (type(string) == str):
-        return [[m.start(), m.end()] for m in re.finditer(rf"{motif}" "", string, overlapped=True)]
+    if type(string) == str:
+        return [
+            [m.start(), m.end()]
+            for m in re.finditer(rf"{motif}" "", string, overlapped=True)
+        ]
     else:
         return None
 
-def find_value(keyword, possible_words):
 
+def find_value(keyword, possible_words):
     for word in possible_words:
         if word in keyword:
             return word
-    return 'not found'
+    return "not found"
 
 
 def annotate_nonAA(df):
@@ -247,7 +261,6 @@ def annotate_AA(df):
     return df
 
 
-
 def get_pos(align_df, seq_id, col_name, pos_type="list"):
     if not literal_eval(align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0]):
         return
@@ -262,7 +275,7 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
         pos = [x + 1 for x in range(pos[0], pos[1])]
 
     else:
-        raise(NameError("Not a valid position type"))
+        raise (NameError("Not a valid position type"))
 
     return pos
 
@@ -276,15 +289,13 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
 
 
 def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
-
-    print ('here')
+    print("here")
     # Map the positions to an index in the alignment
     # aligned_pos = get_aligned_positions(
     #     align_df[align_df["info"] == seq_id], aligned_seq, *unaligned_pos
     # )
 
-    aligned_pos = get_aligned_positions(aligned_seq, *unaligned_pos
-    )
+    aligned_pos = get_aligned_positions(aligned_seq, *unaligned_pos)
 
     # Add the aligned positions we want to track to the dataframe
     align_df = track_aligned_positions(align_df, seq_id, tag, aligned_pos)
@@ -297,10 +308,9 @@ def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
 # def track_residues(seq_id, aligned_)
 
 
-
 def assign_labels(row):
-    proteins = row['protein_name']
-    
+    proteins = row["protein_name"]
+
     # Create a TF-IDF vectorizer to convert protein names into numerical representations
     vectorizer = TfidfVectorizer()
     proteins_tfidf = vectorizer.fit_transform(proteins)
@@ -313,7 +323,9 @@ def assign_labels(row):
 
     # Group proteins based on cosine similarity
     groups = []
-    assigned = [False] * len(proteins)  # Track whether a protein has been assigned to a group
+    assigned = [False] * len(
+        proteins
+    )  # Track whether a protein has been assigned to a group
 
     for i in range(len(proteins)):
         if not assigned[i]:
@@ -321,7 +333,10 @@ def assign_labels(row):
             assigned[i] = True
 
             for j in range(i + 1, len(proteins)):
-                if not assigned[j] and cosine_similarities[i, j] >= similarity_threshold:
+                if (
+                    not assigned[j]
+                    and cosine_similarities[i, j] >= similarity_threshold
+                ):
                     group.append(proteins[j])
                     assigned[j] = True
 
@@ -345,7 +360,9 @@ def assign_labels(row):
         most_common_keywords = keyword_counts.most_common()
 
         # Concatenate the most common keywords into a string
-        label = " ".join(keyword[0] for keyword in most_common_keywords[:4])  # Limit to four words
+        label = " ".join(
+            keyword[0] for keyword in most_common_keywords[:4]
+        )  # Limit to four words
 
         # Assign the concatenated string as the label
         labels.append(label)
@@ -354,36 +371,22 @@ def assign_labels(row):
     return labels
 
 
-
-
-
-
-
-
 def get_aligned_pos_and_content(seq_map_from, seq_map_to, *pos_set):
     """"""
-
-
 
     aligned_pos_set = []
     content_set = []
 
     for pos in pos_set:
-
-
-
         aligned_pos = get_aligned_positions(seq_map_from, *pos)
 
-
         content = get_content_at_pos(seq_map_to, *aligned_pos)
-
-
-
 
         aligned_pos_set.append(aligned_pos)
         content_set.append([content])
 
     return pd.Series([aligned_pos_set, content_set])
+
 
 def get_aligned_positions(sequence, *positions):
     """
@@ -399,22 +402,20 @@ def get_aligned_positions(sequence, *positions):
 
     sequence = "".join(sequence)
 
-    print (positions)
-    print ('there')
-
+    print(positions)
+    print("there")
 
     aligned_positions = []
 
     for pos in positions:
-
         # Get the current index
         curr_idx = pos
 
-        print (curr_idx)
-        print (type(curr_idx))
+        print(curr_idx)
+        print(type(curr_idx))
 
         # Get offset implied by first position
-        offset = sequence[0:int(curr_idx)].count("-")
+        offset = sequence[0 : int(curr_idx)].count("-")
 
         # Get next position based on the first position and the gap offset
         next_idx = curr_idx + offset
@@ -454,7 +455,6 @@ def get_final_pos(sequence, pos, curr_idx, next_idx):
 
 
 def get_content_at_pos(seq, *pos):
-
     # print ('get content at pos')
 
     # print (seq)
@@ -488,11 +488,10 @@ def get_tracked_content(align_df, tag, *aligned_pos):
 def add_tag_if_in_fasta(annot_df, filepath, tag):
     seqs = sc.get_entry_ids_from_fasta(filepath)
 
-    annot_df[tag] = annot_df.apply(
-        lambda row: 1 if row["info"] in seqs else 0, axis=1
-    )
+    annot_df[tag] = annot_df.apply(lambda row: 1 if row["info"] in seqs else 0, axis=1)
 
     return annot_df
+
 
 def add_tag_if_sequence_matches(annot_df, filepath, tag):
     seqs = sc.get_sequence_content_from_fasta(filepath)
@@ -502,6 +501,7 @@ def add_tag_if_sequence_matches(annot_df, filepath, tag):
     )
 
     return annot_df
+
 
 def annotate_sp_tr(df):
     # Is the sequence from SwissProt or TrEMBL
@@ -538,8 +538,6 @@ def annotate_sp_tr(df):
 #     return aligned_positions
 
 
-
-
 def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
     lab_df = pd.read_csv(filepath, encoding="utf-8", header=0)
 
@@ -560,13 +558,8 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
 
     if not df_diff.empty:
         for val in df_diff["info"].values:
-            if (
-                val in annot_df["info"].values
-                and val in lab_df["info"].values
-            ):
-                annot_seq = annot_df.loc[annot_df["info"] == val, seq_col].values[
-                    0
-                ]
+            if val in annot_df["info"].values and val in lab_df["info"].values:
+                annot_seq = annot_df.loc[annot_df["info"] == val, seq_col].values[0]
                 lab_seq = lab_df.loc[lab_df["info"] == val, "sequence"].values[0]
                 if annot_seq != lab_seq:
                     raise ValueError(
@@ -651,8 +644,6 @@ def merge_lab_annotation_cells(id, first_cell, second_cell):
 
 
 def check_terms(check, terms):
-
-
     if pd.isnull(check):
         return
     for term in terms:
@@ -696,7 +687,6 @@ def add_thermo(annot_df, filepath):
         axis=1,
     )
 
-
     annot_df["lineage_thermo"] = annot_df.apply(
         lambda row: True
         if check_terms(row["lineage"], thermo_species_terms + thermo_species)
@@ -705,7 +695,6 @@ def add_thermo(annot_df, filepath):
         else False,
         axis=1,
     )
-
 
     annot_df["lineage_thermo_no_metha"] = annot_df.apply(
         lambda row: True
@@ -793,7 +782,9 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
     with open(outpath, "w") as align_html:
         # Get the length needed
         for acc, _bounds in boundary_dict.items():
-            aligned_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[0]
+            aligned_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[
+                0
+            ]
             alignment_length = str(len(aligned_seq) * 10)
 
         align_html.write(
@@ -804,7 +795,9 @@ def create_annotated_alignment(df, boundary_dict, outpath, colour_dict=None):
 
         for acc, bounds in boundary_dict.items():
             if bounds:
-                orig_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[0]
+                orig_seq = df.loc[df["extracted_id"] == acc]["Sequence_aligned"].values[
+                    0
+                ]
                 formatted_sequence = df.loc[df["extracted_id"] == acc][
                     "Sequence_aligned"
                 ].values[0]
@@ -891,48 +884,49 @@ def get_amino_acids(seq, *pos):
     return ["".join([seq[int(bp)] for bp in pos])]
 
 
-
 def get_binding_pos(id, binding_sites, ligand=None):
     if pd.notnull(binding_sites):
         results = []
-        
+
         # Split by "BINDING" to get the chunks
-        segments = re.split(r'BINDING\s*\d+;', binding_sites)
-        binding_positions = re.findall(r'BINDING\s*(\d+);', binding_sites)
-        
-        for pos, segment in zip(binding_positions, segments[1:]): # Ignore the first split as it will be empty
+        segments = re.split(r"BINDING\s*\d+;", binding_sites)
+        binding_positions = re.findall(r"BINDING\s*(\d+);", binding_sites)
+
+        for pos, segment in zip(
+            binding_positions, segments[1:]
+        ):  # Ignore the first split as it will be empty
             data = {}
-            data['binding_pos'] = int(pos) - 1
-            
+            data["binding_pos"] = int(pos) - 1
+
             # Extract ligand, ligand_id, and evidence
             ligand_match = re.search(r'/ligand="([^"]+)"', segment)
             ligand_id_match = re.search(r'/ligand_id="([^"]+)"', segment)
             evidence_match = re.search(r'/evidence="([^"]+)"', segment)
 
             if ligand_match:
-                data['binding_ligand'] = ligand_match.group(1)
+                data["binding_ligand"] = ligand_match.group(1)
             if ligand_id_match:
-                data['binding_ligand_id'] = ligand_id_match.group(1)
+                data["binding_ligand_id"] = ligand_id_match.group(1)
             if evidence_match:
-                data['binding_evidence'] = evidence_match.group(1)
+                data["binding_evidence"] = evidence_match.group(1)
 
             # If a specific ligand is provided, filter based on that
-            if not ligand or (ligand and 'ligand' in data and data['ligand'] == ligand):
+            if not ligand or (ligand and "ligand" in data and data["ligand"] == ligand):
                 results.append(data)
-        
+
         return results
     else:
         return []
 
 
 def check_sequence_for_loop_length(seq):
-    print (seq[0][0].replace("-",""))
-    return len(seq[0][0].replace("-",""))
+    print(seq[0][0].replace("-", ""))
+    return len(seq[0][0].replace("-", ""))
 
 
 def check_sequence_for_acidic(seq):
-    print (seq)
-    print (seq[0][0])
+    print(seq)
+    print(seq[0][0])
     if "E" in seq[0][0] or "D" in seq[0][0]:
         return "Acidic_residue"
     else:
@@ -940,13 +934,12 @@ def check_sequence_for_acidic(seq):
 
 
 def check_sequence_for_charged(seq):
-    print (seq)
-    print (seq[0][0])
+    print(seq)
+    print(seq[0][0])
     if "R" in seq[0][0] or "K" in seq[0][0]:
         return "Charged_residue"
     else:
         return "No_charged_residue"
-
 
 
 def check_binding_for_acidic(seq, bind_pos):
@@ -959,15 +952,12 @@ def classify_loop_length(bind_pos_set):
     # Offset accounts for the fact that we need to get the total number of positions and also account for the first position in the loop which isn't a binding position
 
     for bind_pos in bind_pos_set:
-
         if bind_pos and bind_pos != "No_binding_positions":
             offset = 2
-
 
             return bind_pos[-1] - bind_pos[0] + offset
         else:
             return "No_binding_positions"
-
 
 
 def check_if_positions_align_with_target(target_pos, seq_pos):

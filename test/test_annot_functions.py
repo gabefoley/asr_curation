@@ -7,12 +7,12 @@ import scripts.seqcurate as sc
 
 def test_get_amino_acids():
     pos = an.get_amino_acids("PPGP", 0)
-    assert pos == ['P']
+    assert pos == ["P"]
 
 
 def test_get_amino_acids_multiple():
     pos = an.get_amino_acids("PPGP", 0, 2)
-    assert pos == ['PG']
+    assert pos == ["PG"]
 
 
 def test_get_binding_pos():
@@ -208,5 +208,3 @@ def test_get_motif_indexes():
 #
 #
 #     an.check_if_positions_align_with_target()
-
-

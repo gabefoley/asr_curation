@@ -1,4 +1,4 @@
-![Coverage](coverage.svg)
+![code coverage](https://raw.githubusercontent.com/gabefoley/asr_curation/coverage-badge/coverage.svg?raw=true)
 [![Twitter](https://badgen.net/badge/icon/gabefoley?icon=twitter&label)](https://twitter.com/gabefoley)
 # ASR Curation workflow
 

@@ -37,7 +37,6 @@ entrypoints
 ete3
 executing
 fastjsonschema
-fastobo
 filelock
 fonttools
 frozenlist
@@ -122,6 +121,7 @@ pytz
 PyYAML
 pyzmq
 ratelimiter
+regex
 requests
 requests-file
 requests-toolbelt

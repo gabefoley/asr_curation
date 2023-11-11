@@ -16,6 +16,7 @@ biopython==1.79
 bleach==5.0.1
 brendapy==0.5.0
 cached-property==1.5.2
+certifi
 cffi==1.15.1
 chardet==4.0.0
 charset-normalizer==2.0.12

@@ -313,7 +313,7 @@ full_uniprot_cols = [
     "xref_swisspalm",
     "xref_tair",
     "xref_tcdb",
-    "xref_tigrfams",
+    #"xref_tigrfams",
     "xref_topdownproteomics",
     "xref_treefam",
     "xref_tuberculist",

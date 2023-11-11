@@ -184,6 +184,8 @@ def fetch_annotations_in_batches(ids, intermediate_tsv_file, result_batch_size):
         + str(result_batch_size)
     )
 
+    print (batch_url)
+
     progress = 0
 
     with open(intermediate_tsv_file, "a") as f:
@@ -241,7 +243,13 @@ def uniprot_annotation_lkp(
 
     # save in .csv file
     print("Creating .csv output file")
-    results_df.to_csv(output_file, index=False)
+
+    merged_df = validated_df.merge(results_df,left_on='sequence', right_on='sequence', how='left')
+
+    merged_df = merged_df.drop_duplicates(subset="info", keep="first")
+    merged_df.to_csv(output_file, index=False)
+
+
     print("Completed Uniprot Annotations Job")
 
     if os.path.exists(intermediate_tsv_file):

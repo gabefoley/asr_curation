@@ -22,7 +22,7 @@ def test_validate_ids_main_from_command_line():
         os.remove(outpath)
 
     os.system(
-        f"python ./scripts/validate_ids.py --input_file ./test/files/test_original.csv --output_file {outpath}"
+        f"python ./scripts/validate_ids_not_uniprot.py --input_file ./test/files/test_original.csv --output_file {outpath}"
     )
 
     assert os.path.isfile(outpath)

@@ -276,9 +276,14 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
 
 
 def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
+
+    print ('here')
     # Map the positions to an index in the alignment
-    aligned_pos = get_aligned_positions(
-        align_df[align_df["id"] == seq_id], aligned_seq, *unaligned_pos
+    # aligned_pos = get_aligned_positions(
+    #     align_df[align_df["info"] == seq_id], aligned_seq, *unaligned_pos
+    # )
+
+    aligned_pos = get_aligned_positions(aligned_seq, *unaligned_pos
     )
 
     # Add the aligned positions we want to track to the dataframe
@@ -394,6 +399,9 @@ def get_aligned_positions(sequence, *positions):
 
     sequence = "".join(sequence)
 
+    print (positions)
+    print ('there')
+
 
     aligned_positions = []
 
@@ -402,8 +410,11 @@ def get_aligned_positions(sequence, *positions):
         # Get the current index
         curr_idx = pos
 
+        print (curr_idx)
+        print (type(curr_idx))
+
         # Get offset implied by first position
-        offset = sequence[0:curr_idx].count("-")
+        offset = sequence[0:int(curr_idx)].count("-")
 
         # Get next position based on the first position and the gap offset
         next_idx = curr_idx + offset
@@ -459,7 +470,7 @@ def get_content_at_pos(seq, *pos):
 #     )
 #     return align_df
 def track_aligned_positions(align_df, seq_id, tag, aligned_pos):
-    seq_index = align_df.index[align_df["id"] == seq_id].tolist()[0]
+    seq_index = align_df.index[align_df["info"] == seq_id].tolist()[0]
     # align_df.at[seq_index, f"tracked_{tag}"] = ",".join(str(x) for x in aligned_pos)
     align_df.at[seq_index, f"tracked_{tag}"] = aligned_pos
 
@@ -535,35 +546,35 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
     annot_df.columns = annot_df.columns.str.replace(" ", "")
     lab_df.columns = lab_df.columns.str.replace(" ", "")
 
-    if "id" not in lab_df.columns:
-        raise ValueError("Lab annotations are missing id field")
+    if "info" not in lab_df.columns:
+        raise ValueError("Lab annotations are missing info field")
 
     if "sequence" not in lab_df.columns:
         raise ValueError("Lab annotations are missing sequence field")
     # Get the columns for id / sequence that are different
     df_diff = pd.concat(
-        [annot_df[["id", seq_col]], lab_df[["id", "sequence"]]]
+        [annot_df[["info", seq_col]], lab_df[["info", "sequence"]]]
     ).drop_duplicates(keep=False)
 
     # Get the ids from df_diff, if an id is in both then the sequence might be different - need to raise an error
 
     if not df_diff.empty:
-        for val in df_diff["id"].values:
+        for val in df_diff["info"].values:
             if (
-                val in annot_df["id"].values
-                and val in lab_df["id"].values
+                val in annot_df["info"].values
+                and val in lab_df["info"].values
             ):
-                annot_seq = annot_df.loc[annot_df["id"] == val, seq_col].values[
+                annot_seq = annot_df.loc[annot_df["info"] == val, seq_col].values[
                     0
                 ]
-                lab_seq = lab_df.loc[lab_df["id"] == val, "sequence"].values[0]
+                lab_seq = lab_df.loc[lab_df["info"] == val, "sequence"].values[0]
                 if annot_seq != lab_seq:
                     raise ValueError(
                         "Lab annotations contain different sequence to existing annotations"
                     )
 
     for col in [x for x in lab_df.columns if not x.strip().startswith("lab")]:
-        if col not in ["id", "sequence"] and col in annot_df.columns:
+        if col not in ["info", "sequence"] and col in annot_df.columns:
             raise ValueError("Duplicate column between lab and existing annotations")
 
     if len(lab_df.columns) != len(
@@ -574,7 +585,7 @@ def add_lab_annotations(annot_df, filepath, seq_col="sequence"):
     # existing_lab_annotations =  [x for x in annot_df if x.strip().startswith("lab")]
 
     # annot_df['id'] = annot_df['id'].astype(object)
-    merge_on = ["id", "sequence"]
+    merge_on = ["info", "sequence"]
 
     # merged_df = pd.concat([annot_df, lab_df], axis=1)
 

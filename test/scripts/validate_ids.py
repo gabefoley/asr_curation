@@ -327,6 +327,13 @@ def create_output_file(data_df, to_id_lookup, output_file):
         lambda x: list(set(x.strip().split(" ")))
     )
 
+    print(output_df)
+    print(data_df)
+
+    print("gonna write")
+
+    output_df = pd.merge(data_df, output_df)
+
     # save as csv and return
     output_df.to_csv(output_file, index=False)
 
@@ -343,6 +350,8 @@ def all_ids_lookup_cmd(input_file, output_file, from_id_lookup=None, to_id_looku
 
 def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
+
+    print("in all ids loopup")
 
     if "SNAKEMAKE" in os.environ:
         input_file = snakemake.input[0]
@@ -364,9 +373,9 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     print(df_data["accession"].str.split("|", expand=True))
 
     # sepearate the ids if they are mulitple seperated by |
-    df_data[["Extracted_ID_1", "Extracted_ID_2", "Extracted_ID_3"]] = df_data[
-        "accession"
-    ].str.split("|", expand=True)
+    # df_data[["Extracted_ID_1", "Extracted_ID_2", "Extracted_ID_3"]] = df_data[
+    #     "accession"
+    # ].str.split("|", expand=True)
     # df_data[['Extracted_ID_1']]= df_data['accession'].str.split('|', expand=True)
     # df_data[['Extracted_ID_1']]= df_data['accession'].str.split('|', expand=True)
 

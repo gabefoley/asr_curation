@@ -15,7 +15,7 @@ def test_get_sequence_df():
 
     # Test that the columns get added correctly
     assert [x for x in df.columns] == [
-        "accession",
+        "info",
         "truncated_info",
         "extracted_id",
         "extracted_name",
@@ -34,7 +34,7 @@ def test_get_sequence_df_multiple_paths():
 
     # Test that the columns get added correctly
     assert [x for x in df.columns] == [
-        "accession",
+        "info",
         "truncated_info",
         "extracted_id",
         "extracted_name",

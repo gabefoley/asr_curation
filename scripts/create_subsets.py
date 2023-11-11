@@ -109,126 +109,135 @@ def add_val_to_dict(term, add_val, add_dict):
         # except ValueError:
         #     add_dict[term] = add_val
 
+def create_subsets():
+    # If a subset rule doesn't exist, then just write out the full data set
+    if snakemake.wildcards.subset == "full_set":
+        sc.write_to_fasta(pd.read_csv(snakemake.input.csv), snakemake.output[0])
 
-# If a subset rule doesn't exist, then just write out the full data set
-if snakemake.wildcards.subset == "full_set":
-    sc.write_to_fasta(pd.read_csv(snakemake.input.csv), snakemake.output[0])
 
+    for line in open(snakemake.input.rules).read().splitlines():
+        # Reset the condition that we want to sample from the dataframe
+        sample_from = None
 
-for line in open(snakemake.input.rules).read().splitlines():
-    # Reset the condition that we want to sample from the dataframe
-    sample_from = None
+        if line and not line.startswith("#"):
+            col_val_dict = {}
+            not_col_val_dict = {}
+            req_col_val_dict = {}
 
-    if line and not line.startswith("#"):
-        col_val_dict = {}
-        not_col_val_dict = {}
-        req_col_val_dict = {}
+            # Check to see if custom name exists
+            name = line.split("=")[0].strip()
 
-        # Check to see if custom name exists
-        name = line.split("=")[0].strip()
+            # Make the dictionary
+            # col_val_dict = dict(line.split("=")[1].strip())
 
-        # Make the dictionary
-        # col_val_dict = dict(line.split("=")[1].strip())
+            dict_def = line.split("=")[1].strip()
 
-        dict_def = line.split("=")[1].strip()
+            # Wildcard for accepting all columns
+            if dict_def != "*":
+                for i in dict_def.split("$"):
+                    term = i.split(":")[0].strip()
 
-        # Wildcard for accepting all columns
-        if dict_def != "*":
-            for i in dict_def.split("$"):
-                term = i.split(":")[0].strip()
+                    if term:
+                        print (i)
+                        term_val = i.split(":")[1].strip()
 
-                if term:
-                    print (i)
-                    term_val = i.split(":")[1].strip()
+                        print (term_val)
 
-                    print (term_val)
+                        # If it is instructions on how to sample from columns create the conditions
 
-                    # If it is instructions on how to sample from columns create the conditions
+                        if term.split(" ")[0].strip().lower() == "sample_from":
+                            sample_num = term.split("(")[1].split(")")[0]
+                            sample_from = [x.strip() for x in term_val.split(",")]
 
-                    if term.split(" ")[0].strip().lower() == "sample_from":
-                        sample_num = term.split("(")[1].split(")")[0]
-                        sample_from = [x.strip() for x in term_val.split(",")]
-
-                    else:
-                        # If the value is a negation add it to the negation dictionary
-                        if term_val.split(" ")[0].strip().lower() == "not":
-                            add_val_to_dict(
-                                term, "".join(term_val.split(" ")[1:]), not_col_val_dict
-                            )
-
-                        # If the value is required to be there add it to the required dictionary
-                        elif term_val.split(" ")[0].strip().lower() == "required":
-                            add_val_to_dict(
-                                term, term_val.split(" ")[1], req_col_val_dict
-                            )
-
-                        # Else add the term value we want
                         else:
-                            add_val_to_dict(term, term_val.split(" ")[0], col_val_dict)
+                            # If the value is a negation add it to the negation dictionary
+                            if term_val.split(" ")[0].strip().lower() == "not":
+                                add_val_to_dict(
+                                    term, "".join(term_val.split(" ")[1:]), not_col_val_dict
+                                )
 
-        # col_val_dict = {i.split(':')[0].strip(): bool(i.split(':')[1].strip().lower() == 'true') if i.split(':')[1].strip().lower() in ['true', 'false'] else i.split(':')[1].strip() for i in dict_def.split(",")}
+                            # If the value is required to be there add it to the required dictionary
+                            elif term_val.split(" ")[0].strip().lower() == "required":
+                                add_val_to_dict(
+                                    term, term_val.split(" ")[1], req_col_val_dict
+                                )
 
-        # If no custom name make name based on values of dictionary
-        if len(name) < 3:
-            name = get_col_val_name(col_val_dict, not_col_val_dict)
+                            # Else add the term value we want
+                            else:
+                                add_val_to_dict(term, term_val.split(" ")[0], col_val_dict)
 
-        if name == snakemake.wildcards.subset:
-            df = pd.read_csv(snakemake.input.csv)
+            # col_val_dict = {i.split(':')[0].strip(): bool(i.split(':')[1].strip().lower() == 'true') if i.split(':')[1].strip().lower() in ['true', 'false'] else i.split(':')[1].strip() for i in dict_def.split(",")}
 
-            # df = df.fillna("None")
+            # If no custom name make name based on values of dictionary
+            if len(name) < 3:
+                name = get_col_val_name(col_val_dict, not_col_val_dict)
 
-            # Subset the annotation file
-            if dict_def == "*":
-                sub_df = df
-            else:
-                sub_df = subset_column_vals(
-                    df, col_val_dict, not_col_val_dict, req_col_val_dict
-                )
+            if name == snakemake.wildcards.subset:
+                df = pd.read_csv(snakemake.input.csv)
 
-            if sample_from:
-                print(
-                    f"We are sampling {sample_num} entries from each of the following columns - {','.join([x for x in sample_from])} "
-                )
+                # df = df.fillna("None")
 
-                frames = []
-
-                for sample in sample_from:
-                    frames.append(
-                        sub_df.loc[sub_df[sample] == True].sample(int(sample_num))
+                # Subset the annotation file
+                if dict_def == "*":
+                    sub_df = df
+                else:
+                    sub_df = subset_column_vals(
+                        df, col_val_dict, not_col_val_dict, req_col_val_dict
                     )
 
-                sub_df = pd.concat(frames)
+                if sample_from:
+                    print(
+                        f"We are sampling {sample_num} entries from each of the following columns - {','.join([x for x in sample_from])} "
+                    )
 
-                print("After sampling the length to write out is")
-                print(len(sub_df))
+                    frames = []
 
-                # Remove this from above and just do it here?
+                    for sample in sample_from:
+                        frames.append(
+                            sub_df.loc[sub_df[sample] == True].sample(int(sample_num))
+                        )
 
-                req_qry = " or ".join(
-                    [
-                        format_subset_val(col, col_val)
-                        for col, col_val in req_col_val_dict.items()
-                    ]
-                )
+                    sub_df = pd.concat(frames)
 
-                if req_qry:
-                    req_df = df.query(req_qry)
+                    print("After sampling the length to write out is")
+                    print(len(sub_df))
 
-                    frames = [sub_df, req_df]
-                    merge_df = pd.concat(frames)
+                    # Remove this from above and just do it here?
 
-                    sub_df = merge_df.drop_duplicates(subset="accession")
+                    req_qry = " or ".join(
+                        [
+                            format_subset_val(col, col_val)
+                            for col, col_val in req_col_val_dict.items()
+                        ]
+                    )
 
-            # Write the subset to a fasta
-            # TODO: Currently this is just working for one subset file (not multiple)
+                    if req_qry:
+                        req_df = df.query(req_qry)
 
-            sub_df = sub_df.replace("None", np.NaN)
+                        frames = [sub_df, req_df]
+                        merge_df = pd.concat(frames)
 
-            print (sub_df)
-            sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
+                        sub_df = merge_df.drop_duplicates(subset="accession")
+
+                # Write the subset to a fasta
+                # TODO: Currently this is just working for one subset file (not multiple)
+
+                sub_df = sub_df.replace("None", np.NaN)
+
+                print (sub_df)
+                sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
 
 
-            print ('write to csv')
+                print ('write to csv')
 
-            # Write the subset to its own csv file
-            sub_df.to_csv(snakemake.output.csv, index=False)
+                # Write the subset to its own csv file
+                sub_df.to_csv(snakemake.output.csv, index=False)
+
+
+def main():
+    print("Starting Validating IDs")
+    create_subsets()
+
+
+if __name__ == "__main__":
+    main()

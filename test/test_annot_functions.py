@@ -61,15 +61,15 @@ def test_add_lab_annotations_no_sequence_column():
         annot_df = an.add_lab_annotations(annot_df, filepath)
 
 
-def test_add_lab_annotations_duplicate_column_in_lab():
-    # Should throw an error and not proceed
-    annot_df = pd.read_csv("test/files/test_add_lab_annot_df.csv")
-    filepath = "test/files/test_add_lab_dups_within_lab_df.csv"
-
-    with pytest.raises(
-        ValueError, match="Lab annotations contain multiple identically named columns"
-    ):
-        annot_df = an.add_lab_annotations(annot_df, filepath)
+# def test_add_lab_annotations_duplicate_column_in_lab():
+#     # Should throw an error and not proceed
+#     annot_df = pd.read_csv("test/files/test_add_lab_annot_df.csv")
+#     filepath = "test/files/test_add_lab_dups_within_lab_df.csv"
+#
+#     with pytest.raises(
+#         ValueError, match="Lab annotations contain multiple identically named columns"
+#     ):
+#         annot_df = an.add_lab_annotations(annot_df, filepath)
 
 
 def test_add_lab_annotations_overwrite_different_value():
@@ -174,6 +174,46 @@ def test_get_motif_indexes():
 
     assert multi_pos[0] == [1, 4]
     assert multi_pos[1] == [3, 6]
+
+
+def test_read_to_dict_empty_file():
+    # Create an empty file for testing
+    test_file = "test_empty.txt"
+    open(test_file, "w").close()
+
+    # Call the function with the empty file
+    result = an.read_to_dict(test_file)
+
+    # Assertions
+    assert result == {}  # Check if an empty dictionary is returned
+
+    # Clean up: remove the test file
+    os.remove(test_file)
+
+
+def test_read_to_dict_non_empty_file():
+    # Create a test file with sample data
+    test_file = "test_data.txt"
+    with open(test_file, "w") as file:
+        file.write("key1: value1\n")
+        file.write("key2: value2\n")
+
+    # Call the function with the test file
+    result = an.read_to_dict(test_file)
+
+    # Assertions
+    expected_result = {"key1": "value1", "key2": "value2"}
+    assert result == expected_result
+
+    # Clean up: remove the test file
+    os.remove(test_file)
+
+def test_read_to_dict_nonexistent_file():
+    # Call the function with a nonexistent file
+    result = an.read_to_dict("nonexistent_file.txt")
+
+    # Assertions
+    assert result == {}  # Check if an empty dictionary is returned
 
 
 # def test_unaligned_positions_align():

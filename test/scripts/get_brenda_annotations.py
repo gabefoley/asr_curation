@@ -48,11 +48,11 @@ def count_uniprot_entries(ec_dict):
 
 def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
     for name, annots in brenda_dict.items():
-        # print("now we adding")
-        # print(name)
-        # print(annots)
-        # print("entry_id")
-        # print(entry_id)
+        print("now we adding")
+        print(name)
+        print(annots)
+        print("entry_id")
+        print(entry_id)
         df.loc[df["extracted_id"].str.contains(entry_id), name] = ";".join(
             str(x) for x in annots
         )
@@ -83,9 +83,9 @@ def add_val(brenda_dict, protein, attrib, attrib_count):
 
             for term in terms:
                 if term in attrib:
-                    # if term == "data":
-                    #     # print("doggy adding")
-                    #     # print(f"BRENDA_{str(bc)}_{term.upper()}")
+                    if term == "data":
+                        print("doggy adding")
+                        print(f"BRENDA_{str(bc)}_{term.upper()}")
                     brenda_dict[protein.uniprot][
                         f"BRENDA_{str(bc)}_{term.upper()}"
                     ].append(f"{attrib[term]}_count={attrib_count}")
@@ -166,10 +166,10 @@ if ec_nums:
                                 "SS",
                             ]:
                                 print("adding TO")
-                                # print(brenda_dict)
-                                # print(protein)
-                                # print(attrib)
-                                # print(attrib_count)
+                                print(brenda_dict)
+                                print(protein)
+                                print(attrib)
+                                print(attrib_count)
                                 add_val(brenda_dict, protein, attrib, attrib_count)
                             if bc == "GI":
                                 print(f"WARNING {bc} is not implemented")

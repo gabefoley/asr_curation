@@ -3,13 +3,11 @@ from collections import defaultdict
 import os
 
 # Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
-
 os.environ["SNAKEMAKE"] = 'True'
 
 # Add the scripts folder to PYTHONPATH. This is needed if we use custom annotations located elsewhere (so they can access the scripts folder)
 if "PYTHONPATH" in os.environ:
     os.environ["PYTHONPATH"] += f':{os.getcwd()}/scripts'
-
 else:
     os.environ["PYTHONPATH"] = f'{os.getcwd()}/scripts'
 
@@ -140,7 +138,8 @@ rule all:
 
             trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            # extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
+            extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
+#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_build/html/index.html' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
 
 # Create the initial annotation file from the FASTA file or list of IDs
 rule create_annotations:
@@ -357,3 +356,87 @@ rule concat_ancestor_alignment:
         WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln"
     shell:
         "cat {input.extants} {input.ancestors} > {output}"
+
+
+# output for making the summary documents
+
+
+# Rules for creating the PDF summary files
+
+rule create_dataset_summary:
+    input:
+       WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv",
+    params:
+        annotation_cols = config['annotation_cols']
+    output:
+       summary = WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb",
+       # dir = directory(WORKDIR + "/{dataset}/dataset_summary")
+
+    log:
+       # optional path to the processed notebook
+       notebook=WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb"
+    notebook:
+       "notebooks/create_summary_document.py.ipynb"
+
+
+#Hide the first cell that snakemake adds to the notebook
+rule clean_summary_document:
+   input:
+       WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb"
+   output:
+       WORKDIR + "/{dataset}/dataset_summary/{dataset}_summary_cleaned.ipynb"
+
+   script:
+       "scripts/clean_summary_document.py"
+
+rule create_subset_summary:
+    input:
+       aln = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln",
+       csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv",
+
+    params:
+        annotation_cols = config['annotation_cols']
+
+    output:
+       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_{cluster_thresh}_subset_summary.ipynb",
+    log:
+        #optional path to the processed notebook
+       notebook=WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_{cluster_thresh}_subset_summary.ipynb"
+    notebook:
+       "notebooks/create_subset_document.py.ipynb"
+
+
+#Hide the first cell that snakemake adds to the notebook
+rule clean_subset_summary:
+   input:
+       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_{cluster_thresh}_subset_summary.ipynb"
+   output:
+       summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/{subset}_{cluster_thresh}_subset_summary_cleaned.ipynb",
+
+   script:
+       "scripts/clean_summary_document.py"
+
+        #expand("indelible_summaries/{{taxon}}/{rep}.csv", rep = [x for x in range(1, config['REPS'] + 1)])
+rule create_subset_document:
+   input:
+       pdf = WORKDIR + "/{dataset}/dataset_summary/{dataset}_summary_cleaned.ipynb",
+       subsets = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/{subset}_{cluster_thresh}_subset_summary_cleaned.ipynb",
+       # subsets = expand(WORKDIR + "/{{dataset}}/dataset_summary/{{dataset}}/subsets/{subset}/temp/{subset}_summary.ipynb", subset = [subset for subset in subsets[{{wildcards.dataset}}]])
+   output:
+       config = WORKDIR + "/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_config.yml",
+       toc = WORKDIR + "/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_toc.yml"
+
+   script:
+       "scripts/create_summary_document.py"
+
+rule compile_summary_document:
+   input:
+       # dir = WORKDIR + "/{dataset}/dataset_summary",
+       config = WORKDIR + "/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_config.yml",
+
+   params:
+       dir = WORKDIR + "/{dataset}/dataset_summary/{subset}_{cluster_thresh}",
+   output:
+      config = WORKDIR + "/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_build/html/index.html"
+   shell:
+       "jb build {params.dir}"

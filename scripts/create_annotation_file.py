@@ -3,23 +3,11 @@ import click
 import os
 
 
-@click.command()
-@click.option("--df", help="Dataframe with all annotations")
-@click.option("--annot", help="Columns to add to annotation file")
-@click.option(
-    "--outpath", default="./annotation_cols.txt", help="Outpath for annotation file"
-)
-def create_annotations(df, annot, outpath):
-    if "SNAKEMAKE" in os.environ:
-        df = pd.read_csv(snakemake.input.csv)
-        annotation_cols = snakemake.params.annotation_cols
-        outpath = snakemake.output.tsv
 
-    else:
-        df = pd.read_csv(df, dtype="object")
-
-        with open(annot) as annot_file:
-            annotation_cols = [line.strip() for line in annot_file]
+def create_annotations():
+    df = pd.read_csv(snakemake.input.csv)
+    annotation_cols = snakemake.params.annotation_cols
+    outpath = snakemake.output.tsv
 
     # Accession needs to be the first column so if it isn't requested, add it in.
     if annotation_cols[0] != "truncated_info":

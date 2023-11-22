@@ -293,7 +293,7 @@ rule run_grasp:
         tree = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.nwk"
 
     shell:
-        "grasp -a {input.aln} -n {input.tree} -s LG -o {output.dir} -i BEP -j --save-as FASTA TREE -pre GRASP -t 2"
+        "grasp -a {input.aln} -n {input.tree} -s LG -o {output.dir} -i BEP -j --save-as FASTA TREE -pre GRASP -t 4 --verbose"
 
 rule add_annotations_from_alignment:
     input:
@@ -330,7 +330,9 @@ rule add_annotations_from_ancestors:
     input:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv",
         aln= WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.fa",
-        tree = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.nwk"
+        tree = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/grasp_results/GRASP_ancestors.nwk",
+        custom_dir = CUSTOM_ANCESTOR_DIR
+
     output:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
     script:

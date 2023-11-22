@@ -1,5 +1,4 @@
 import pandas as pd
-from Bio import AlignIO
 import seqcurate as sc
 
 

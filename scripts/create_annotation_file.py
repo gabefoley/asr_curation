@@ -1,13 +1,9 @@
 import pandas as pd
-import click
-import os
 
 
 
-def create_annotations():
-    df = pd.read_csv(snakemake.input.csv)
-    annotation_cols = snakemake.params.annotation_cols
-    outpath = snakemake.output.tsv
+def create_annotations(df, annotation_cols, outpath):
+
 
     # Accession needs to be the first column so if it isn't requested, add it in.
     if annotation_cols[0] != "truncated_info":
@@ -22,4 +18,8 @@ def create_annotations():
 
 
 if __name__ == "__main__":
-    create_annotations()
+    df = pd.read_csv(snakemake.input.csv)
+    annotation_cols = snakemake.params.annotation_cols
+    outpath = snakemake.output.tsv
+
+    create_annotations(df, annotation_cols, outpath)

@@ -2,6 +2,7 @@ import scripts.seqcurate as sc
 import pytest
 import os
 import tempfile
+import pandas as pd
 @pytest.fixture
 def temporary_fasta_file():
     # Create a temporary FASTA file with test data
@@ -68,3 +69,53 @@ def test_get_sequence_df_multiple_paths():
 
     # Size should be 5 rows x 6 columns = 30
     assert df.size == 30
+
+
+# Test for add_from_csv function
+def test_add_from_csv(tmp_path):
+    # Create a sample DataFrame
+    df = pd.DataFrame({"info": ["A", "B", "C"], "data": ['1', '2', '3']})
+
+    # Create a sample CSV file
+    add_data = pd.DataFrame({"info": ["B", "C"], "additional_data": ["X", "Y"]})
+    add_data.to_csv(tmp_path / "add_data.csv", index=False)
+
+    # Call the add_from_csv function with the DataFrame and CSV file path
+    merged_df = sc.add_from_csv(df, tmp_path / "add_data.csv", match="info")
+
+    # Define the expected merged DataFrame
+    expected_df = pd.DataFrame({
+        "info": ["A", "B", "C"],
+        "data": ['1', '2', '3'],
+        "additional_data": [None, "X", "Y"]
+    })
+
+    # Check if the result matches the expected DataFrame
+    assert merged_df.equals(expected_df)
+
+# Test for get_entry_ids_from_fasta function
+def test_get_entry_ids_from_fasta(tmp_path):
+    # Create a sample FASTA file
+    fasta_file = tmp_path / "sample.fasta"
+    with open(fasta_file, "w") as f:
+        f.write(">entry1\nACGT\n>entry2\nTGCA")
+
+    entry_ids = sc.get_entry_ids_from_fasta(fasta_file)
+
+    expected_ids = ["entry1", "entry2"]
+
+    assert entry_ids == expected_ids
+
+
+# Test for get_sequence_content_from_fasta function
+def test_get_sequence_content_from_fasta(tmp_path):
+    # Create a sample FASTA file
+    fasta_file = tmp_path / "sample.fasta"
+    with open(fasta_file, "w") as f:
+        f.write(">entry1\nACGT\n>entry2\nTGCA")
+
+    sequences = sc.get_sequence_content_from_fasta(fasta_file)
+
+    expected_sequences = ["ACGT", "TGCA"]
+
+    assert sequences == expected_sequences

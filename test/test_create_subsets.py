@@ -2,10 +2,6 @@ import os
 
 import pandas as pd
 
-import scripts.create_subsets as cs
-from click.testing import CliRunner
-
-
 # Tests to check the validation of IDs
 def test_create_subset_with_blank():
     annot_df = pd.read_csv(
@@ -21,8 +17,3 @@ def test_create_subset_with_blank():
         f"python ./scripts/validate_ids.py --input_file ./test/files/test_original.csv --output_file {outpath}"
     )
 
-
-# def test_validate_ids_main_from_command_line():
-#
-#
-#     assert os.path.isfile(outpath)

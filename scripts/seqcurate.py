@@ -177,20 +177,51 @@ def randstring(length=10):
     return "".join((random.choice(valid_letters) for i in range(length)))
 
 
+# Function to merge dataframes based on a common column
 def add_from_csv(df, add_df, match="info"):
+    """
+    Merge two DataFrames based on a common column.
+
+    Args:
+        df (pd.DataFrame): The main DataFrame.
+        add_df (str): Path to the CSV file containing data to be added.
+        match (str): The column name to match on.
+
+    Returns:
+        pd.DataFrame: Merged DataFrame.
+    """
     add_df = pd.read_csv(add_df)
     merged_df = pd.merge(df, add_df, how="left", on=[match], suffixes=["", "_r"])
-
     return merged_df
 
-
+# Function to get entry IDs from a FASTA file
 def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
-    seqs = SeqIO.parse(fasta_path, "fasta")
+    """
+    Extract entry IDs from a FASTA file.
 
+    Args:
+        fasta_path (str): Path to the FASTA file.
+        alphabet (str): Allowed characters in the entry IDs.
+
+    Returns:
+        list: List of entry IDs.
+    """
+    seqs = SeqIO.parse(fasta_path, "fasta")
     return [seq.name for seq in seqs]
 
-
+# Function to get sequence content from a FASTA file
 def get_sequence_content_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
-    seqs = SeqIO.parse(fasta_path, "fasta")
+    """
+    Extract sequence content from a FASTA file.
 
+    Args:
+        fasta_path (str): Path to the FASTA file.
+        alphabet (str): Allowed characters in the sequence.
+
+    Returns:
+        list: List of sequences.
+    """
+    seqs = SeqIO.parse(fasta_path, "fasta")
     return [seq.seq for seq in seqs]
+
+

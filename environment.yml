@@ -40,7 +40,6 @@ dependencies:
     - cffi
     - chardet
     - charset-normalizer
-    - click
     - colorama
     - commonmark
     - configargparse

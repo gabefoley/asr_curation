@@ -18,7 +18,6 @@ cached-property
 cffi
 chardet
 charset-normalizer
-click
 colorama
 commonmark
 ConfigArgParse

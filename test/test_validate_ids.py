@@ -1,6 +1,5 @@
 import os
 import scripts.validate_ids_not_uniprot as vi
-from click.testing import CliRunner
 
 
 # Tests to check the validation of IDs
@@ -26,27 +25,6 @@ def test_validate_ids_main_from_command_line():
     )
 
     assert os.path.isfile(outpath)
-
-
-def test_validate_ids_call_command_line_directly():
-    outpath = "test/files/output_test_validated_command_line_direct.csv"
-
-    if os.path.exists(outpath):
-        os.remove(outpath)
-
-    runner = CliRunner()
-
-    # vi.all_ids_lookup_cmd(["--input_file", "test/files/test_original.csv", "--output_file", outpath])
-
-    result = runner.invoke(
-        vi.all_ids_lookup_cmd,
-        ["--input_file", "test/files/test_original.csv", "--output_file", outpath],
-    )
-
-    assert result.exit_code == 0
-
-    assert os.path.isfile(outpath)
-
 
 # def test_creating_and_validating_diverse_headers():
 #     # This test creates a DataFrame that contains full NCBI accession header, full UniProt header, gi header

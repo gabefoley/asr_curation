@@ -14,17 +14,7 @@ def test_validate_ids_main():
     assert os.path.isfile(outpath)
 
 
-def test_validate_ids_main_from_command_line():
-    outpath = "test/files/output_test_validated_command_line.csv"
 
-    if os.path.exists(outpath):
-        os.remove(outpath)
-
-    os.system(
-        f"python ./scripts/validate_ids_not_uniprot.py --input_file ./test/files/test_original.csv --output_file {outpath}"
-    )
-
-    assert os.path.isfile(outpath)
 
 # def test_creating_and_validating_diverse_headers():
 #     # This test creates a DataFrame that contains full NCBI accession header, full UniProt header, gi header

@@ -353,11 +353,10 @@ def chunk_it(iterable, size):
 CHUNK_SIZE = 5000  # Adjust based on your requirements
 
 
-def all_ids_lookup(from_id_lookup=None, to_id_lookup=None):
+def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
 
-    input_file = snakemake.input[0]
-    output_file = snakemake.output[0]
+
 
     # Set default from and to id lookups
     if not from_id_lookup:
@@ -422,4 +421,6 @@ def all_ids_lookup(from_id_lookup=None, to_id_lookup=None):
 
 
 if __name__ == "__main__":
-    all_ids_lookup()
+    input_file = snakemake.input[0]
+    output_file = snakemake.output[0]
+    all_ids_lookup(input_file, output_file)

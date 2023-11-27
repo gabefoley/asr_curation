@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
 
-      COVERAGE_DIR: ${{ github.workspace }}/coverage  # Define the coverage directory based on the environment variable
+#      COVERAGE_DIR: ${{ github.workspace }}/coverage  # Define the coverage directory based on the environment variable
 
     steps:
       - uses: actions/checkout@v3
@@ -53,13 +53,14 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov=$COVERAGE_DIR
+          pytest
+#          pytest --cov=$COVERAGE_DIR
 
 
       - name: Copy coverage report
         run: |
           mkdir -p coverage
-          cp -r $COVERAGE_DIR coverage/
+#          cp -r $COVERAGE_DIR coverage/
 
 #      - name: Test with pytest
 #        run: |

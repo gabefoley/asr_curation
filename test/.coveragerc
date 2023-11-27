@@ -6,3 +6,4 @@ source =
 omit =
     */workflows/*
     */test/*
+    */snakefile

@@ -48,7 +48,8 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov=/tmp/test_workflow --cov-append --cov-report=xml
+          pytest --cov=/tmp/test_workflow --cov-report=xml
+#          pytest --cov=/tmp/test_workflow --cov-append --cov-report=xml
 
       - name: Creating coverage folder
         run: |

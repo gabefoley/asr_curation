@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
+#    env:
 
 #      COVERAGE_DIR: ${{ github.workspace }}/coverage  # Define the coverage directory based on the environment variable
 

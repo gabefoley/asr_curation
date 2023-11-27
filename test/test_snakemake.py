@@ -120,21 +120,6 @@ def test_snakemake_pipeline_with_existing_annotation_file(tmpdir):
     print (os.path.exists(snakefile_dest))
 
     print ('okay')    # Use tmpdir provided by pytest to create temporary directories
-    test_dir = tmpdir.mkdir("test_workflow")
-    snakefile_dest = os.path.join(test_dir, "snakefile")
-    scripts_dest = os.path.join(test_dir, "scripts")
-    subset_output = os.path.join(test_dir, "subsets")
-
-    # Remove snakefile
-    if os.path.exists(snakefile_dest):
-        os.remove(snakefile_dest)
-
-    if os.path.exists(scripts_dest):
-        shutil.rmtree(scripts_dest)
-
-    if os.path.exists(subset_output):
-        shutil.rmtree(subset_output)
-
 
     print ('snakefile dest is')
     print (snakefile_dest)
@@ -146,6 +131,7 @@ def test_snakemake_pipeline_with_existing_annotation_file(tmpdir):
     shutil.copyfile("snakefile", snakefile_dest)
     shutil.copytree("scripts", scripts_dest)
 
+    print ('Now does it exist')
     print (os.path.exists(snakefile_dest))
     print (os.path.exists(scripts_dest))
 

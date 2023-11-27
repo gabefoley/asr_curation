@@ -7,21 +7,16 @@ import pytest
 def test_dir(tmpdir):
     # Create a temporary directory for testing
     test_dir = tmpdir.mkdir("test_workflow")
-    os.environ["COVERAGE_DIR"] = str(tmpdir.mkdir("coverage"))
-
     # Copy the Snakefile and test/files directory to the temporary directory
     snakefile_dest = os.path.join(test_dir, "snakefile")
     scripts_dest = os.path.join(test_dir, "scripts")
     test_dest = os.path.join(test_dir, "test")
-    # test_files_src = "test/files"
 
     shutil.copyfile("snakefile", snakefile_dest)
     shutil.copytree("scripts", scripts_dest)
     shutil.copytree("test", test_dest)
-
-    # shutil.copytree(test_files_src, os.path.join(test_dir, "test_files"))
-
-    os.chdir(test_dir)  # Change working directory to the test directory
+    
+    os.chdir(test_dir)
 
     return test_dir
 
@@ -32,8 +27,6 @@ def test_snakemake_pipeline(test_dir):
     print(os.listdir())
 
     # Set the coverage directory to be the temporary directory defined in test_dir()
-    os.system(f"pytest --cov=$COVERAGE_DIR")
-
     os.system("snakemake --cores 1 --configfile test/files/config/test_config.yaml")
 
     assert os.path.exists(os.path.join(test_dir,

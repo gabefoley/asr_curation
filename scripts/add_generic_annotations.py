@@ -14,9 +14,6 @@ def main():
     # Annotate Swiss-Prot and TrEMBL sequences
     annot_df = an.annotate_sp_tr(annot_df)
 
-    # Add thermophilic bacteria data from an external file
-    annot_df = an.add_thermo(annot_df, "./additional_data/thermophilic_bacteria.txt")
-
     # Add an additional Length column (temporary)
     annot_df["Length_2"] = annot_df["length"]
 

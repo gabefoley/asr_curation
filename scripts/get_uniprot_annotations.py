@@ -104,8 +104,8 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace("-", "_")
     annot_df.columns = annot_df.columns.str.replace("[()]", "", regex=False)
 
-    print("printing lineage")
-    print(annot_df["lineage"])
+    # print("printing lineage")
+    # print(annot_df["lineage"])
 
     # seperate lineage columns ( after the new api changes)
     (
@@ -223,7 +223,7 @@ def uniprot_annotation_lkp(
     # get all uniprot ids
     validated_df = pd.read_csv(input_file)
     uniprot_list_ids = get_uniprot_id_list(validated_df)
-    print(uniprot_list_ids)
+    # print(uniprot_list_ids)
 
     # create a new intermediate tsv file with header row for dumping results
     header = "\t".join(full_uniprot_cols)

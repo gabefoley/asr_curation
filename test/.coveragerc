@@ -8,3 +8,4 @@ omit =
     */test/*
     **/[Ss]nakefile
     */tmp/*
+    tmp/*

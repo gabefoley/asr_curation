@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+
+      COVERAGE_DIR: ${{ github.workspace }}/coverage  # Define the coverage directory based on the environment variable
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -45,16 +49,27 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install pytest pytest-coverage
+      
 
       - name: Test with pytest
         run: |
-          pytest --cov
-#          pytest --cov=/tmp/test_workflow --cov-report=xml
-#          pytest --cov=/tmp/test_workflow --cov-append --cov-report=xml
+          pytest --cov=$COVERAGE_DIR --cov-report=xml
 
-      - name: Creating coverage folder
+
+      - name: Copy coverage report
         run: |
           mkdir -p coverage
+          cp -r $COVERAGE_DIR coverage/
+
+#      - name: Test with pytest
+#        run: |
+#          pytest --cov
+##          pytest --cov=/tmp/test_workflow --cov-report=xml
+##          pytest --cov=/tmp/test_workflow --cov-append --cov-report=xml
+#
+#      - name: Creating coverage folder
+#        run: |
+#          mkdir -p coverage
 
       - name: Generate coverage badge
         uses: tj-actions/coverage-badge-py@v1.8

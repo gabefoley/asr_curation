@@ -56,7 +56,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov --cov-exclude=tmp/
+          pytest --cov
 #          pytest --cov=$COVERAGE_DIR
 
 

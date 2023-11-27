@@ -11,11 +11,10 @@ base_url = "https://www.cathdb.info"
 
 # Function to add FunFam information to the DataFrame
 def add_funfam_info_to_df(df, funfam_dict):
+
     for seq_id, info_dict in funfam_dict.items():
-        print (seq_id)
         if type(info_dict) != dict:
             info_dict = ast.literal_eval(info_dict)
-        print (df.loc[df['info'] == seq_id])
         if info_dict:
             # If the entry is not None, add the information to the DataFrame
             df.loc[df['info'] == seq_id, 'funfam_names'] = info_dict['funfam_names']
@@ -144,16 +143,18 @@ def get_funfams(df, output_dir):
         sequence = row["sequence"]
         
         if seq_id not in name_mapping:
-            print ('not there')
-            print (seq_id)
+            continue
+            # print ('not there')
+            # print (seq_id)
         
-            seq_funfam_info = process_sequence(seq_id, sequence)
-            name_mapping[seq_id] = seq_funfam_info
+            # seq_funfam_info = process_sequence(seq_id, sequence)
+            # if seq_funfam_info:
+            #     name_mapping[seq_id] = seq_funfam_info
             
         an.write_from_dict(existing_mapping, name_mapping)
         
         
-    print (name_mapping)
+    # print (name_mapping)
 
 
 

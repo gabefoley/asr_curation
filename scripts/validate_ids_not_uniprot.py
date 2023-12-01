@@ -2,17 +2,25 @@
 
 import pandas as pd
 import requests
+import json
+import zlib
+import re
+import time
 import math
-import os
+from io import StringIO
+from xml.etree import ElementTree
+from urllib.parse import urlparse, parse_qs, urlencode
+from requests.adapters import HTTPAdapter, Retry
+from itertools import islice
 
-# Constants
-CHUNK_SIZE = 5000
+# Configuration and API parameters
 POLLING_INTERVAL = 3
 API_URL = "https://rest.uniprot.org"
-retries = requests.Retry(total=5, backoff_factor=0.25, status_forcelist=[500, 502, 503, 504])
+retries = Retry(total=5, backoff_factor=0.25, status_forcelist=[500, 502, 503, 504])
 session = requests.Session()
-session.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+session.mount("https://", HTTPAdapter(max_retries=retries))
 
+# Dictionary for mapping database names
 from_id_db_lookup = {
     "NCBI": "RefSeq_Protein",
     "EMBL": "EMBL-GenBank-DDBJ",
@@ -29,6 +37,7 @@ to_id_db_lookup = {
     "UNIPARC": "UniParc",
 }
 
+# Response format for different databases
 db_response_format = {
     "UNIPROT": "long",
     "NCBI": "short",
@@ -37,20 +46,55 @@ db_response_format = {
     "EMBL-CDS": "short",
 }
 
+# Response key to be used in JSON format
+db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId"}
+
+# list of lookup for aiding the querying and processing of results
+
+# database name in uniprot for different databases when used in the "FROM" field.
+from_id_db_lookup = {
+    "NCBI": "RefSeq_Protein",
+    "EMBL": "EMBL-GenBank-DDBJ",
+    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
+    "UNIPROT-FROM": "UniProtKB_AC-ID",
+    "UNIPARC": "UniParc",
+}
+
+# database name in uniprot for different databases when used in the "TO" field.
+to_id_db_lookup = {
+    "NCBI": "RefSeq_Protein",
+    "EMBL": "EMBL-GenBank-DDBJ",
+    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
+    "UNIPROT": "UniProtKB",
+    "UNIPARC": "UniParc",
+}
+
+# response format from uniprot when using these databases in the "TO" field.
+db_response_format = {
+    "UNIPROT": "long",
+    "NCBI": "short",
+    "UNIPARC": "long",
+    "EMBL": "short",
+    "EMBL-CDS": "short",
+}
+
+# response key to be used in JSON format is the response format is long.
 db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId"}
 
 
+# functions
 def submit_id_mapping(from_db, to_db, ids):
-    # Function to make an API call to UniProt for ID mapping
-    response = requests.post(
+    """function to make api call to uniprot"""
+
+    request = requests.post(
         f"{API_URL}/idmapping/run",
         data={"from": from_db, "to": to_db, "ids": ",".join(ids)},
     )
     try:
-        response.raise_for_status()
+        request.raise_for_status()
     except:
         return
-    return response.json()["jobId"]
+    return request.json()["jobId"]
 
 
 def check_id_mapping_results_ready(job_id):
@@ -398,13 +442,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     return df_final
 
 
-def main():
+if __name__ == "__main__":
     input_file = snakemake.input[0]
     output_file = snakemake.output[0]
-    from_id_lookup = ["UNIPROT-FROM"]
-    to_id_lookup = ["UNIPROT"]
-    all_ids_lookup(input_file, output_file, from_id_lookup, to_id_lookup)
-
-
-if __name__ == "__main__":
-    main()
+    all_ids_lookup(input_file, output_file)

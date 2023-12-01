@@ -1,6 +1,7 @@
 import seqcurate as sc
 import pandas as pd
 
+
 def main():
     input_fasta = snakemake.input.fasta
     output_fasta = snakemake.output.fasta
@@ -55,6 +56,7 @@ def main():
 
         sc.write_to_fasta(seqs_df, output_fasta, trim=True)
         add_df.to_csv(output_csv, index=False)
+
 
 if __name__ == "__main__":
     main()

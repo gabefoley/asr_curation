@@ -1,10 +1,7 @@
 import pandas as pd
 
 
-
 def create_annotations(df, annotation_cols, outpath):
-
-
     # Accession needs to be the first column so if it isn't requested, add it in.
     if annotation_cols[0] != "truncated_info":
         annotation_cols = ["truncated_info"] + annotation_cols

@@ -46,10 +46,6 @@ def get_orthodb_names(df, output_dir):
     # Check for an existing mapping generated from a previous run
     name_mapping = read_to_dict(existing_mapping)
 
-    print(name_mapping)
-
-    print(unique_orthodb_ids)
-
     for orthodb_id in unique_orthodb_ids:
         # If it already exists we don't need to retrieve it again
         if orthodb_id not in name_mapping:
@@ -261,23 +257,48 @@ def annotate_AA(df):
     return df
 
 
-def get_pos(align_df, seq_id, col_name, pos_type="list"):
-    if not literal_eval(align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0]):
-        return
+from ast import literal_eval  # Import the literal_eval function from ast module
 
-    pos = literal_eval(align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0])[0]
+def get_pos(align_df, seq_id, col_name, pos_type="list"):
+    """
+    Get positions from a DataFrame column for a specific sequence ID.
+
+    Args:
+        align_df (DataFrame): The DataFrame containing alignment data.
+        seq_id (str): The ID of the sequence for which positions are to be retrieved.
+        col_name (str): The name of the column containing the positions in string format.
+        pos_type (str, optional): The type of positions to return, either 'list' or 'range'.
+                                  Defaults to 'list'.
+
+    Returns:
+        list or range: The positions as either a list or a range, depending on pos_type.
+                      Returns None if the positions are not available in the DataFrame.
+
+    Raises:
+        NameError: If an invalid pos_type is provided.
+
+    """
+    # Query the DataFrame to find the row with the given sequence ID and extract the column value
+    pos_str = align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0]
+
+    # Use literal_eval to safely convert the string representation of positions to a Python object
+    positions = literal_eval(pos_str)
+
+    if not positions:
+        return None
 
     if pos_type == "list":
-        pos = [x for x in pos]
-        pos[0] += 1
+        # Convert positions to a list and increment each element by 1
+        positions = [x + 1 for x in positions]
 
     elif pos_type == "range":
-        pos = [x + 1 for x in range(pos[0], pos[1])]
+        # Convert positions to a range and increment each element by 1
+        positions = range(positions[0] + 1, positions[1] + 1)
 
     else:
-        raise (NameError("Not a valid position type"))
+        raise NameError("Not a valid position type")
 
-    return pos
+    return positions
 
 
 # def add_tag_relative_to_seq(align_df, seq_id, tag, unaligned_pos, aln_dict):

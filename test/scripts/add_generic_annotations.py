@@ -1,6 +1,7 @@
 import annot_functions as an
 import pandas as pd
 
+
 def main():
     # Load the input CSV file
     annot_df = pd.read_csv(snakemake.input[0])
@@ -22,6 +23,7 @@ def main():
 
     # Save the annotated DataFrame to the output CSV file
     annot_df.to_csv(snakemake.output[0], index=False)
+
 
 if __name__ == "__main__":
     main()

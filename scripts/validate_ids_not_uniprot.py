@@ -356,8 +356,6 @@ CHUNK_SIZE = 5000  # Adjust based on your requirements
 def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
     """main function to map input ids to different database specified in the id_lookup list"""
 
-
-
     # Set default from and to id lookups
     if not from_id_lookup:
         from_id_lookup = ["UNIPROT-FROM"]

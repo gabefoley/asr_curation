@@ -194,6 +194,7 @@ def add_from_csv(df, add_df, match="info"):
     merged_df = pd.merge(df, add_df, how="left", on=[match], suffixes=["", "_r"])
     return merged_df
 
+
 # Function to get entry IDs from a FASTA file
 def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
     """
@@ -209,6 +210,7 @@ def get_entry_ids_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-")
     seqs = SeqIO.parse(fasta_path, "fasta")
     return [seq.name for seq in seqs]
 
+
 # Function to get sequence content from a FASTA file
 def get_sequence_content_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ-"):
     """
@@ -223,5 +225,3 @@ def get_sequence_content_from_fasta(fasta_path, alphabet="ABCDEFGHIJKLMNOPQRSTUV
     """
     seqs = SeqIO.parse(fasta_path, "fasta")
     return [seq.seq for seq in seqs]
-
-

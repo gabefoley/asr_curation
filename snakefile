@@ -52,6 +52,12 @@ if 'BRENDA_RUN' in config.keys():
 else:
     BRENDA_RUN = False
 
+try:
+    ANNOTATION_COLS = config['annotation_cols']
+except:
+    ANNOTATION_COLS = []
+
+
 
 
 # cluster_threshes = ["1", "0.9", "0.7"]
@@ -84,12 +90,12 @@ def get_subset_names(subset_rules_dir):
 
     for subset in subsets:
 
-        print ('subset is ')
-        print (subset)
+        if VERBOSE:
+            print ('The subset name is ')
+            print (subset)
 
         # If a subset rule doesn't exist, then just write out the full data set
         if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
-
             subset_dict[subset].append('full_set')
 
 
@@ -97,7 +103,7 @@ def get_subset_names(subset_rules_dir):
 
             if line and not line.startswith("#"):
 
-                print ('line is ')
+                print ('The subset rules are')
                 print (line)
 
 
@@ -124,6 +130,7 @@ def get_ancestor_col_dict(ancestor_cols):
     return ancestor_col_dict
 
 subsets = get_subset_names(SUBDIR)
+print (subsets)
 print (WORKDIR)
 print (FASTADIR)
 
@@ -135,7 +142,7 @@ rule all:
 
             annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-
+            itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset] for col in ANNOTATION_COLS],
             trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
@@ -319,7 +326,7 @@ rule create_alignment_annotation_file:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
 
     params:
-        annotation_cols = config['annotation_cols']
+        annotation_cols = ANNOTATION_COLS
     output:
         tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt",
     script:
@@ -344,11 +351,22 @@ rule create_ancestor_annotation_file:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
 
     params:
-        annotation_cols = config['annotation_cols']
+        annotation_cols = ANNOTATION_COLS
     output:
         tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestor_annotations.txt",
     script:
         "scripts/create_annotation_file.py"
+
+
+rule create_itol_annotations:
+    input:
+        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv"
+    params:
+        annotation_cols = ANNOTATION_COLS
+    output:
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt",
+    script:
+        "scripts/create_itol_files.py"
 
 rule concat_ancestor_alignment:
     input:
@@ -369,7 +387,7 @@ rule create_dataset_summary:
     input:
        WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv",
     params:
-        annotation_cols = config['annotation_cols']
+        annotation_cols = ANNOTATION_COLS
     output:
        summary = WORKDIR + "/{dataset}/dataset_summary/temp/{dataset}_summary.ipynb",
        # dir = directory(WORKDIR + "/{dataset}/dataset_summary")
@@ -397,7 +415,7 @@ rule create_subset_summary:
        csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv",
 
     params:
-        annotation_cols = config['annotation_cols']
+        annotation_cols = ANNOTATION_COLS
 
     output:
        summary = WORKDIR + "/{dataset}/dataset_summary/{dataset}/subsets/{subset}/temp/{subset}_{cluster_thresh}_subset_summary.ipynb",

@@ -21,6 +21,5 @@ def main():
     merged_df.to_csv(snakemake.output.csv, index=False)
 
 
-# Check if this script is being run as the main program
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ source =
 omit =
     */workflows/*
     */test/*
+    */utilities/
+    */example_custom_annotations/*
     **/[Ss]nakefile
     */tmp/*
     tmp/*

@@ -1,33 +1,18 @@
 """ Python script to validate uniprot ids and find the corresponding NCBI,EMBL,Uniparc ids """
 
 import pandas as pd
-import urllib.parse
-import urllib.request
-from io import StringIO
-import requests, json
-from time import sleep
-import re
-import time
-import json
-import zlib
-from xml.etree import ElementTree
-from urllib.parse import urlparse, parse_qs, urlencode
 import requests
-from requests.adapters import HTTPAdapter, Retry
-from itertools import islice
 import math
 import os
 
-# configuration and api parameters
+# Constants
+CHUNK_SIZE = 5000
 POLLING_INTERVAL = 3
 API_URL = "https://rest.uniprot.org"
-retries = Retry(total=5, backoff_factor=0.25, status_forcelist=[500, 502, 503, 504])
+retries = requests.Retry(total=5, backoff_factor=0.25, status_forcelist=[500, 502, 503, 504])
 session = requests.Session()
-session.mount("https://", HTTPAdapter(max_retries=retries))
+session.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
 
-# list of lookup for aiding the querying and processing of results
-
-# database name in uniprot for different databases when used in the "FROM" field.
 from_id_db_lookup = {
     "NCBI": "RefSeq_Protein",
     "EMBL": "EMBL-GenBank-DDBJ",
@@ -36,7 +21,6 @@ from_id_db_lookup = {
     "UNIPARC": "UniParc",
 }
 
-# database name in uniprot for different databases when used in the "TO" field.
 to_id_db_lookup = {
     "NCBI": "RefSeq_Protein",
     "EMBL": "EMBL-GenBank-DDBJ",
@@ -45,7 +29,6 @@ to_id_db_lookup = {
     "UNIPARC": "UniParc",
 }
 
-# response format from uniprot when using these databases in the "TO" field.
 db_response_format = {
     "UNIPROT": "long",
     "NCBI": "short",
@@ -54,23 +37,20 @@ db_response_format = {
     "EMBL-CDS": "short",
 }
 
-# response key to be used in JSON format is the response format is long.
 db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId"}
 
 
-# functions
 def submit_id_mapping(from_db, to_db, ids):
-    """function to make api call to uniprot"""
-
-    request = requests.post(
+    # Function to make an API call to UniProt for ID mapping
+    response = requests.post(
         f"{API_URL}/idmapping/run",
         data={"from": from_db, "to": to_db, "ids": ",".join(ids)},
     )
     try:
-        request.raise_for_status()
+        response.raise_for_status()
     except:
         return
-    return request.json()["jobId"]
+    return response.json()["jobId"]
 
 
 def check_id_mapping_results_ready(job_id):
@@ -418,7 +398,13 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     return df_final
 
 
-if __name__ == "__main__":
+def main():
     input_file = snakemake.input[0]
     output_file = snakemake.output[0]
-    all_ids_lookup(input_file, output_file)
+    from_id_lookup = ["UNIPROT-FROM"]
+    to_id_lookup = ["UNIPROT"]
+    all_ids_lookup(input_file, output_file, from_id_lookup, to_id_lookup)
+
+
+if __name__ == "__main__":
+    main()

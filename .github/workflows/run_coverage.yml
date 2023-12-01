@@ -56,7 +56,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov=my_project --cov-exclude '*snakefile*' --cov-config=.coveragerc
+          pytest --cov
 #          pytest --cov=$COVERAGE_DIR
 
 

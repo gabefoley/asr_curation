@@ -198,6 +198,27 @@ def test_read_to_dict_empty_file():
     # Clean up: remove the test file
     os.remove(test_file)
 
+def test_annotate_motif():
+    # Create a sample DataFrame with a 'sequence' column
+    data = {'sequence': ['ACGT', 'GCTA', 'ATAG']}
+    df = pd.DataFrame(data)
+
+    # Define the motif to search for
+    motif = 'AT'
+
+    # Call the annotate_motif function
+    df_annotated = an.annotate_motif(df, motif)
+
+    # Check if the new column was added
+    assert f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}" in df_annotated.columns
+
+    # Check if the annotation is correct for each row
+    assert df_annotated[f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}"].tolist() == [False, False, True]
+
+    # Check if the original DataFrame is unchanged
+    assert 'MOTIF_' not in df.columns
+
+
 
 def test_read_to_dict_non_empty_file():
     # Create a test file with sample data

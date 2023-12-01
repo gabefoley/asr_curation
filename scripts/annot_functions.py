@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from collections import Counter
 import os
+import requests
 
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
@@ -22,8 +23,6 @@ def exact_match(df, col, match):
     return df[col] == match
 
 
-import pandas as pd
-import requests
 
 
 # Map between a
@@ -195,7 +194,6 @@ def retrieve_interpro_name(interpro_id):
     if response.status_code == 200:
         data = response.json()
         interpro_name = data["metadata"]["name"]["name"]
-        print(interpro_name)
         return interpro_name
     else:
         return "Unknown"
@@ -255,9 +253,6 @@ def annotate_AA(df):
     df["AA_Character"] = ~(df["sequence"].dropna().str.contains(non_AA, na=None))
 
     return df
-
-
-from ast import literal_eval  # Import the literal_eval function from ast module
 
 def get_pos(align_df, seq_id, col_name, pos_type="list"):
     """
@@ -530,33 +525,6 @@ def annotate_sp_tr(df):
     df.loc[df["info"].str.startswith("tr"), "UniProt_DB"] = "TrEMBL"
 
     return df
-
-
-# def get_aligned_positions(entry, sequence, *positions):
-#     # print(f"\nSeq name is {entry}")
-#     sequence = "".join(sequence)
-#
-#     aligned_positions = []
-#
-#     for pos in positions:
-#         # Get the current index
-#         curr_idx = pos
-#
-#         # Get offset implied by first position
-#         offset = sequence[0:curr_idx].count("-")
-#
-#         # Get next position based on the first position and the gap offset
-#         next_idx = curr_idx + offset
-#
-#         # Search to find the final position
-#
-#         final_pos = get_final_pos(sequence, pos, curr_idx, next_idx)
-#         aligned_positions.append(final_pos)
-#
-#     # Update the indexes
-#     aligned_positions = [x - 1 for x in aligned_positions]
-#
-#     return aligned_positions
 
 
 def add_lab_annotations(annot_df, filepath, seq_col="sequence"):

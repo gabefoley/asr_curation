@@ -218,6 +218,55 @@ def test_annotate_motif():
     # Check if the original DataFrame is unchanged
     assert 'MOTIF_' not in df.columns
 
+def test_find_value():
+    # Test when the keyword contains one of the possible words
+    keyword = "apple_pie"
+    possible_words = ["apple", "banana", "cherry"]
+    result = an.find_value(keyword, possible_words)
+    assert result == "apple"
+
+    # Test when the keyword contains a different possible word
+    keyword = "banana_split"
+    possible_words = ["apple", "banana", "cherry"]
+    result = an.find_value(keyword, possible_words)
+    assert result == "banana"
+
+    # Test when the keyword contains multiple possible words
+    keyword = "cherry_pie"
+    possible_words = ["apple", "banana", "cherry"]
+    result = an.find_value(keyword, possible_words)
+    assert result == "cherry"
+
+    # Test when the keyword does not contain any possible words
+    keyword = "grape_juice"
+    possible_words = ["apple", "banana", "cherry"]
+    result = an.find_value(keyword, possible_words)
+    assert result == "not found"
+
+    # Test when the keyword and possible words are empty
+    keyword = ""
+    possible_words = []
+    result = an.find_value(keyword, possible_words)
+    assert result == "not found"
+
+    # Test when the keyword is empty and there are possible words
+    keyword = ""
+    possible_words = ["apple", "banana", "cherry"]
+    result = an.find_value(keyword, possible_words)
+    assert result == "not found"
+
+def test_annotate_sp_tr():
+    # Create a sample DataFrame
+    data = {'info': ["sp|Q12345|Protein_A", "tr|A56789|Protein_B", "sp|X98765|Protein_C"]}
+    df = pd.DataFrame(data)
+
+    # Call the annotate_sp_tr function
+    df = an.annotate_sp_tr(df)
+
+    # Check if the UniProt_DB column has been correctly annotated
+    assert df.loc[0, 'UniProt_DB'] == 'SwissProt'
+    assert df.loc[1, 'UniProt_DB'] == 'TrEMBL'
+    assert df.loc[2, 'UniProt_DB'] == 'SwissProt'
 
 
 def test_read_to_dict_non_empty_file():

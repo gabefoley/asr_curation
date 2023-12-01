@@ -115,13 +115,11 @@ if __name__ == "__main__":
         for col in annotation_cols:
 
             # Skip the info column, which won't be informative
-            if col != 'info':
+            if col != 'info' and col in df:
 
                 print (col)
 
                 color_dict, color_list = get_color_dict_and_color_list(df, col)
-
-
                 print ('color dict')
                 print (color_dict)
 

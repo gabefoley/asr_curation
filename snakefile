@@ -41,6 +41,13 @@ except:
     ALIGNMENT_TOOL = "mafft"
 
 try:
+    TREE_TOOL = config['tree_tool']
+except:
+    TREE_TOOL = "fasttree"
+
+
+
+try:
     KEY_SEQUENCES = config['key_sequences']
 except:
     KEY_SEQUENCES = "scripts/blank_key_seqs.fasta"
@@ -277,15 +284,39 @@ elif ALIGNMENT_TOOL == 'mafft-dash':
         shell:
             "mafft --dash --reorder --originalseqonly {input} > {output}"
 
-rule infer_tree:
-    input:
-            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
 
-    output:
+if TREE_TOOL == 'fasttree':
+
+    rule infer_tree_fasttree:
+        input:
+                WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
+
+        output:
+                WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk"
+        shell:
+            "FastTree {input} > {output}"
+
+elif TREE_TOOL == 'iqtree2':
+    rule infer_tree_iqtree2:
+        input:
+                WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
+
+        output:
+                WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln.treefile"
+        shell:
+            "iqtree2 -s {input}"
+
+    rule rename_iqtree2_tree:
+        input:
+            WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln.treefile"
+        output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk"
+        shell:
+            "cp {input} {output}"
 
-    shell:
-        "FastTree {input} > {output}"
+
+
+
 
 rule run_grasp:
     input:

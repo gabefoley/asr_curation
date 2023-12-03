@@ -3,7 +3,7 @@ import distinctipy
 import configs.itol_text as itol_text
 import os
 
-def get_color_dict_and_color_list(df, col):
+def get_color_dict_and_info_list(df, col):
     df = df.fillna("None")
 
     # Get unique values from the 'funfam_specific_summary' column
@@ -28,15 +28,15 @@ def get_color_dict_and_color_list(df, col):
     colors = distinctipy.get_colors(len(unique_values))
 
     # Create a list that combines the 'info' value with the corresponding color
-    color_list = [(df.at[i, "info"], df.at[i, col]) for i in df.index]
+    info_list = [(df.at[i, "info"], df.at[i, col]) for i in df.index]
 
-    return color_dict, color_list
+    return color_dict, info_list
 
 
-def generate_itol_colorstrip(col, color_dict, color_list, output_filename):
+def generate_itol_colorstrip(col, color_dict, info_list, output_filename):
     with open(output_filename, "w") as f:
         f.write(itol_text.dataset_colorstrip_text)
-        for info, label in color_list:
+        for info, label in info_list:
             print (info)
             print (label)
             f.write(f"{info} {color_dict[label]} {label} \n")
@@ -44,13 +44,13 @@ def generate_itol_colorstrip(col, color_dict, color_list, output_filename):
     print(f"File '{output_filename}' has been created.")
 
 
-def generate_itol_ranges(col, color_dict, color_list, output_filename):
+def generate_itol_ranges(col, color_dict, info_list, output_filename):
     # START_NODE_ID,END_NODE_ID,FILL_COLOR,GRADIENT_COLOR,LINE_COLOR,LINE_STYLE,LINE_WIDTH,LABEL_TEXT,LABEL_COLOR,LABEL_SIZE_FACTOR,LABEL_STYLE
     # 9606,184922,#ffffff,#ff0000,#000000,dashed,2,Example range,#0000ff,1,italic
 
     with open(output_filename, "w") as f:
         f.write(itol_text.dataset_ranges_text)
-        for info, label in color_list:
+        for info, label in info_list:
             f.write(
                 f"{info},{info},{color_dict[label]},{color_dict[label]},{color_dict[label]},dashed,2,{label},black,italic\n"
             )
@@ -87,14 +87,14 @@ def generate_itol_shape(df):
     print(f"File '{output_filename}' has been created.")
 
 
-def generate_dataset_style(col, color_dict, color_list, output_filename):
+def generate_dataset_style(col, color_dict, info_list, output_filename):
     output_filename = f"{col}_dataset_style.txt"
     # START_NODE_ID,END_NODE_ID,FILL_COLOR,GRADIENT_COLOR,LINE_COLOR,LINE_STYLE,LINE_WIDTH,LABEL_TEXT,LABEL_COLOR,LABEL_SIZE_FACTOR,LABEL_STYLE
     # 9606,184922,#ffffff,#ff0000,#000000,dashed,2,Example range,#0000ff,1,italic
 
     with open(output_filename, "w") as f:
         f.write(itol_text.dataset_style_text)
-        for info, label in color_list:
+        for info, label in info_list:
             f.write(f"{info},branch,node,{color_dict[label]},1,normal\n")
 
     print(f"File '{output_filename}' has been created.")
@@ -119,29 +119,29 @@ if __name__ == "__main__":
 
                 print (col)
 
-                color_dict, color_list = get_color_dict_and_color_list(df, col)
+                color_dict, info_list = get_color_dict_and_info_list(df, col)
                 print ('color dict')
                 print (color_dict)
 
                 print ('color list')
-                print (color_list)
+                print (info_list)
 
                 generate_itol_colorstrip(
-                    col, color_dict, color_list, f"{outpath}/{col}itol_colorstrip.txt"
+                    col, color_dict, info_list, f"{outpath}/{col}itol_colorstrip.txt"
                 )
 
 
                 output_text.write(f"Colorstrip generated for {col} at {outpath}/{col}itol_colorstrip.txt ")
 
                 generate_itol_ranges(
-                    col, color_dict, color_list, f"{outpath}/{col}_itol_ranges.txt"
+                    col, color_dict, info_list, f"{outpath}/{col}_itol_ranges.txt"
                 )
 
                 output_text.write(f"Color list generated for {col} at {outpath}/{col}_itol_ranges.txt ")
 
 
                 generate_dataset_style(
-                    col, color_dict, color_list, f"{outpath}/{col}itol_dataset_style.txt"
+                    col, color_dict, info_list, f"{outpath}/{col}itol_dataset_style.txt"
                 )
 
                 output_text.write(f"Dataset style generated for {col} at {outpath}/{col}itol_dataset_style.txt ")

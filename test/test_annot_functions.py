@@ -8,7 +8,8 @@ import scripts.seqcurate as sc
 @pytest.fixture
 def sample_dataframe():
     data = {
-        'id': ['seq1', 'seq2', 'seq3'],
+        'info': ['seq1', 'seq2', 'seq3'],
+        'sequence' : ['PPCP', 'PDRD', 'SSDD'],
         'positions': ['[1, 5]', '[3, 8]', '[]']
     }
     return pd.DataFrame(data)

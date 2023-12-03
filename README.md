@@ -60,7 +60,7 @@ pip install -r requirements.txt
 - [mafft](https://mafft.cbrc.jp/alignment/software/) - callable as `mafft`
 - [FastTree](http://www.microbesonline.org/fasttree/) - callable as `FastTree`
 - [GRASP](https://bodenlab.github.io/GRASP-suite/project/graspcmd/) - callable as `grasp`
-
+- [IQ-TREE 2](http://www.iqtree.org/) - callable as `iqtree2`
 
 Optional (for viewing trees with generated annotation files)
 

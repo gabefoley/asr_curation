@@ -274,7 +274,7 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
 
     """
     # Query the DataFrame to find the row with the given sequence ID and extract the column value
-    pos_str = align_df.query(f"id=='{seq_id}'")[col_name].tolist()[0]
+    pos_str = align_df.query(f"info=='{seq_id}'")[col_name].tolist()[0]
 
     # Use literal_eval to safely convert the string representation of positions to a Python object
     positions = literal_eval(pos_str)

@@ -1,4 +1,4 @@
-col = ""
+
 
 dataset_ranges_text = f"""
     DATASET_RANGE
@@ -14,7 +14,7 @@ dataset_ranges_text = f"""
 SEPARATOR COMMA
 
 #label is used in the legend table (can be changed later)
-DATASET_LABEL,{col}
+DATASET_LABEL, <custom_dataset_label>_ranges
 
 #dataset color in the legend table
 COLOR,#ffff00
@@ -162,7 +162,7 @@ dataset_colorstrip_text = f"""DATASET_COLORSTRIP
 SEPARATOR SPACE
 
 #label is used in the legend table (can be changed later)
-DATASET_LABEL {col}
+DATASET_LABEL <custom_dataset_label>_colorstrip
 
 #dataset color (can be changed later)
 COLOR #ff0000
@@ -270,7 +270,7 @@ DATA
 #9606|5664 rgba(0,255,0,0.5)
 """
 
-dataset_shape_text = f"""
+lab_assays_text = f"""
     DATASET_EXTERNALSHAPE
 #Nodes have multiple values associated with them. Values will be displayed as geometric shapes of different sizes in columns outside the tree.
 #Highest value in the dataset will have the largest size, and all others will be scaled down proportionally.
@@ -285,7 +285,7 @@ dataset_shape_text = f"""
 SEPARATOR COMMA
 
 #label is used in the legend table (can be changed later)
-DATASET_LABEL,example shapes dataset
+DATASET_LABEL, Lab Assays
 
 #dataset color (can be changed later)
 COLOR,#ff0000
@@ -395,7 +395,7 @@ DATASET_STYLE
 SEPARATOR COMMA
 
 #label is used in the legend table (can be changed later)
-DATASET_LABEL,{col}_dataset_style
+DATASET_LABEL, <custom_dataset_label>_dataset_style
 
 #dataset color (can be changed later)
 COLOR,#ffff00
@@ -459,3 +459,4 @@ DATA
 #all leaf labels in a clade will be displayed in red
 #2097|1502,label,clade,#ff0000,1,normal
 """
+

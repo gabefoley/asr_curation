@@ -204,3 +204,47 @@ def classify_funfams_general(row, name_mapping):
         return ';'.join(general_matches) if general_matches else None
     else:
         return None
+
+
+def classify_funfams_specific_top(row, name_mapping, name_mapping_specific):
+    longer_names_specific = list(name_mapping_specific.keys())
+    longer_names_general = list(name_mapping.keys())
+
+    description = row['funfam_descriptions']
+
+    if not pd.isnull(description):
+        first_match = None
+
+        for longer_name in longer_names_specific:
+            if longer_name in description:
+                first_match = name_mapping_specific.get(longer_name)
+                break
+
+        if not first_match:
+            for longer_name in longer_names_general:
+                if longer_name in description:
+                    first_match = name_mapping.get(longer_name)
+                    break
+
+        return first_match
+
+    else:
+        return None
+
+
+def classify_funfams_general_top(row, name_mapping):
+    longer_names_general = list(name_mapping.keys())
+    description = row['funfam_descriptions']
+
+    if not pd.isnull(description):
+        first_match = None
+
+        for longer_name in longer_names_general:
+            if longer_name in description:
+                first_match = name_mapping.get(longer_name)
+                break
+
+        return first_match
+
+    else:
+        return None

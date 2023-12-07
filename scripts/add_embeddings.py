@@ -77,10 +77,10 @@ def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.p
                 [pd.DataFrame([new_row], embedding_df)], ignore_index=True
             )
 
-            for key, value in embeddings.items():
-                if key not in df.columns:
-                    df[key] = [None] * len(df)
-                df.at[idx, key] = value
+            # for key, value in embeddings.items():
+            #     if key not in df.columns:
+            #         df[key] = [None] * len(df)
+            #     df.at[idx, key] = value
 
     # Saving the updated embedding dataframe
     embedding_df.to_pickle(embedding_df_path)

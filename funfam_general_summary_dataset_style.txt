@@ -12,7 +12,7 @@ DATASET_STYLE
 SEPARATOR COMMA
 
 #label is used in the legend table (can be changed later)
-DATASET_LABEL,_dataset_style
+DATASET_LABEL, funfam_general_summary_dataset_style
 
 #dataset color (can be changed later)
 COLOR,#ffff00
@@ -75,7 +75,13 @@ DATA
 
 #all leaf labels in a clade will be displayed in red
 #2097|1502,label,clade,#ff0000,1,normal
-O50112,branch,node,#00ff00,1,normal
-&YP_008771485.1,branch,node,#ff00ff,1,normal
+O50112,branch,node,#14ff0c,1,normal
+YP_008771485.1,branch,node,#ff00ff,1,normal
 Q6PJP8,branch,node,#0080ff,1,normal
-N0,branch,node,#ff8000,1,normal
+Q68D91,branch,node,#ff8000,1,normal
+T0BMH6,branch,node,#804080,1,normal
+B5DCA0,branch,node,#53f7b7,1,normal
+Q88QV5,branch,node,#c1f913,1,normal
+P0A8V0,branch,node,#3d7f02,1,normal
+A0A411PXB6,branch,node,#3d7f02,1,normal
+Q9SID3,branch,node,#ff8000,1,normal

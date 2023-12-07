@@ -35,7 +35,7 @@ def get_color_dict_and_info_list(df, col):
 
 def generate_itol_colorstrip(col, color_dict, info_list, output_filename):
     with open(output_filename, "w") as f:
-        f.write(itol_text.dataset_colorstrip_text)
+        f.write(itol_text.dataset_colorstrip_text.replace("<custom_dataset_label>", col))
         for info, label in info_list:
             print (info)
             print (label)
@@ -49,7 +49,7 @@ def generate_itol_ranges(col, color_dict, info_list, output_filename):
     # 9606,184922,#ffffff,#ff0000,#000000,dashed,2,Example range,#0000ff,1,italic
 
     with open(output_filename, "w") as f:
-        f.write(itol_text.dataset_ranges_text)
+        f.write(itol_text.dataset_ranges_text.replace("<custom_dataset_label>", col))
         for info, label in info_list:
             f.write(
                 f"{info},{info},{color_dict[label]},{color_dict[label]},{color_dict[label]},dashed,2,{label},black,italic\n"
@@ -58,8 +58,8 @@ def generate_itol_ranges(col, color_dict, info_list, output_filename):
     print(f"File '{output_filename}' has been created.")
 
 
-def generate_itol_shape(df):
-    output_filename = "shapes.txt"
+def generate_lab_assays(df):
+    output_filename = "lab_assays.txt"
 
     selected_columns = df.columns[
         df.columns.get_loc("Activity_Zn_PnP") : df.columns.get_loc("Activity_Mn_4NPS")
@@ -68,7 +68,7 @@ def generate_itol_shape(df):
     selected_columns = selected_columns.insert(0, "UniProt")
 
     with open(output_filename, "w") as f:
-        f.write(itol_text.dataset_shape_text)
+        f.write(itol_text.lab_assays_text)
 
         # Select columns from 'Activity_Zn_PnP' to 'Activity_Mn_4NPS' (inclusive)
 
@@ -93,7 +93,7 @@ def generate_dataset_style(col, color_dict, info_list, output_filename):
     # 9606,184922,#ffffff,#ff0000,#000000,dashed,2,Example range,#0000ff,1,italic
 
     with open(output_filename, "w") as f:
-        f.write(itol_text.dataset_style_text)
+        f.write(itol_text.dataset_style_text.replace("<custom_dataset_label>", col))
         for info, label in info_list:
             f.write(f"{info},branch,node,{color_dict[label]},1,normal\n")
 
@@ -112,6 +112,11 @@ if __name__ == "__main__":
     print (outpath)
 
     with open (snakemake.output.tsv, "w+") as output_text:
+
+
+
+        output_text.write(f"Lab Assays written to {outpath}/lab_assays.txt ")
+
         for col in annotation_cols:
 
             # Skip the info column, which won't be informative

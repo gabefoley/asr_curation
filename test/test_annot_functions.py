@@ -295,7 +295,11 @@ def test_read_to_dict_nonexistent_file():
     assert result == {}  # Check if an empty dictionary is returned
 
 
-
+def test_add_labels_from_file(sample_dataframe):
+    df = an.add_labels_from_file(sample_dataframe, 'col_to_add', "./test/files/annot_functions/test_add_labels.txt")
+    expected_labels = ['B1', 'B1', 'RNaseZ']
+    actual_labels = df['col_to_add'].tolist()
+    assert actual_labels == expected_labels
 
 def test_get_pos_list(sample_dataframe):
     assert an.get_pos(sample_dataframe, 'seq1', 'positions', 'list') == [2, 6]

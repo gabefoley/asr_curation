@@ -60,7 +60,7 @@ def check_scan_progress(task_id):
                 return True
             elif status == "running":
                 print("Scan is still running. Waiting...")
-                time.sleep(3)
+                time.sleep(5)
             else:
                 print(f"Scan status: {status}")
                 print(f"Scan message: {message}")
@@ -144,14 +144,16 @@ def get_funfams(df, output_dir):
         seq_id = row["info"]
         sequence = row["sequence"]
 
-        if seq_id not in name_mapping:
-            continue
-            # print ('not there')
-            # print (seq_id)
+        print (seq_id)
+        print (name_mapping)
 
-            # seq_funfam_info = process_sequence(seq_id, sequence)
-            # if seq_funfam_info:
-            #     name_mapping[seq_id] = seq_funfam_info
+        if seq_id not in name_mapping:
+            print ('not there')
+            print (seq_id)
+
+            seq_funfam_info = process_sequence(seq_id, sequence)
+            if seq_funfam_info:
+                name_mapping[seq_id] = seq_funfam_info
 
         an.write_from_dict(existing_mapping, name_mapping)
 

@@ -1,0 +1,3 @@
+seq1	B1
+seq2	B1
+seq3	RNaseZ

@@ -132,6 +132,9 @@ def create_subsets():
                 for i in dict_def.split("$"):
                     term = i.split(":")[0].strip()
 
+                    print ('term is')
+                    print (term)
+
                     if term:
                         print(i)
                         term_val = i.split(":")[1].strip()

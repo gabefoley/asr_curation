@@ -73,9 +73,7 @@ def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.p
         else:
             embeddings = calculate_embeddings(sequence, model, model_name, tokenizer)
             new_row = {"sequence": sequence, "model_name": model_name, **embeddings}
-            embedding_df = pd.concat(
-                [pd.DataFrame([new_row], embedding_df)], ignore_index=True
-            )
+            embedding_df = pd.concat([embedding_df, pd.DataFrame([new_row])], ignore_index=True)
 
             # for key, value in embeddings.items():
             #     if key not in df.columns:

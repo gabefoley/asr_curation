@@ -952,3 +952,20 @@ def classify_loop_length(bind_pos_set):
 def check_if_positions_align_with_target(target_pos, seq_pos):
     if target_pos == seq_pos:
         return True
+
+
+# Function to add a new column to the DataFrame
+def add_labels_from_file(df, column_name, file_path):
+    with open(file_path, 'r') as file:
+        entries = {}
+        for line in file:
+            parts = line.strip().split('\t')
+            if len(parts) >= 2:
+                entries[parts[0]] = parts[1]
+
+        print (entries)
+
+        df[column_name] = df['info'].apply(lambda x: entries.get(x, None))
+
+    return df
+

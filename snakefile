@@ -65,6 +65,17 @@ except:
     ANNOTATION_COLS = []
 
 
+try:
+    SINGLE_COLOUR_ANNOTATION_COLS = config['single_colour_annotation_cols']
+except:
+    SINGLE_COLOUR_ANNOTATION_COLS = []
+
+try:
+    UNIPROT_COL_SIZE = config['uniprot_col_size']
+except:
+    UNIPROT_COL_SIZE = 'full'
+
+
 
 
 # cluster_threshes = ["1", "0.9", "0.7"]
@@ -144,12 +155,12 @@ print (FASTADIR)
 
 rule all:
         input:
-            brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+#            brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
             custom =     [f'{WORKDIR}/{dataset}/csv/custom/{dataset}_annotated.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
-            itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset] for col in ANNOTATION_COLS],
-            trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+#            annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+#            reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
+#            itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset] for col in ANNOTATION_COLS],
+#             trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
 #             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
 #             extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
 #             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_build/html/index.html' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]]
@@ -176,9 +187,11 @@ rule validate_ids:
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:
     input:
-        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
+        csv=WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
     output:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
+    params:
+        uniprot_col_size=UNIPROT_COL_SIZE,
     script:
         "scripts/get_uniprot_annotations.py"
 
@@ -392,7 +405,9 @@ rule create_itol_annotations:
     input:
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment.csv"
     params:
-        annotation_cols = ANNOTATION_COLS
+        annotation_cols = ANNOTATION_COLS,
+        single_colour_annotation_cols = SINGLE_COLOUR_ANNOTATION_COLS
+
     output:
         tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt",
     script:

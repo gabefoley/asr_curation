@@ -1,6 +1,25 @@
 # 2021 July Note: 'comment(ENZYME REGULATION)', 'context', 'tools'  are not returning a value correctly
 # 2022 Sep Note: ' commented fields not supported by uniprot api ' - SANJANA
 
+reduced_uniprot_cols = [
+    "accession",
+    "id",
+    "sequence",
+    "length",
+    "fragment",
+    "protein_families",
+    "protein_name",
+    "ft_binding",
+    "lineage",
+    "xref_gene3d",
+    "xref_interpro",
+    "xref_oma",
+    "xref_orthodb",
+    "xref_panther",
+    "xref_pdb",
+    "xref_pfam",
+]
+
 
 full_uniprot_cols = [
     "accession",

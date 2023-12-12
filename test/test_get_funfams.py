@@ -9,7 +9,7 @@ def test_get_funfams():
         "test/files/funfams/baier_and_tokuriki_24_structures_24_generic_annotated.csv"
     )
 
-    outpath = "test/files/funfams/test_subset.csv"
+    outpath = "test/files/funfams/"
 
     if os.path.exists(outpath):
         os.remove(outpath)

@@ -44,10 +44,6 @@ def test_split_lineage_when_no_info():
 
     uniprot_list_ids = ["A0A873WER9", "A0A4Y7BF74"]
 
-    annotations = scripts.get_uniprot_annotations.get_uniprot_annotations(
-        uniprot_list_ids, outpath, 20, 20
-    )
-
     result_df = pd.read_csv(outpath, sep="\t", header=None)
 
     assert len(result_df) == len(uniprot_list_ids)

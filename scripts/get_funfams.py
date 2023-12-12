@@ -89,7 +89,7 @@ def retrieve_scan_results(task_id):
 def process_sequence(seq_id, sequence):
     # Submit the sequence for scanning
     task_id = submit_fasta_sequence(sequence)
-    print(task_id)
+    # print(task_id)
 
     if task_id:
         # Check progress and retrieve results for the current task
@@ -144,12 +144,12 @@ def get_funfams(df, output_dir):
         seq_id = row["info"]
         sequence = row["sequence"]
 
-        print (seq_id)
-        print (name_mapping)
+        # print (seq_id)
+        # print (name_mapping)
 
         if seq_id not in name_mapping:
-            print ('not there')
-            print (seq_id)
+            # print ('not there')
+            # print (seq_id)
 
             seq_funfam_info = process_sequence(seq_id, sequence)
             if seq_funfam_info:
@@ -191,12 +191,12 @@ def classify_funfams_general(row, name_mapping):
     # for longer_name in longer_names_general:
     # 	print (longer_name)
     # 	print (type(longer_name))
-    print('description')
+    # print('description')
 
-    print(description)
+    # print(description)
 
-    print('longer_names_general')
-    print(longer_names_general)
+    # print('longer_names_general')
+    # print(longer_names_general)
 
     if not pd.isnull(description):
 

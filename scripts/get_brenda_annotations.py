@@ -12,11 +12,19 @@ def parse_proteins_for_ec(ec="1.1.1.1"):
     return proteins
 
 
-def get_ec_nums(dataset_name):
-    ec_nums = []
-    if "ec" in dataset_name:
-        for ec_string in dataset_name.split("ec_")[1:]:
-            ec_nums.append(".".join(ec_string.split("_")[0:4]).replace("_", "."))
+def get_ec_nums(df):
+    # Initialize a set to store unique EC numbers
+    unique_ec_nums = set()
+
+    # Split the 'ec' column by semicolon (;) and iterate through the values
+    for row in df['ec'].str.split(';'):
+        for ec in row:
+            ec = ec.strip()  # Remove leading/trailing whitespaces
+            if "-" not in ec:  # Filter out invalid EC numbers
+                unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
+
+    ec_nums = list(unique_ec_nums)
+
     return ec_nums
 
 
@@ -55,8 +63,8 @@ def add_val(brenda_dict, protein, attrib, attrib_count, bc):
 
 
 def main():
-    ec_nums = get_ec_nums(snakemake.wildcards.dataset)
     original_df = pd.read_csv(snakemake.input[0])
+    ec_nums = get_ec_nums(original_df)
     brenda_dict = defaultdict(lambda: defaultdict(list))
 
     if ec_nums:

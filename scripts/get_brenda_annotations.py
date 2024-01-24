@@ -16,16 +16,20 @@ def get_ec_nums(df):
     # Initialize a set to store unique EC numbers
     unique_ec_nums = set()
 
+    df_filtered = df[pd.notna(df['ec'])]
+
+
     # Split the 'ec' column by semicolon (;) and iterate through the values
-    for row in df['ec'].str.split(';'):
-        for ec in row:
-            ec = ec.strip()  # Remove leading/trailing whitespaces
-            if "-" not in ec:  # Filter out invalid EC numbers
-                unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
+    for row in df_filtered['ec'].str.split(';'):
+        if row:
+            for ec in row:
+                ec = ec.strip()  # Remove leading/trailing whitespaces
+                if "-" not in ec:  # Filter out invalid EC numbers
+                    unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
 
-    ec_nums = list(unique_ec_nums)
+        ec_nums = list(unique_ec_nums)
 
-    return ec_nums
+        return ec_nums
 
 
 def count_uniprot_entries(ec_dict):
@@ -43,8 +47,19 @@ def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
 
 
 def add_val(brenda_dict, protein, attrib, attrib_count, bc):
+
+    print ('here')
+    print (protein.uniprot)
+    print (bc)
+    print (attrib)
+    if type(attrib) == dict and "substrate" in attrib:
+        print ('substrate')
+        print (attrib['substrate'])
+
+
+
     if "comment" not in attrib or "mutant" not in attrib["comment"]:
-        if "substrate" in attrib:
+        if type(attrib) == dict and "substrate" in attrib:
             terms = ["units", "refs", "comment"]
             brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_DATA"].append(
                 f"{attrib['value']}_count={attrib_count}")
@@ -69,6 +84,7 @@ def main():
 
     if ec_nums:
         for ec_num in ec_nums:
+            print (ec_num)
             ec_dict = parse_proteins_for_ec(ec_num)
             original_df = pd.read_csv(snakemake.input[0])
             print(f"\nEC number is {ec_num}")

@@ -291,10 +291,10 @@ DATASET_LABEL, Lab Assays
 COLOR,#ff0000
 
 #define colors for each individual field column (use hexadecimal, RGB or RGBA notation; if using RGB/RGBA, COMMA cannot be used as SEPARATOR)
-FIELD_COLORS,#ff0000,#ff0000,#ff0000,#00ff00,#00ff00,#00ff00,#0000ff,#0000ff,#0000ff,#800080,#800080,#800080
+FIELD_COLORS,#ff0000,#ff0000,#ff0000,#00ff00,#00ff00,#00ff00,#0000ff,#0000ff,#0000ff,#800080,#800080,#800080,#ff6666,#ff6666,#ff6666,#66ff99,#66ff99,#66ff99,#6666ff,#6666ff,#6666ff,#ffcc99,#ffcc99,#ffcc99,#ff9966,#ff9966,#ff9966,#99ff99,#99ff99,#99ff99,#9999ff,#9999ff,#9999ff,#ff9966,#ff9966,#ff9966
 
 #field labels
-FIELD_LABELS,Activity_Zn_PnP, Activity_Mg_PnP, Activity_Mn_PnP, Activity_Zn_BnP, Activity_Mg_BnP, Activity_Mn_BnP, Activity_Zn_4NPC, Activity_Mg_4NPC, Activity_Mn_4NPC, Activity_Zn_4NPS, Activity_Mg_4NPS, Activity_Mn_4NPS, Activity_Zn_4NPA, Activity_Mg_4NPA, Activity_Mn_4NPA, Activity_Zn_DVL, Activity_Mg_DVL, Activity_Mn_DVL, Activity_Zn_Nitrocefin, Activity_Mg_Nitrocefin, Activity_Mn_Nitrocefin
+FIELD_LABELS,Activity_Zn_PnP, Activity_Mg_PnP, Activity_Mn_PnP, Activity_Zn_BnP, Activity_Mg_BnP, Activity_Mn_BnP, Activity_Zn_TnP, Activity_Mg_TnP, Activity_Mn_TnP, Activity_Zn_4NPC, Activity_Mg_4NPC, Activity_Mn_4NPC, Activity_Zn_4NPS, Activity_Mg_4NPS, Activity_Mn_4NPS, Activity_Zn_4NPA, Activity_Mg_4NPA, Activity_Mn_4NPA, Activity_Zn_4NPB, Activity_Mg_4NPB, Activity_Mn_4NPB, Activity_Zn_4NPH, Activity_Mg_4NPH, Activity_Mn_4NPH, Activity_Zn_DVL, Activity_Mg_DVL, Activity_Mn_DVL, Activity_Zn_DHM, Activity_Mg_DHM, Activity_Mn_DHM, Activity_Zn_Nitrocefin, Activity_Mg_Nitrocefin, Activity_Mn_Nitrocefin, Activity_Zn_SLG, Activity_Mg_SLG, Activity_Mn_SLG
 
 #=================================================================#
 #                    OPTIONAL SETTINGS                            #

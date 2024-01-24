@@ -93,18 +93,20 @@ def generate_lab_assays(df, outpath):
     completed, total, percentage = get_lab_percentages(df)
 
     selected_columns = df.columns[
-        df.columns.get_loc("Activity_Zn_PnP") : df.columns.get_loc("Activity_Mn_4NPS")
+        df.columns.get_loc("Activity_Zn_PnP") : df.columns.get_loc("Activity_Mn_SLG")
         + 1
     ]
     selected_columns = selected_columns.insert(0, "UniProt")
 
-    with open(outpath, "w") as f:
+    with open(outpath, "w+") as f:
 
         text_to_write = itol_text.lab_assays_text.replace("<completed>", str(completed))
         text_to_write = text_to_write.replace("<total>", str(total))
         f.write(text_to_write.replace("<percentage>", percentage))
 
         # Select columns from 'Activity_Zn_PnP' to 'Activity_Mn_4NPS' (inclusive)
+
+        print (df[selected_columns])
 
         # Iterate through the rows of the DataFrame
         for index, row in df[selected_columns].iterrows():
@@ -205,18 +207,20 @@ if __name__ == "__main__":
         for single_col in single_colour_annotation_cols:
             print ('here is single col')
             print (single_col)
-            info_dict = get_single_info_dict(df, single_col)
+
+            if single_col in df.columns:
+                info_dict = get_single_info_dict(df, single_col)
 
 
-            print (single_colours[idx])
+                print (single_colours[idx])
 
-            generate_shape_style(
-                single_col, single_colours[idx], info_dict, f"{outpath}/{single_col}_itol_dataset_style.txt"
-            )
+                generate_shape_style(
+                    single_col, single_colours[idx], info_dict, f"{outpath}/{single_col}_itol_dataset_style.txt"
+                )
 
-            idx +=1
+                idx +=1
 
-            output_text.write(f"Dataset style generated for {single_col} at {outpath}/{single_col}_itol_dataset_style.txt\n")
+                output_text.write(f"Dataset style generated for {single_col} at {outpath}/{single_col}_itol_dataset_style.txt\n")
 
 
 

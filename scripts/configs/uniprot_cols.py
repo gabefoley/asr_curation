@@ -9,6 +9,7 @@ reduced_uniprot_cols = [
     "fragment",
     "protein_families",
     "protein_name",
+    "ec",
     "ft_binding",
     "lineage",
     "xref_gene3d",

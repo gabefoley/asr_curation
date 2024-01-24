@@ -144,7 +144,7 @@ def write_from_dict(filename, data_dict):
     # Merge dictionaries. If there are overlaps, data_dict will overwrite existing_data
     merged_data = {**existing_data, **data_dict}
 
-    with open(filename, "w") as file:
+    with open(filename, "w+") as file:
         for key, value in merged_data.items():
             file.write(f"{key} : {value}\n")
 

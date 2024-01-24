@@ -22,64 +22,43 @@ def format_subset_val(col, col_val):
         return f"{col.strip()} == {col_val}"
 
 
-def subset_column_vals(df, col_val_dict, not_col_val_dict, req_col_val_dict):
+def subset_column_vals(df, col_val_dict, not_col_val_dict):
+    
+    excluded_identifiers = {}
+
+    # For everything that has to be there, we can just query the data_frame directly
     qry = " and ".join(
         [format_subset_val(col, col_val) for col, col_val in col_val_dict.items()]
     )
 
-    # sub_df = df.loc[(df[list(col_val_dict)] == pd.Series(col_val_dict)).all(axis=1)]
-
     print(f"Creating a subset with {qry}")
 
-    # qry = "gene_primary.str.contains('ilvC', na=False)"
-    # qry = "Length_2.str.contains('None')"
-
-    print(qry)
-
-    print("hello")
-
     sub_df = df.query(qry)
+    
 
-    print("got here")
-
-    print(sub_df)
+    
+    for col, col_val in col_val_dict.items():
+        excluded_identifiers[f'{col}_{col_val}'] = df.loc[~df[col].eq(col_val), 'info'].tolist()
 
     sub_df = sub_df.fillna("None")
 
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
+        df[col] = df[col].astype(str)
+        sub_df[col] = sub_df[col].astype(str)
+
         print(col)
         # If it is a list split it up
         for val in col_val.split(","):
-            print(val)
             sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
+            excluded_identifiers[f'{col}_NOT_{val}'] = (df[~df[col].str.contains(val.strip(), na=False)]['info'].tolist())
 
-    print("now")
-    if req_col_val_dict:
-        req_qry = " or ".join(
-            [
-                format_subset_val(col, col_val)
-                for col, col_val in req_col_val_dict.items()
-            ]
-        )
+#     sub_df, not_identifiers = subset_not_column_vals(df, not_col_val_dict)
 
-        print(sub_df)
 
-        req_df = df.query(req_qry)
-
-        frames = [sub_df, req_df]
-        merge_df = pd.concat(frames)
-
-        merge_df = merge_df.drop_duplicates(subset="accession")
-
-        return merge_df
-    else:
-        print("sub df")
-        print(sub_df)
-        sub_df = sub_df.drop_duplicates(subset="accession")
-        return sub_df
-
+    sub_df = sub_df.drop_duplicates(subset="accession")
+    return sub_df, excluded_identifiers
 
 def get_col_val_name(col_val_dict, not_col_val_dict):
     name = "_".join(str(k) + "_" + str(v) for k, v in col_val_dict.items())
@@ -104,11 +83,17 @@ def add_val_to_dict(term, add_val, add_dict):
         # except ValueError:
         #     add_dict[term] = add_val
 
-
 def create_subsets():
+
+
+
+    # excluded_output_path = snakemake.output.explanation + "/subset_explanations.txt"
+
+
     # If a subset rule doesn't exist, then just write out the full data set
     if snakemake.wildcards.subset == "full_set":
         sc.write_to_fasta(pd.read_csv(snakemake.input.csv), snakemake.output[0])
+
 
     for line in open(snakemake.input.rules).read().splitlines():
         # Reset the condition that we want to sample from the dataframe
@@ -117,7 +102,6 @@ def create_subsets():
         if line and not line.startswith("#"):
             col_val_dict = {}
             not_col_val_dict = {}
-            req_col_val_dict = {}
 
             # Check to see if custom name exists
             name = line.split("=")[0].strip()
@@ -156,23 +140,17 @@ def create_subsets():
                                     not_col_val_dict,
                                 )
 
-                            # If the value is required to be there add it to the required dictionary
-                            elif term_val.split(" ")[0].strip().lower() == "required":
-                                add_val_to_dict(
-                                    term, term_val.split(" ")[1], req_col_val_dict
-                                )
-
                             # Else add the term value we want
                             else:
                                 add_val_to_dict(
                                     term, term_val.split(" ")[0], col_val_dict
                                 )
 
-            # col_val_dict = {i.split(':')[0].strip(): bool(i.split(':')[1].strip().lower() == 'true') if i.split(':')[1].strip().lower() in ['true', 'false'] else i.split(':')[1].strip() for i in dict_def.split(",")}
 
             # If no custom name make name based on values of dictionary
             if len(name) < 3:
                 name = get_col_val_name(col_val_dict, not_col_val_dict)
+
 
             if name == snakemake.wildcards.subset:
                 df = pd.read_csv(snakemake.input.csv)
@@ -183,9 +161,11 @@ def create_subsets():
                 if dict_def == "*":
                     sub_df = df
                 else:
-                    sub_df = subset_column_vals(
-                        df, col_val_dict, not_col_val_dict, req_col_val_dict
+                    sub_df, excluded_identifiers = subset_column_vals(
+                        df, col_val_dict, not_col_val_dict
                     )
+                    
+
 
                 if sample_from:
                     print(
@@ -204,39 +184,33 @@ def create_subsets():
                     print("After sampling the length to write out is")
                     print(len(sub_df))
 
-                    # Remove this from above and just do it here?
-
-                    req_qry = " or ".join(
-                        [
-                            format_subset_val(col, col_val)
-                            for col, col_val in req_col_val_dict.items()
-                        ]
-                    )
-
-                    if req_qry:
-                        req_df = df.query(req_qry)
-
-                        frames = [sub_df, req_df]
-                        merge_df = pd.concat(frames)
-
-                        sub_df = merge_df.drop_duplicates(subset="accession")
-
+     
                 # Write the subset to a fasta
                 # TODO: Currently this is just working for one subset file (not multiple)
 
                 sub_df = sub_df.replace("None", np.NaN)
 
-                print(sub_df)
-                sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
+                sc.write_to_fasta(sub_df, 'output.fasta', trim=True)
+
+                print (excluded_identifiers)
+
+                print (snakemake.output.subset_log)
+
+                with open(snakemake.output.subset_log, "w+") as file:
+                    file.write ('hello')
+                    for key, value in excluded_identifiers.items():
+                        file.write(f"{key} : {value}\n")
+
+                
+
 
                 print("write to csv")
 
                 # Write the subset to its own csv file
-                sub_df.to_csv(snakemake.output.csv, index=False)
-
+                sub_df.to_csv('output.csv', index=False)
 
 def main():
-    print("Starting Validating IDs")
+    print("Starting to create subsets IDs")
     create_subsets()
 
 

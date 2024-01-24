@@ -11,17 +11,17 @@ base_url = "https://www.cathdb.info"
 # Function to add FunFam information to the DataFrame
 def add_funfam_info_to_df(df, funfam_dict):
     for seq_id, info_dict in funfam_dict.items():
-        if type(info_dict) != dict:
-            info_dict = ast.literal_eval(info_dict)
-        if info_dict:
+        if info_dict is not None:  # Skip entries with info_dict equal to None
+            if type(info_dict) != dict:
+                info_dict = ast.literal_eval(info_dict)
             # If the entry is not None, add the information to the DataFrame
-            df.loc[df["info"] == seq_id, "funfam_names"] = info_dict["funfam_names"]
-            df.loc[df["info"] == seq_id, "funfam_descriptions"] = info_dict[
+            df.loc[df["info"] == seq_id, "funfam_names"] = info_dict.get("funfam_names")
+            df.loc[df["info"] == seq_id, "funfam_descriptions"] = info_dict.get(
                 "funfam_descriptions"
-            ]
-            df.loc[df["info"] == seq_id, "funfam_significance"] = info_dict[
+            )
+            df.loc[df["info"] == seq_id, "funfam_significance"] = info_dict.get(
                 "funfam_significance"
-            ]
+            )
         else:
             # If the entry is None, set the columns to None
             df.loc[df["info"] == seq_id, "funfam_names"] = None
@@ -148,8 +148,8 @@ def get_funfams(df, output_dir):
         # print (name_mapping)
 
         if seq_id not in name_mapping:
-            # print ('not there')
-            # print (seq_id)
+            print ('not there')
+            print (seq_id)
 
             seq_funfam_info = process_sequence(seq_id, sequence)
             if seq_funfam_info:

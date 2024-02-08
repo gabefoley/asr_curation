@@ -1,7 +1,8 @@
 import seqcurate as sc
 import pandas as pd
 import numpy as np
-
+import os 
+import time
 
 def format_subset_val(col, col_val):
     if type(col_val) == str:
@@ -45,14 +46,16 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict):
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
-        df[col] = df[col].astype(str)
-        sub_df[col] = sub_df[col].astype(str)
 
-        print(col)
-        # If it is a list split it up
-        for val in col_val.split(","):
-            sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
-            excluded_identifiers[f'{col}_NOT_{val}'] = (df[~df[col].str.contains(val.strip(), na=False)]['info'].tolist())
+        if col in df:
+            df[col] = df[col].astype(str)
+            sub_df[col] = sub_df[col].astype(str)
+
+            print(col)
+            # If it is a list split it up
+            for val in col_val.split(","):
+                sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
+                excluded_identifiers[f'{col}_NOT_{val}'] = (df[~df[col].str.contains(val.strip(), na=False)]['info'].tolist())
 
 #     sub_df, not_identifiers = subset_not_column_vals(df, not_col_val_dict)
 
@@ -190,24 +193,23 @@ def create_subsets():
 
                 sub_df = sub_df.replace("None", np.NaN)
 
-                sc.write_to_fasta(sub_df, 'output.fasta', trim=True)
+                sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
 
                 print (excluded_identifiers)
 
                 print (snakemake.output.subset_log)
 
                 with open(snakemake.output.subset_log, "w+") as file:
-                    file.write ('hello')
                     for key, value in excluded_identifiers.items():
                         file.write(f"{key} : {value}\n")
 
-                
+
 
 
                 print("write to csv")
 
                 # Write the subset to its own csv file
-                sub_df.to_csv('output.csv', index=False)
+                sub_df.to_csv(snakemake.output.csv, index=False)
 
 def main():
     print("Starting to create subsets IDs")

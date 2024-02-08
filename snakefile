@@ -232,6 +232,15 @@ rule create_column_summary_images:
     script:
         "scripts/get_column_summary_images.py"
 
+
+# rule create_dbscan_coverage:
+#     input:
+#         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
+#     output:
+#         img = WORKDIR + "/{dataset}/dbscan_coverage/{dataset}_dbscan.png"
+#     script:
+#         "scripts/create_dbscan_coverage.py"
+
 rule create_subsets:
     input:
         rules=SUBDIR + "/{dataset}.subset",

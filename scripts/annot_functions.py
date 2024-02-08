@@ -210,6 +210,29 @@ def add_interpro_name_column(row, interpro_mapping):
     return row
 
 
+
+def process_note_column(df, column):
+    pattern = r'note="([^"]+)"'
+    df[column + '_notes'] = df[column].str.extractall(pattern)[0].groupby(level=0).apply(lambda x: '|'.join(x))
+    binary_matrix = df[column + '_notes'].str.get_dummies()
+    result_df = pd.concat([df, binary_matrix.add_prefix(f'{column}||')], axis=1)
+    result_df = result_df.drop(columns=[column + '_notes'])
+    return result_df
+
+
+
+def separate_notes(df):
+    note_columns = df.applymap(lambda x: 'note=' in str(x)).any()
+    result_columns = note_columns[note_columns].index.tolist()
+
+
+    # Iterate through each column and process it
+    for col in result_columns:
+        df = process_note_column(df, col)
+        
+    return df
+
+
 def annotate_motif(df, motif):
     # For a dataframe, check if the sequence column contains a certain motif
     df[f"MOTIF_{motif.replace('.', 'x').replace('[', '_').replace(']', '_')}"] = (
@@ -244,6 +267,9 @@ def annotate_nonAA(df):
     df["Non_AA_Character"] = df["sequence"].dropna().str.contains(non_AA)
 
     return df
+
+
+
 
 
 def annotate_AA(df):
@@ -906,6 +932,29 @@ def get_binding_pos(id, binding_sites, ligand=None):
         return results
     else:
         return []
+
+
+def create_top_column(df, threshold_percentage, max_threshold_percentage=100):
+    new_df = df.copy()
+
+    for column in df.columns:
+        # Check if the column name already starts with "TOP_"
+        if not column.startswith("TOP_"):
+            # Calculate the percentage of the most common value in the column, including NaN
+            value_counts = df[column].value_counts(normalize=True, dropna=False)
+            if not value_counts.empty:
+                most_common_value_percentage = value_counts.max() * 100
+                most_common_value = value_counts.idxmax()
+
+                # Check if the most common value is not np.nan and meets the threshold conditions
+                if (most_common_value_percentage > threshold_percentage and
+                        most_common_value_percentage < max_threshold_percentage and
+                        not pd.isna(most_common_value)):
+                    new_column_name = f"TOP_{column}||{most_common_value}"
+                    new_df[new_column_name] = (df[column] == most_common_value) & (~df[column].isna())
+
+    return new_df.dropna(axis=1, how='all')
+
 
 
 def check_sequence_for_loop_length(seq):

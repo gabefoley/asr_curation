@@ -49,7 +49,7 @@ to you `config` file.
 
 ## Create a top column
 
-Because it can be useful for generating rules that 
+Creates a new column 
 
 annot_df = an.create_top_column(annot_df, 80)
 

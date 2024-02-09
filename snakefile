@@ -12,10 +12,10 @@ else:
     os.environ["PYTHONPATH"] = f'{os.getcwd()}/scripts'
 
 # Collect config info from config file
+TOPDIR = config['workdir']
 WORKDIR = config['workdir'] + "/datasets"
 FASTADIR = config['fastadir']
 SUBDIR = config['subdir']
-VERBOSE = True
 
 # Path for custom annotation scripts. Defaults to scripts folder
 
@@ -45,8 +45,6 @@ try:
 except:
     TREE_TOOL = "fasttree"
 
-
-
 try:
     KEY_SEQUENCES = config['key_sequences']
 except:
@@ -75,8 +73,10 @@ try:
 except:
     UNIPROT_COL_SIZE = 'full'
 
-
-
+try:
+    VERBOSE = config['verbose']
+except:
+    VERBOSE = True
 
 # cluster_threshes = ["1", "0.9", "0.7"]
 # cluster_threshes = ["0.65", "0.7"]
@@ -87,7 +87,7 @@ DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR 
 
 if VERBOSE:
 
-    print ("Running ASR curation pipeline with the following datasets:")
+    print ("\nRunning ASR curation pipeline with the following datasets:")
     print (DATASETS)
 
 # for blocked in config['blocked_datasets']:
@@ -153,6 +153,8 @@ print (WORKDIR)
 print (FASTADIR)
 
 
+
+
 rule all:
         input:
            brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in cluster_threshes for dataset in DATASETS for subset in subsets[dataset]],
@@ -171,6 +173,8 @@ rule create_annotations:
         FASTADIR + "/{dataset}.fasta"
     output:
         WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
+    params:
+        verbose=VERBOSE,
     script:
         "scripts/create_annotations.py"
 

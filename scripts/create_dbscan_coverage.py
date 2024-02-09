@@ -15,15 +15,6 @@ dbscan_params_eps = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6,
 dbscan_params_min_samples = [1,2,3,4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 500, 1000, 5000]
 
 
-skip_cols = ['info', 'truncated_info', 'extracted_id',
-             'extracted_name', 'sequence_version', 'protein_existence',
-             'reviewed', 'UniProt_DB', 'cdd_evalue', 'cdd_incomplete', 'embeddings',
-             'embeddings2', 'IQR_marked', 'curated', 'Routine_exclusion', 'cdd_pssm_id',
-             'cdd_from', 'cdd_to', 'cdd_bitscore', 'lineage_thermo',
-             'MOTIF__SGALC__LIMP__LIVMF_TD_GA_R_LIVMFY_S_GA__GAV__ST_',
-             'lineage_subkingdom', 'volker_sadht', 'lineage_thermo', 'thermo_bacteria', 'lineage_thermo_no_metha',
-             'model_name', 'Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS', 'embeddings_encoded']
-
 
 
 def generate_dbscan_embeddings(df, embedding_col,
@@ -36,10 +27,15 @@ def generate_dbscan_embeddings(df, embedding_col,
         print (f"Requested embedding column {embedding_col} is not in dataframe")
         return
 
-    df['embeddings_encoded'] = df['Prot_T5 Embed Encoded'].apply(lambda s: ast.literal_eval(s))
+    # df['embeddings_encoded'] = df['Prot_T5 Embed Encoded'].apply(lambda s: ast.literal_eval(s))
+    #
+    #
+    # embeddings = np.vstack(df['embeddings_encoded'].to_numpy())
+
+    # df['embeddings_encoded'] = df['Prot_T5 Embed Encoded'].apply(lambda s: ast.literal_eval(s))
 
 
-    embeddings = np.vstack(df['embeddings_encoded'].to_numpy())
+    embeddings = np.vstack(df[embedding_col].to_numpy())
 
 
     for eps_param in dbscan_params_eps:
@@ -72,7 +68,7 @@ def compare_categorical_distributions(df1, df2, column_name, alpha=0.05):
     else:
         return
 
-def generate_parameter_subsets(df, cols_to_check, parameter_subsets):
+def generate_parameter_subsets(df, cols_to_check):
     '''
     Generate a dictionary with each parameter combination, and the list of annotation columns implied as to be excluded on'''
     parameter_subsets = defaultdict(list)
@@ -172,20 +168,34 @@ def generate_db_scan_coverage_plot(df, parameter_subsets, outpath):
                         ncol=1)
     plt.subplots_adjust(right=0.7)  # Adjust the right margin to make space for the legend
 
-    plt.savefig(outpath)
+    plt.savefig(f'{outpath}'.png)
 
 
-def generate_dbscan_coverage(df, embedding_col, outpath):
+def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
     embedding_cols = ['Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS']
     df = generate_dbscan_embeddings(df, embedding_col)
 
-    cols_to_check = [x for x in df.keys() if x not in skip_cols]
+    # We always want to skip these columns as they will be uninformative
+    skip_cols += ['info', 'truncated_info', 'extracted_id',
+                 'extracted_name', 'sequence_version', 'protein_existence',
+                 'reviewed', 'UniProt_DB', 'cdd_evalue', 'cdd_incomplete', 'embeddings',
+                 'embeddings2', 'IQR_marked', 'curated', 'Routine_exclusion', 'cdd_pssm_id',
+                 'cdd_from', 'cdd_to', 'cdd_bitscore', 'lineage_thermo', 'organism_name', 'organism_id', 'length',
+                 'mass', 'sequence_version', 'version', 'Length_2', 'annotation_score',
+                 'lineage_subkingdom', 'volker_sadht', 'lineage_thermo', 'thermo_bacteria', 'lineage_thermo_no_metha',
+                 'model_name', 'Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS', 'embeddings_encoded',
+                  'BRENDA', 'dbscan']
 
-    cols_to_check = [x for x in cols_to_check if not x.startswith("BRENDA")]
+    cols_to_check = [x for x in df.keys() if x not in skip_cols and not any(x.startswith(term) for term in skip_cols)]
 
-    cols_to_check = [x for x in cols_to_check if not x.startswith("dbscan")]
+
 
     parameter_subsets = generate_parameter_subsets(df, cols_to_check)
+
+    # Write out the parameter subsets
+    with open(f'{outpath}'.txt, 'w') as file:
+        for item in parameter_subsets:
+            file.write("%s\n" % item)
 
     generate_db_scan_coverage_plot(df, parameter_subsets, outpath)
 

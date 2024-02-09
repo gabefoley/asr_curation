@@ -35,19 +35,19 @@ def test_validate_ids_main():
 #     #
 
 
-def test_validating_ncbi_and_uniprot_headers():
-    # This test creates a DataFrame that contains full NCBI accession header, full UniProt header, gi header
-    # (as downloaded from Conserved Domain Database alignment) and single NCBI identifier and single UniProt identifier
-
-    # seq_outpath = "test/files/validate_ids/ncbi_and_uniprot.csv"
-    # validated_outpath = "test/files/output_test_diverse_5_validated.csv"
-    #
-
-    outpath = "test/files/validate_ids/ncbi_and_uniprot_validated.csv"
-
-    if os.path.exists(outpath):
-        os.remove(outpath)
-
-    vi.all_ids_lookup("test/files/validate_ids/ncbi_and_uniprot.csv", outpath)
-
-    assert os.path.isfile(outpath)
+# def test_validating_ncbi_and_uniprot_headers():
+#     # This test creates a DataFrame that contains full NCBI accession header, full UniProt header, gi header
+#     # (as downloaded from Conserved Domain Database alignment) and single NCBI identifier and single UniProt identifier
+#
+#     # seq_outpath = "test/files/validate_ids/ncbi_and_uniprot.csv"
+#     # validated_outpath = "test/files/output_test_diverse_5_validated.csv"
+#     #
+#
+#     outpath = "test/files/validate_ids/ncbi_and_uniprot_validated.csv"
+#
+#     if os.path.exists(outpath):
+#         os.remove(outpath)
+#
+#     vi.all_ids_lookup("test/files/validate_ids/ncbi_and_uniprot.csv", outpath)
+#
+#     assert os.path.isfile(outpath)

@@ -168,7 +168,7 @@ def generate_db_scan_coverage_plot(df, parameter_subsets, outpath):
                         ncol=1)
     plt.subplots_adjust(right=0.7)  # Adjust the right margin to make space for the legend
 
-    plt.savefig(f'{outpath}'.png)
+    plt.savefig(f'{outpath}.png')
 
 
 def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
@@ -186,14 +186,14 @@ def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
                  'model_name', 'Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS', 'embeddings_encoded',
                   'BRENDA', 'dbscan']
 
-    cols_to_check = [x for x in df.keys() if x not in skip_cols and not any(x.startswith(term) for term in skip_cols)]
+    cols_to_check = [x for x in df.keys() if not any(x.startswith(term) for term in skip_cols)]
 
 
 
     parameter_subsets = generate_parameter_subsets(df, cols_to_check)
 
     # Write out the parameter subsets
-    with open(f'{outpath}'.txt, 'w') as file:
+    with open(f'{outpath}.txt', 'w') as file:
         for item in parameter_subsets:
             file.write("%s\n" % item)
 

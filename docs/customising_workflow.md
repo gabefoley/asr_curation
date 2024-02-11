@@ -67,5 +67,9 @@ annot_df = tm_vec_embed.process_and_store_embeddings(annot_df, 'Prot_T5')
 
 Generate a DBSCAN coverage image
 
-generate_dbscan_coverage(df, 'Prot_T5 Embed Encoded', snakemake.input.custom_dir + "/dbscan_coverage.png" )
+generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage")
+
+Here we provide the `dataframe` name, the name of the column to find the embeddings in (by default 'Prot_T5 Embed Encoded' if you are using Prot_T5 in the previous step) and a prefix for the output files
+
+
 

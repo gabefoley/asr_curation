@@ -270,15 +270,6 @@ rule create_column_summary_images:
     script:
         "scripts/get_column_summary_images.py"
 
-
-# rule create_dbscan_coverage:
-#     input:
-#         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
-#     output:
-#         img = WORKDIR + "/{dataset}/dbscan_coverage/{dataset}_dbscan.png"
-#     script:
-#         "scripts/create_dbscan_coverage.py"
-
 rule create_subsets:
     input:
         rules=SUBDIR + "/{dataset}.subset",
@@ -323,9 +314,6 @@ rule add_key_sequences:
     script:
         "scripts/add_key_sequences.py"
 
-
-
-
 if ALIGNMENT_TOOL == 'mafft':
     rule align_seqs:
         input:
@@ -366,6 +354,7 @@ elif TREE_TOOL == 'iqtree2':
         shell:
             "iqtree2 -s {input}"
 
+    # Have to rename the IQTree2 tree output file to have .nwk file extension
     rule rename_iqtree2_tree:
         input:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln.treefile"
@@ -373,10 +362,6 @@ elif TREE_TOOL == 'iqtree2':
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk"
         shell:
             "cp {input} {output}"
-
-
-
-
 
 rule run_grasp:
     input:
@@ -468,9 +453,6 @@ rule concat_ancestor_alignment:
         WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln"
     shell:
         "cat {input.extants} {input.ancestors} > {output}"
-
-
-# output for making the summary documents
 
 
 # Rules for creating the PDF summary files

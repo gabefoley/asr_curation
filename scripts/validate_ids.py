@@ -7,7 +7,6 @@ import zlib
 import re
 import time
 import math
-from io import StringIO
 from xml.etree import ElementTree
 from urllib.parse import urlparse, parse_qs, urlencode
 from requests.adapters import HTTPAdapter, Retry
@@ -106,7 +105,8 @@ def check_id_mapping_results_ready(job_id):
         j = request.json()
         if "jobStatus" in j:
             if j["jobStatus"] == "RUNNING":
-                print(f"Retrying in {POLLING_INTERVAL}s")
+                if verbose:
+                    print(f"Retrying in {POLLING_INTERVAL}s")
                 time.sleep(POLLING_INTERVAL)
             else:
                 raise Exception(request["jobStatus"])
@@ -307,8 +307,6 @@ def process_results(data_df, results, from_db, to_db):
             id_mapping_list.append((from_id, to_id))
         result_df = pd.DataFrame(id_mapping_list, columns=["from", "to"])
 
-    # print("Result Dataframe",result_df.head())
-
     # group the results by from and remove duplicates
     result_df["grouped_to"] = result_df.groupby(["from"])["to"].transform(
         lambda x: " ".join(x)
@@ -348,19 +346,6 @@ def create_output_file(data_df, to_id_lookup, output_file):
         lambda x: list(set(x.strip().split(" ")))
     )
 
-    # print (output_df)
-    print(data_df)
-    #
-    # print ('gonna write')
-    #
-    # print (output_df.columns)
-    print(data_df.columns)
-    #
-    # output_df = pd.merge(
-    #     data_df,
-    #     output_df
-    # )
-
     # save as csv and return
     data_df.to_csv(output_file, index=False)
 
@@ -377,8 +362,8 @@ def chunk_it(iterable, size):
 CHUNK_SIZE = 5000  # Adjust based on your requirements
 
 
-def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None):
-    """main function to map input ids to different database specified in the id_lookup list"""
+def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None, verbose):
+    """Main function to map input ids to different database specified in the id_lookup list"""
 
     # Set default from and to id lookups
     if not from_id_lookup:
@@ -387,12 +372,15 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     if not to_id_lookup:
         to_id_lookup = ["UNIPROT"]
 
-    print(f"params - {input_file}  {output_file} {from_id_lookup} {to_id_lookup} ")
+    if verbose:
+        print ("Validating IDs")
+        print (f"Mapping from - {from_id_lookup}")
+        print (f"Mapping to - {to_id_lookup}")
+        print(f"There are a total of {len(ids)} IDs to map")
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
     ids = list(df_data["extracted_id"])
-    print(len(ids))
 
     # Create an empty DataFrame to hold concatenated results
     df_final = pd.DataFrame()
@@ -405,14 +393,17 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
     # process mapping from uniprot to "to ids list" using chunked IDs
     for chunk_num, chunked_ids in enumerate(chunk_it(ids, CHUNK_SIZE), start=1):
-        print(f"Processing chunk {chunk_num} of {total_chunks}")
+        if verbose:
+            print(f"Processing chunk {chunk_num} of {total_chunks}")
 
         for from_db_short in from_id_lookup:
-            print("Finding the ids from database:", from_db_short)
+            if verbose:
+                print("Finding the ids from database:", from_db_short)
 
             for to_db_short in to_id_lookup:
                 if from_db_short != to_db_short:
-                    print("Finding the ids to database:", to_db_short)
+                    if verbose:
+                        print("Finding the ids to database:", to_db_short)
 
                     # call uniprot API with chunked IDs
                     results_uniprot = try_map_all_ids(
@@ -422,13 +413,16 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
                     # check if any results returned
                     if results_uniprot:
                         # process the results
-                        print("OUTCOME :: Results Returned")
+                        if verbose:
+                            print("OUTCOME :: Results Returned")
                         df_data = process_results(
                             df_data, results_uniprot, from_db_short, to_db_short
                         )
-                        print("Results Processed")
+                        if verbose:
+                            print("Results Processed")
                     else:
-                        print("OUTCOME :: No Results Returned")
+                        if verbose:
+                            print("OUTCOME :: No Results Returned")
 
         # After processing the results for a chunk, concatenate it to the final DataFrame
         df_final = pd.concat(
@@ -445,4 +439,5 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 if __name__ == "__main__":
     input_file = snakemake.input[0]
     output_file = snakemake.output[0]
-    all_ids_lookup(input_file, output_file)
+    verbose = snakemake.params.verbose
+    all_ids_lookup(input_file, output_file, verbose)

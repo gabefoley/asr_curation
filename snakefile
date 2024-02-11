@@ -102,19 +102,21 @@ DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR 
 
 if VERBOSE:
 
-    print ("\nRunning ASR curation pipeline with the following datasets:")
+    print ("============================================================")
+    print ("Running ASR curation pipeline with the following datasets:")
     print (DATASETS)
+    print ("============================================================")
 
-    print ("Main working directory is")
+    print ("\nMain working directory is")
     print (TOPDIR)
 
-    print ("Reading FASTA files from")
+    print ("\nReading FASTA files from")
     print (FASTADIR)
 
-    print ("Reading subset rules from")
+    print ("\nReading subset rules from")
     print (SUBDIR)
 
-    print ("Files will be written to ")
+    print ("\nFiles will be written to ")
     print (WORKDIR)
 
 # for blocked in config['blocked_datasets']:
@@ -124,7 +126,6 @@ if VERBOSE:
 
 def get_col_val_name(col_val_dict):
     name =  "_".join(str(k) + "_" +  str(v) for k,v in col_val_dict.items())
-
     return name
 
 def get_subset_names(subset_rules_dir):
@@ -135,8 +136,7 @@ def get_subset_names(subset_rules_dir):
     for subset in subsets:
 
         if VERBOSE:
-            print ('The subset name is ')
-            print (subset)
+            print ('\nThe subset name is {subset}')
 
         # If a subset rule doesn't exist, then just write out the full data set
         if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
@@ -215,8 +215,7 @@ rule validate_ids:
    params:
         verbose=VERBOSE,
    script:
-       # "scripts/validate_ids.py"
-       "scripts/validate_ids_not_uniprot.py"
+       "scripts/validate_ids.py"
 
 # Map to UniProt to get all of the known UniProt annotations
 rule get_uniprot_annotations:
@@ -226,6 +225,8 @@ rule get_uniprot_annotations:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
     params:
         uniprot_col_size=UNIPROT_COL_SIZE,
+        verbose=VERBOSE,
+
     script:
         "scripts/get_uniprot_annotations.py"
 

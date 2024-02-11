@@ -62,6 +62,21 @@ try:
 except:
     ANNOTATION_COLS = []
 
+try:
+    SINGLE_COLOUR_ANNOTATION_COLS = config['single_colour_annotation_cols']
+except:
+    SINGLE_COLOUR_ANNOTATION_COLS = []
+
+try:
+    UNIPROT_COL_SIZE = config['uniprot_col_size']
+except:
+    UNIPROT_COL_SIZE = 'full'
+
+try:
+    VERBOSE = config['verbose']
+except:
+    VERBOSE = True
+
 
 try:
     SINGLE_COLOUR_ANNOTATION_COLS = config['single_colour_annotation_cols']
@@ -78,10 +93,9 @@ try:
 except:
     VERBOSE = True
 
-# cluster_threshes = ["1", "0.9", "0.7"]
-# cluster_threshes = ["0.65", "0.7"]
-cluster_threshes = ["1"]
-
+try cluster_threshes = config['cluster_threshes']
+except:
+    cluster_threshes = ["1"]
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 
@@ -89,6 +103,18 @@ if VERBOSE:
 
     print ("\nRunning ASR curation pipeline with the following datasets:")
     print (DATASETS)
+
+    print ("Main working directory is")
+    print (TOPDIR)
+
+    print ("Reading FASTA files from")
+    print (FASTADIR)
+
+    print ("Reading subset rules from")
+    print (SUBDIR)
+
+    print ("Files will be written to ")
+    print (WORKDIR)
 
 # for blocked in config['blocked_datasets']:
 #     if blocked in DATASETS:
@@ -99,7 +125,6 @@ def get_col_val_name(col_val_dict):
     name =  "_".join(str(k) + "_" +  str(v) for k,v in col_val_dict.items())
 
     return name
-
 
 def get_subset_names(subset_rules_dir):
     subset_dict = defaultdict(list)
@@ -114,6 +139,8 @@ def get_subset_names(subset_rules_dir):
 
         # If a subset rule doesn't exist, then just write out the full data set
         if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
+            if VERBOSE:
+                print (f"No rules exist for subset - {subset}, writing out the full dataset")
             subset_dict[subset].append('full_set')
 
 
@@ -121,9 +148,10 @@ def get_subset_names(subset_rules_dir):
 
             if line and not line.startswith("#"):
 
-                print ('The subset rules are')
-                print (line)
+                if VERBOSE:
 
+                    print (f'The subset rules for {subset} are ')
+                    print (f"{line}\n")
 
                 # Check to see if custom name exists
                 name = line.split("=")[0].strip()
@@ -144,16 +172,15 @@ def get_ancestor_col_dict(ancestor_cols):
         val = col_val.split(":")[1].strip()
         ancestor_col_dict[col] = val
 
-    print (ancestor_col_dict)
     return ancestor_col_dict
 
 subsets = get_subset_names(SUBDIR)
-print (subsets)
-print (WORKDIR)
-print (FASTADIR)
 
 
-
+if VERBOSE:
+    print ("Running the following subset files with the following subset rules")
+    for k,v in subsets.items():
+        print (f"{k} - {v}")
 
 rule all:
         input:
@@ -184,6 +211,8 @@ rule validate_ids:
        WORKDIR + "/{dataset}/csv/original/{dataset}_original.csv"
    output:
        WORKDIR + "/{dataset}/csv/validated/{dataset}_validated.csv"
+   params:
+        verbose=VERBOSE,
    script:
        # "scripts/validate_ids.py"
        "scripts/validate_ids_not_uniprot.py"

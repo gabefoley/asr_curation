@@ -104,9 +104,6 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace("-", "_")
     annot_df.columns = annot_df.columns.str.replace("[()]", "", regex=False)
 
-    # print("printing lineage")
-    # print(annot_df["lineage"])
-
     # seperate lineage columns ( after the new api changes)
     (
         annot_df["lineage_superkingdom"],
@@ -142,7 +139,7 @@ def process_results(intermediate_tsv_file):
 
 
 def get_uniprot_annotations(
-    uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size
+    uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
 ):
     """running uniprot ids batches"""
 
@@ -154,21 +151,24 @@ def get_uniprot_annotations(
     # For each split go to UniProt to retrieve information
     for split in splits:
         split_count += 1
-        print(f"Running stage {split_count} of {len(splits)}")
+        if verbose:
+            print(f"Running stage {split_count} of {len(splits)}")
         split_fetch_success = fetch_annotations_in_batches(
-            split, uniprot_cols, intermediate_tsv_file, result_batch_size
+            split, uniprot_cols, intermediate_tsv_file, result_batch_size, verbose
         )
 
         if split_fetch_success == 1:
-            print(f"Successfully Processed {split_count} of {len(splits)}")
+            if verbose:
+                print(f"Successfully processed {split_count} of {len(splits)}")
         else:
-            print(f"Failed Processed {split_count} of {len(splits)}")
+            if verbose:
+                print(f"Failed to process {split_count} of {len(splits)}")
             return 0
 
     return 1
 
 
-def fetch_annotations_in_batches(ids, uniprot_cols, intermediate_tsv_file, result_batch_size):
+def fetch_annotations_in_batches(ids, uniprot_cols, intermediate_tsv_file, result_batch_size, verbose):
     """process uniprot api results in batches and load it in .tsv file on the disk"""
 
     cols = ",".join(uniprot_cols)
@@ -184,8 +184,6 @@ def fetch_annotations_in_batches(ids, uniprot_cols, intermediate_tsv_file, resul
         + str(result_batch_size)
     )
 
-    print(batch_url)
-
     progress = 0
 
     with open(intermediate_tsv_file, "a") as f:
@@ -194,10 +192,12 @@ def fetch_annotations_in_batches(ids, uniprot_cols, intermediate_tsv_file, resul
             for line in lines[1:]:
                 print(line, file=f)
             progress += len(lines[1:])
-            print(f"{progress} / {total}")
+            if verbose:
+                print(f"{progress} / {total}")
 
-    if int(progress) == int(total):  # all have be fetched
-        print("Created and loaded annotations in .tsv file")
+    if int(progress) == int(total):  # All have been fetched
+        if verbose:
+            print("Created and loaded annotations in .tsv file")
         return 1
     else:
         return 0
@@ -216,23 +216,21 @@ def get_uniprot_id_list(df):
 
 
 def uniprot_annotation_lkp(
-    input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size
-):
+    input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose):
     """main function to get uniprot ids annotation"""
 
     # get all uniprot ids
     validated_df = pd.read_csv(input_file)
     uniprot_list_ids = get_uniprot_id_list(validated_df)
-    # print(uniprot_list_ids)
 
     # create a new intermediate tsv file with header row for dumping results
     header = "\t".join(uniprot_cols)
     with open(intermediate_tsv_file, "w") as f:
         print(header, file=f)
 
-    # submit all ids to uniprot for gettting annotation and load in .tsv file
+    # submit all ids to uniprot for getting annotation and load in .tsv file
     results_uniprot_loaded = get_uniprot_annotations(
-        uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size
+        uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
     )
 
     # process results
@@ -242,7 +240,8 @@ def uniprot_annotation_lkp(
         print("Uniprot Results fetched failed.")
 
     # save in .csv file
-    print("Creating .csv output file")
+    if verbose:
+        print("Creating .csv output file")
 
     merged_df = validated_df.merge(
         results_df, left_on="sequence", right_on="sequence", how="left"
@@ -251,33 +250,42 @@ def uniprot_annotation_lkp(
     merged_df = merged_df.drop_duplicates(subset="info", keep="first")
     merged_df.to_csv(output_file, index=False)
 
-    print("Completed Uniprot Annotations Job")
+    if verbose:
+        print("Completed UniProt annotations retrieval")
 
     if os.path.exists(intermediate_tsv_file):
         os.remove(intermediate_tsv_file)
 
 
 def main():
-    print ('got here')
     input_file = snakemake.input.csv
     output_file = snakemake.output[0]
     intermediate_tsv_file = snakemake.input.csv.split(".")[0] + ".tsv"
     uniprot_col_size = snakemake.params.uniprot_col_size
-
-    print ('Col_size is ')
-    print (uniprot_col_size)
+    verbose = snakemake.params.verbose
 
     if uniprot_col_size == 'full':
+
+        if verbose:
+            print ('Retrieving all of the UniProt columns')
+
         uniprot_cols = full_uniprot_cols
     elif uniprot_col_size == 'reduced':
+
+        print ('Retrieving a reduced set of the UniProt columns')
+
         uniprot_cols = reduced_uniprot_cols
+
+    if verbose:
+        print ("UniProt columns to retrieve - ")
+        print (uniprot_cols)
 
     id_batch_size = 110  # process ids in batches of this parameter
     result_batch_size = 50  # process results in this batches (uses pagination)
 
-    print("Starting Uniprot Annotations Job")
+    print("Starting to retrieve UniProt annotations")
     uniprot_annotation_lkp(
-        input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size
+        input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
     )
 
 

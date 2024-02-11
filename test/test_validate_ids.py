@@ -1,5 +1,5 @@
 import os
-import scripts.validate_ids_not_uniprot as vi
+import scripts.validate_ids as vi
 
 
 # Tests to check the validation of IDs

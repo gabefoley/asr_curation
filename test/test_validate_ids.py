@@ -9,7 +9,7 @@ def test_validate_ids_main():
     if os.path.exists(outpath):
         os.remove(outpath)
 
-    vi.all_ids_lookup("test/files/test_original.csv", outpath)
+    vi.all_ids_lookup("test/files/test_original.csv", outpath, verbose=True)
 
     assert os.path.isfile(outpath)
 

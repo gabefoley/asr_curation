@@ -237,7 +237,9 @@ rule get_brenda_annotations:
         WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
         # WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
     output:
-        WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
+        WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv",
+        verbose=VERBOSE,
+
     script:
         "scripts/get_brenda_annotations.py"
 

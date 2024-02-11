@@ -189,7 +189,7 @@ def merge_xml_results(xml_results):
     return ElementTree.tostring(merged_root, encoding="utf-8", xml_declaration=True)
 
 
-def get_id_mapping_results_search(url):
+def get_id_mapping_results_search(url, verbose=True):
     """function to process the results in a batch by batch"""
 
     parsed = urlparse(url)
@@ -238,7 +238,7 @@ def combine_batches(all_results, batch_results, file_format):
     return all_results
 
 
-def map_ids_in_uniprot(ids, from_db, to_db):
+def map_ids_in_uniprot(ids, from_db, to_db, verbose=True):
     """map ids to uniprot"""
 
     # submit job to uniprot
@@ -249,20 +249,20 @@ def map_ids_in_uniprot(ids, from_db, to_db):
         # check if ready and get if ready.
         if check_id_mapping_results_ready(job_id):
             link = get_id_mapping_results_link(job_id)
-            results = get_id_mapping_results_search(link)
+            results = get_id_mapping_results_search(link, verbose=verbose)
     else:
         return  # this happens if the "from id" is not correct id, so the call was not made
     return results
 
 
-def try_map_all_ids(ids, from_db_short, to_db_short):
+def try_map_all_ids(ids, from_db_short, to_db_short, verbose=True):
     """function to try guess each database id belongs to and make a call to uniprot"""
 
     # get uniprot identifier for database
     from_db = from_id_db_lookup[from_db_short]
     to_db = to_id_db_lookup[to_db_short]
 
-    results_this_db = map_ids_in_uniprot(ids, from_db, to_db)
+    results_this_db = map_ids_in_uniprot(ids, from_db, to_db, verbose=verbose)
 
     return results_this_db
 
@@ -411,7 +411,7 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
 
                     # call uniprot API with chunked IDs
                     results_uniprot = try_map_all_ids(
-                        chunked_ids, from_db_short, to_db_short
+                        chunked_ids, from_db_short, to_db_short, verbose
                     )
 
                     # check if any results returned

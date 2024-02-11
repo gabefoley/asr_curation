@@ -211,10 +211,12 @@ def get_id_mapping_results_search(url):
 
     if results["results"]:
         total = int(request.headers["x-total-results"])
-        print_progress_batches(0, size, total)
+        if verbose:
+            print_progress_batches(0, size, total)
         for i, batch in enumerate(get_batch(request, file_format, compressed), 1):
             results = combine_batches(results, batch, file_format)
-            print_progress_batches(i, size, total)
+            if verbose:
+                print_progress_batches(i, size, total)
         if file_format == "xml":
             return merge_xml_results(results)
     else:
@@ -362,7 +364,7 @@ def chunk_it(iterable, size):
 CHUNK_SIZE = 5000  # Adjust based on your requirements
 
 
-def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None, verbose):
+def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None, verbose=True):
     """Main function to map input ids to different database specified in the id_lookup list"""
 
     # Set default from and to id lookups
@@ -372,15 +374,17 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     if not to_id_lookup:
         to_id_lookup = ["UNIPROT"]
 
+
+    # read data and get ids
+    df_data = pd.read_csv(input_file)
+    ids = list(df_data["extracted_id"])
+
     if verbose:
         print ("Validating IDs")
         print (f"Mapping from - {from_id_lookup}")
         print (f"Mapping to - {to_id_lookup}")
         print(f"There are a total of {len(ids)} IDs to map")
 
-    # read data and get ids
-    df_data = pd.read_csv(input_file)
-    ids = list(df_data["extracted_id"])
 
     # Create an empty DataFrame to hold concatenated results
     df_final = pd.DataFrame()
@@ -419,10 +423,10 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
                             df_data, results_uniprot, from_db_short, to_db_short
                         )
                         if verbose:
-                            print("Results Processed")
+                            print("Results processed\n")
                     else:
                         if verbose:
-                            print("OUTCOME :: No Results Returned")
+                            print("OUTCOME :: No Results Returned\n")
 
         # After processing the results for a chunk, concatenate it to the final DataFrame
         df_final = pd.concat(
@@ -440,4 +444,4 @@ if __name__ == "__main__":
     input_file = snakemake.input[0]
     output_file = snakemake.output[0]
     verbose = snakemake.params.verbose
-    all_ids_lookup(input_file, output_file, verbose)
+    all_ids_lookup(input_file, output_file, verbose=verbose)

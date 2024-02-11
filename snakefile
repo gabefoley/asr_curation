@@ -103,7 +103,8 @@ DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR 
 if VERBOSE:
 
     print ("============================================================")
-    print ("Running ASR curation pipeline with the following datasets:")
+    print ("Running ASR curation pipeline")
+    print ("Found the following FASTA files - ")
     print (DATASETS)
     print ("============================================================")
 
@@ -136,7 +137,7 @@ def get_subset_names(subset_rules_dir):
     for subset in subsets:
 
         if VERBOSE:
-            print ('\nThe subset name is {subset}')
+            print (f'\nThe subset name is {subset}')
 
         # If a subset rule doesn't exist, then just write out the full data set
         if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
@@ -182,6 +183,7 @@ if VERBOSE:
     print ("Running the following subset files with the following subset rules")
     for k,v in subsets.items():
         print (f"{k} - {v}")
+    print()
 
 rule all:
         input:
@@ -226,7 +228,6 @@ rule get_uniprot_annotations:
     params:
         uniprot_col_size=UNIPROT_COL_SIZE,
         verbose=VERBOSE,
-
     script:
         "scripts/get_uniprot_annotations.py"
 

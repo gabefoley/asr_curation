@@ -331,7 +331,6 @@ def get_pos(align_df, seq_id, col_name, pos_type="list"):
 
 
 def track_residues2(align_df, seq_id, aligned_seq, tag, *unaligned_pos):
-    print("here")
     # Map the positions to an index in the alignment
     # aligned_pos = get_aligned_positions(
     #     align_df[align_df["info"] == seq_id], aligned_seq, *unaligned_pos
@@ -444,8 +443,6 @@ def get_aligned_positions(sequence, *positions):
 
     sequence = "".join(sequence)
 
-    print(positions)
-    print("there")
 
     aligned_positions = []
 

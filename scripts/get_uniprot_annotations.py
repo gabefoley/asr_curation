@@ -251,7 +251,7 @@ def uniprot_annotation_lkp(
     merged_df.to_csv(output_file, index=False)
 
     if verbose:
-        print("Completed UniProt annotations retrieval")
+        print("Completed UniProt annotations retrieval\n")
 
     if os.path.exists(intermediate_tsv_file):
         os.remove(intermediate_tsv_file)
@@ -279,11 +279,11 @@ def main():
     if verbose:
         print ("UniProt columns to retrieve - ")
         print (uniprot_cols)
+        print("\nStarting to retrieve UniProt annotations")
 
     id_batch_size = 110  # process ids in batches of this parameter
     result_batch_size = 50  # process results in this batches (uses pagination)
 
-    print("Starting to retrieve UniProt annotations")
     uniprot_annotation_lkp(
         input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
     )

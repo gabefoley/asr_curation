@@ -109,7 +109,6 @@ if ec_nums:
         # Not getting SN (synonyms) or RN (accepted name (IUPAC)) or IC50
         for prot_id, protein in sorted(ec_dict.items()):
             if protein.uniprot:
-                print("here are references")
                 # print(protein.references)
 
                 # For all the references, add them as separate columns so we can search them

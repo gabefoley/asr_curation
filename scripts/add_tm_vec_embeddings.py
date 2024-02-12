@@ -16,7 +16,7 @@ import distinctipy as dp
 from tqdm import tqdm
 import os
 
-def calculate_embeddings(sequences, model_name, model, config):
+def calculate_embeddings(sequences, model_name, model_checkpoint, config):
 
     tokenizer = T5Tokenizer.from_pretrained("Rostlab/prot_t5_xl_uniref50", do_lower_case=False )
     model = T5EncoderModel.from_pretrained("Rostlab/prot_t5_xl_uniref50")
@@ -27,9 +27,8 @@ def calculate_embeddings(sequences, model_name, model, config):
     model = model.eval()
 
     #TM-Vec model paths
-    tm_vec_model_cpnt = model
+    tm_vec_model_cpnt = model_checkpoint
     tm_vec_model_config = config
-
 
 
     #Load the TM-Vec model
@@ -53,7 +52,7 @@ def calculate_embeddings(sequences, model_name, model, config):
 
     return embeddings
 
-def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.pkl"):
+def process_and_store_embeddings(df, model_name, model_checkpoint, model_config, embedding_df_path="embeddings.pkl"):
     if os.path.exists(embedding_df_path):
         embedding_df = pd.read_pickle(embedding_df_path)
     else:
@@ -79,7 +78,7 @@ def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.p
             new_sequences.append(sequence)
 
     if new_sequences:
-        embeddings = calculate_embeddings(new_sequences, model_name)
+        embeddings = calculate_embeddings(new_sequences, model_name, model_checkpoint, model_config)
         
         for idx, sequence in enumerate(new_sequences):
             row_data = {"sequence": sequence, "model_name": model_name}
@@ -87,11 +86,10 @@ def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.p
                 embedding_val = embedding_vals[idx] if idx < len(embedding_vals) else None
                 row_data[embedding_type] = embedding_val
     
-            embedding_df = pd.concat([embedding_df, pd.DataFrame([row_data])], ignore_index=True)
+            df = pd.concat([embedding_df, pd.DataFrame([row_data])], ignore_index=True)
 
         # Saving the updated embedding dataframe
         embedding_df.to_pickle(embedding_df_path)
-
 
     return df
 

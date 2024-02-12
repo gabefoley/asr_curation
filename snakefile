@@ -238,6 +238,7 @@ rule get_brenda_annotations:
         # WORKDIR + "/{dataset}/csv/gtdb_processed/{dataset}_gtdb_processed.csv"
     output:
         WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv",
+    params:
         verbose=VERBOSE,
 
     script:

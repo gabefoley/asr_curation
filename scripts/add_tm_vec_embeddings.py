@@ -16,7 +16,7 @@ import distinctipy as dp
 from tqdm import tqdm
 import os
 
-def calculate_embeddings(sequences, model_name):
+def calculate_embeddings(sequences, model_name, model, config):
 
     tokenizer = T5Tokenizer.from_pretrained("Rostlab/prot_t5_xl_uniref50", do_lower_case=False )
     model = T5EncoderModel.from_pretrained("Rostlab/prot_t5_xl_uniref50")
@@ -27,12 +27,8 @@ def calculate_embeddings(sequences, model_name):
     model = model.eval()
 
     #TM-Vec model paths
-    tm_vec_model_cpnt = "tm_vec_cath_model.ckpt"
-    tm_vec_model_config = "tm_vec_cath_model_params.json"
-
-
-    tm_vec_model_cpnt = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model.ckpt"
-    tm_vec_model_config = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model_params.json"
+    tm_vec_model_cpnt = model
+    tm_vec_model_config = config
 
 
 

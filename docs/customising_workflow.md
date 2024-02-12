@@ -71,5 +71,5 @@ generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', f"{snakemake.input.c
 
 Here we provide the `dataframe` name, the name of the column to find the embeddings in (by default 'Prot_T5 Embed Encoded' if you are using Prot_T5 in the previous step) and a prefix for the output files
 
-Change to docs
+:)
 

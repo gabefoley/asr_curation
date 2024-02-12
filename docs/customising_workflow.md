@@ -69,9 +69,15 @@ annot_df = an.separate_notes(annot_df)
 Generate embeddings using TM Vec. You need to download the checkpoint and config.json and point to their path in your `add_custom_annotations.py` code
 
 
+To download the files -
+`!wget https://users.flatironinstitute.org/thamamsy/public_www/tm_vec_cath_model.ckpt -q gwpy\n"`
+`!wget https://users.flatironinstitute.org/thamamsy/public_www/tm_vec_cath_model_params.json -q gwpy"`
+
+Then set their path in your file - 
+
 ```
-model_checkpoint_path = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model.ckpt"
-model_config_path = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model_params.json
+model_checkpoint_path = <path_to_ckpt>
+model_config_path = <path_to_json>
 ```
 
 And then create the embeddings. This will store the generated embeddings in a local file, so that embeddings can be reused over subsequent runs of asr_curation.

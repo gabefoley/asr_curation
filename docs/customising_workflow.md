@@ -49,7 +49,81 @@ to you `config` file.
 
 ## Create a top column
 
-Creates a new column 
+Creates a new column where if a value within a column is more than a given percentage, it will create a new column,
+labelled TOP_<column_name>_<value_name> with `True` or `False` values depending on whether a sequence has
+that annotation.
+
+This can be useful for grouping together multiple annotations that differ from the dominant value in a column.
+
+`annot_df = an.create_top_column(annot_df, 80)`
+
+# Separate out the note values from the feature columns
+
+annot_df = an.separate_notes(annot_df)
+
+
+# Generating embeddings and running DBSCAN
+
+# Add embeddings
+
+Generate embeddings using TM Vec. You need to download the checkpoint and config.json and point to their path in your `add_custom_annotations.py` code
+
+
+```
+model_checkpoint_path = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model.ckpt"
+model_config_path = "/Users/uqgfoley/Dropbox/Code/Python_Workspace/ml_notebooks/TM_Vec_MBL/tm_vec_cath_model_params.json
+```
+
+And then create the embeddings. This will store the generated embeddings in a local file, so that embeddings can be reused over subsequent runs of asr_curation.
+
+The default path is in the custom_annotations folder, in a pickle file - "embeddings.pkl", but this can be changed with the parameter `embedding_df_path` when using the following
+`process_and_store_embeddings` function
+
+annot_df = tm_vec_embed.process_and_store_embeddings(annot_df, 'Prot_T5', model_checkpoint_path, model_config_path)
+
+# Generate DBSCAN images
+
+Generate a DBSCAN coverage image
+
+```
+db.generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', 
+	f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage" )
+```
+
+
+Here we provide the `dataframe` name, the name of the column to find the embeddings in (by default 'Prot_T5 Embed Encoded' if you are using Prot_T5 in the previous step) and a prefix for the output files
+
+
+You can also pass columns that you do not wish to include in the DBSCAN analysis using the parameter `skip_cols`
+```
+db.generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', 
+	f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage_no_ft",
+	skip_cols = ['ft_var_seq||', 'ft_variant||', 'ft_conflict||', 'ft_chain||', 'ft_crosslnk||', 'ft_carbohyd||', 'ft_init_met||' , 'ft_mod_res||', 'ft_lipid||', 'ft_transit||', 'ft_compbias||', 'ft_domain||', 'ft_motif||',  'ft_region||', 'ft_repeat||', 'ft_zn_fing||', 'ft_binding||', 'ft_topo_dom||', 'ft_act_site||'])
+
+```
+
+# Full minimal example of generating embeddings and running DBSCAN outlier detection
+
+The following can be created as `add_custom_annotations.py` to generate embeddings. Make sure to specify that you are using a custom annotations file in your `config` file 
+and to update the paths to the TM-Vec checkpoint / config.
+
+```python
+import os
+import annot_functions as an
+import get_funfams as ff
+import map_to_cdd as m2c
+import seqcurate as sc
+import pandas as pd
+import numpy as np
+import add_embeddings as embed
+import add_tm_vec_embeddings as tm_vec_embed
+import create_itol_files as itol
+import create_dbscan_coverage as db
+
+
+annot_df = pd.read_csv(snakemake.input.csv)
+
+# Create TOP column for high scoring values
 
 annot_df = an.create_top_column(annot_df, 80)
 
@@ -59,17 +133,20 @@ annot_df = an.separate_notes(annot_df)
 
 # Add embeddings
 
-Generate embeddings using TM Vec.
+model_checkpoint_path = <path_to_checkpoint>
+model_config_path = <path_to_config>
 
-annot_df = tm_vec_embed.process_and_store_embeddings(annot_df, 'Prot_T5')
+annot_df = tm_vec_embed.process_and_store_embeddings(annot_df, 'Prot_T5', model_checkpoint_path, model_config_path)
 
 # Generate DBSCAN images
+db.generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', 
+	f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage" )
 
-Generate a DBSCAN coverage image
 
-generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage")
+db.generate_dbscan_coverage(annot_df, 'Prot_T5 Embed Encoded', 
+	f"{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage_no_ft",
+	skip_cols = ['ft_var_seq||', 'ft_variant||', 'ft_conflict||', 'ft_chain||', 'ft_crosslnk||', 'ft_carbohyd||', 'ft_init_met||' , 'ft_mod_res||', 'ft_lipid||', 'ft_transit||', 'ft_compbias||', 'ft_domain||', 'ft_motif||',  'ft_region||', 'ft_repeat||', 'ft_zn_fing||', 'ft_binding||', 'ft_topo_dom||', 'ft_act_site||'])
 
-Here we provide the `dataframe` name, the name of the column to find the embeddings in (by default 'Prot_T5 Embed Encoded' if you are using Prot_T5 in the previous step) and a prefix for the output files
+annot_df.to_csv(snakemake.output[0], index=False)
 
-:)
-
+```

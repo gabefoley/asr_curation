@@ -62,7 +62,7 @@ This can be useful for grouping together multiple annotations that differ from t
 annot_df = an.separate_notes(annot_df)
 
 
-# Generating embeddings and running DBSCAN
+## Generating embeddings and running DBSCAN
 
 # Add embeddings
 

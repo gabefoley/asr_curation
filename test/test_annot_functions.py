@@ -14,6 +14,59 @@ def sample_dataframe():
     }
     return pd.DataFrame(data)
 
+@pytest.fixture
+def sample_other_df():
+
+    df = pd.DataFrame({
+        'info': ['seq1', 'seq2', 'seq3'],
+        'Group': ['Phosphatase', 'B1', "B3"],
+        'Class': ['PhnP', None , "B3E"]
+
+    })
+
+    return df
+
+def test_add_all_columns_to_df(sample_dataframe, sample_other_df):
+    df1 = sample_dataframe
+    df2 = sample_other_df
+
+    original_df1_len = len(df1.columns)
+    original_df2_len = len(df2.columns)
+
+    filepath = "sample_other_df.csv"
+    df2.to_csv(filepath, index=False)
+
+    # Test without specifying columns_to_match and columns_to_add
+    updated_df = an.add_columns_to_df(df1, filepath)
+
+    assert len(updated_df.columns) == original_df1_len + original_df2_len - 1  # ID column appears once
+    assert 'Group' in updated_df.columns
+    assert 'Class' in updated_df.columns
+
+    # Clean up temporary file
+    os.remove(filepath)
+
+def test_add_multiple_columns_to_df(sample_dataframe, sample_other_df):
+    df1 = sample_dataframe
+    df2 = sample_other_df
+
+    original_df1_len = len(df1.columns)
+    original_df2_len = len(df2.columns)
+
+    filepath = "sample_other_df.csv"
+    df2.to_csv(filepath, index=False)
+
+    # Test with specifying columns_to_match and columns_to_add
+    updated_df = an.add_columns_to_df(df1, filepath, columns_to_match=['info'], columns_to_add=['Group'])
+    assert 'Group' in updated_df.columns
+    assert 'Class' not in updated_df.columns
+    assert len(updated_df.columns) == original_df1_len + 1  # Only one additional column is added
+
+    # Clean-up
+    import os
+    os.remove(filepath)
+
+
 def test_get_amino_acids():
     pos = an.get_amino_acids("PPGP", 0)
     assert pos == ["P"]

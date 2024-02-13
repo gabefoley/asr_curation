@@ -210,6 +210,57 @@ def add_interpro_name_column(row, interpro_mapping):
     return row
 
 
+import pandas as pd
+
+import pandas as pd
+
+import pandas as pd
+
+def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None):
+    """
+    Adds specified columns from the loaded dataframe to df1 based on matching columns.
+
+    Parameters:
+    - df1: DataFrame, the first dataframe.
+    - filepath: str, filepath of the dataframe to be loaded.
+    - columns_to_match: list of str, column name(s) from both df1 and the loaded dataframe
+      to match values on. If None, matches on index.
+      Default is None.
+    - columns_to_add: list of str, column name(s) from the loaded dataframe to add
+      to df1. If None, all columns from the loaded dataframe will be added.
+      Default is None.
+
+    Returns:
+    - df1: DataFrame, the updated dataframe with added columns.
+    """
+    # Load dataframe from file
+    df2 = pd.read_csv(filepath)
+
+    # If columns_to_match is None, match on index
+    if columns_to_match is None:
+        merged_df = pd.merge(df1, df2, on='info')
+    else:
+        merged_df = pd.merge(df1, df2, on=columns_to_match)
+
+    if columns_to_add is None:
+        columns_to_add = df2.columns
+
+    print()
+    print ('MERGED DF')
+    print (merged_df)
+
+    print ('columns to add')
+    print (columns_to_add)
+
+    # Add specified columns from df2 to df1
+    for col in columns_to_add:
+        df1[col] = merged_df[col]
+
+    return df1
+
+
+
+
 
 def process_note_column(df, column):
     pattern = r'note="([^"]+)"'

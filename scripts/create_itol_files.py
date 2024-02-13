@@ -96,7 +96,7 @@ def generate_lab_assays(df, outpath):
         df.columns.get_loc("Activity_Zn_PnP") : df.columns.get_loc("Activity_Mn_SLG")
         + 1
     ]
-    selected_columns = selected_columns.insert(0, "UniProt")
+    selected_columns = selected_columns.insert(0, "info")
 
     with open(outpath, "w+") as f:
 

@@ -16,4 +16,4 @@ annotation_issues.log
 /.tsv
 *.tsv
 
-./site/*
+/site/*

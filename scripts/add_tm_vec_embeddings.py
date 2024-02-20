@@ -56,13 +56,14 @@ def process_and_store_embeddings(df, model_name, model_checkpoint, model_config,
     if os.path.exists(embedding_df_path):
         embedding_df = pd.read_pickle(embedding_df_path)
     else:
-        embedding_df = pd.DataFrame(columns=["sequence", "model_name"])
+        embedding_df = pd.DataFrame(columns=["info", "sequence", "model_name"])
 
     new_sequences = []
 
     for idx, row in df.iterrows():
+        info = row['info']
         sequence = row["sequence"]
-        
+
         existing_row = embedding_df[
             (embedding_df["sequence"] == sequence)
             & (embedding_df["model_name"] == model_name)
@@ -75,23 +76,34 @@ def process_and_store_embeddings(df, model_name, model_checkpoint, model_config,
                     df[key] = [None] * len(df)
                 df.at[idx, key] = value
         else:
-            new_sequences.append(sequence)
+            new_sequences.append((sequence, info)) 
 
     if new_sequences:
         embeddings = calculate_embeddings(new_sequences, model_name, model_checkpoint, model_config)
         
-        for idx, sequence in enumerate(new_sequences):
-            row_data = {"sequence": sequence, "model_name": model_name}
+        new_embedding_data = []
+
+        for idx, sequence_info in enumerate(new_sequences):
+            sequence, info = sequence_info
+            row_data = {"info": info, "sequence": sequence, "model_name": model_name}
             for embedding_type, embedding_vals in embeddings.items():
                 embedding_val = embedding_vals[idx] if idx < len(embedding_vals) else None
                 row_data[embedding_type] = embedding_val
-    
-            df = pd.concat([embedding_df, pd.DataFrame([row_data])], ignore_index=True)
+            new_embedding_data.append(row_data)
+
+        new_embedding_df = pd.DataFrame(new_embedding_data)
+
+        # Merge the original DataFrame with the new embedding DataFrame based on 'sequence' column
+        df = df.merge(new_embedding_df, on='sequence', how='left')
+
+        # Concatenate the original embedding DataFrame with the new embedding DataFrame
+        embedding_df = pd.concat([embedding_df, new_embedding_df], ignore_index=True)
 
         # Saving the updated embedding dataframe
         embedding_df.to_pickle(embedding_df_path)
 
     return df
+
 
 
 

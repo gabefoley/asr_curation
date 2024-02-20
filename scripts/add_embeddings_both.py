@@ -7,9 +7,6 @@ from tm_vec.embed_structure_model import trans_basic_block, trans_basic_block_Co
 from tm_vec.tm_vec_utils import featurize_prottrans, embed_tm_vec, encode
 from sklearn.manifold import TSNE
 
-def calculate_bert_embeddings(sequence, model, tokenizer):
-    # ... (same as your calculate_embeddings function for BERT)
-
 def calculate_t5_embeddings(sequences, model_deep, model, tokenizer, device):
     encoded_sequences = encode(sequences, model_deep, model, tokenizer, device)
     # Process and return T5 embeddings as needed

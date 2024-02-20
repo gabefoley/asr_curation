@@ -159,7 +159,7 @@ def get_subset_names(subset_rules_dir):
                 name = line.split("=")[0].strip()
 
                 # If no custom name make name based on values of dictionary
-                if len(name) < 3:
+                if len(name) < 1:
                     name = get_col_val_name(col_val_dict)
 
                 subset_dict[subset].append(name)

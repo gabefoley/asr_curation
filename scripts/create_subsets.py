@@ -151,7 +151,7 @@ def create_subsets():
 
 
             # If no custom name make name based on values of dictionary
-            if len(name) < 3:
+            if len(name) < 1:
                 name = get_col_val_name(col_val_dict, not_col_val_dict)
 
 

@@ -238,19 +238,12 @@ def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None)
 
     # If columns_to_match is None, match on index
     if columns_to_match is None:
-        merged_df = pd.merge(df1, df2, on='info')
+        merged_df = pd.merge(df1, df2, on='info', how='left')  # Keep all rows from df1
     else:
-        merged_df = pd.merge(df1, df2, on=columns_to_match)
+        merged_df = pd.merge(df1, df2, on=columns_to_match, how='left')  # Keep all rows from df1
 
     if columns_to_add is None:
         columns_to_add = df2.columns
-
-    print()
-    print ('MERGED DF')
-    print (merged_df)
-
-    print ('columns to add')
-    print (columns_to_add)
 
     # Add specified columns from df2 to df1
     for col in columns_to_add:

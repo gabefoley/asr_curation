@@ -26,6 +26,18 @@ def sample_other_df():
 
     return df
 
+@pytest.fixture
+def sample_other_df_missing():
+
+    df = pd.DataFrame({
+        'info': ['seq3', 'seq1',  'seq4', 'seq6'],
+        'Group': ['B3', 'Phosphatase', "B3", "B3"],
+        'Class': ['B3E','PhnP',  "B3G", "UNK"]
+
+    })
+
+    return df
+
 def test_add_all_columns_to_df(sample_dataframe, sample_other_df):
     df1 = sample_dataframe
     df2 = sample_other_df
@@ -61,6 +73,38 @@ def test_add_multiple_columns_to_df(sample_dataframe, sample_other_df):
     assert 'Group' in updated_df.columns
     assert 'Class' not in updated_df.columns
     assert len(updated_df.columns) == original_df1_len + 1  # Only one additional column is added
+
+    # Clean-up
+    import os
+    os.remove(filepath)
+
+def test_add_columns_missing_data(sample_dataframe, sample_other_df_missing):
+    df1 = sample_dataframe
+    df2 = sample_other_df_missing
+
+    original_df1_len = len(df1.columns)
+    original_df2_len = len(df2.columns)
+
+    filepath = "sample_other_df.csv"
+    df2.to_csv(filepath, index=False)
+
+    # Test with specifying columns_to_match and columns_to_add
+    updated_df = an.add_columns_to_df(df1, filepath, columns_to_match=['info'], columns_to_add=['Group', 'Class'])
+
+    print (updated_df)
+    assert 'Group' in updated_df.columns
+    assert 'Class' in updated_df.columns
+    assert len(updated_df.columns) == original_df1_len + original_df2_len - 1  # Only one additional column is added
+
+    # Assert that 'seq3' has 'B3' and 'B3E' labels
+    assert updated_df.loc[updated_df['info'] == 'seq3', 'Group'].values[0] == 'B3'
+    assert updated_df.loc[updated_df['info'] == 'seq3', 'Class'].values[0] == 'B3E'
+
+    # Assert that 'seq2' has no labels in 'Group' and 'Class'
+    assert pd.isnull(updated_df.loc[updated_df['info'] == 'seq2', 'Group'].values[0])
+    assert pd.isnull(updated_df.loc[updated_df['info'] == 'seq2', 'Class'].values[0])
+
+
 
     # Clean-up
     import os

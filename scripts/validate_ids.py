@@ -96,7 +96,7 @@ def submit_id_mapping(from_db, to_db, ids):
     return request.json()["jobId"]
 
 
-def check_id_mapping_results_ready(job_id):
+def check_id_mapping_results_ready(job_id, verbose):
     """function to check if the api call results are ready"""
 
     while True:
@@ -247,7 +247,7 @@ def map_ids_in_uniprot(ids, from_db, to_db, verbose=True):
 
     if job_id != None:  # if the call was made successfully
         # check if ready and get if ready.
-        if check_id_mapping_results_ready(job_id):
+        if check_id_mapping_results_ready(job_id, verbose):
             link = get_id_mapping_results_link(job_id)
             results = get_id_mapping_results_search(link, verbose=verbose)
     else:

@@ -14,6 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from collections import Counter
 import os
 import requests
+from bs4 import BeautifulSoup
 
 
 logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
@@ -21,6 +22,91 @@ logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 
 def exact_match(df, col, match):
     return df[col] == match
+
+
+def get_panther_family_names(df, output_dir):
+    existing_mapping = output_dir + "/panther_mappings.txt"
+
+    print("Fetching PANTHER family names")
+
+    # Check for an existing mapping generated from a previous run
+    name_mapping = read_to_dict(existing_mapping)
+
+    unique_panther_ids = get_list_of_unique_panther_ids(df)
+
+    for panther_id in unique_panther_ids:
+        # If the PANTHER ID already exists in the mapping, skip retrieval
+        if panther_id not in name_mapping:
+            family_name = retrieve_panther_family_name(panther_id)
+            name_mapping[panther_id] = family_name
+
+    # Update the name mapping .txt in the output directory
+    write_from_dict(existing_mapping, name_mapping)
+
+    # Apply the add_panther_family_name function to each row of the DataFrame
+    
+    print("Add the actual PANTHER names")
+
+    df = df.apply(lambda row: add_panther_family_name(row, name_mapping), axis=1)
+
+    return df
+
+
+def get_list_of_unique_panther_ids(df):
+
+    unique_panther_ids = set()
+    # Get all unique PANTHER IDs
+    for entry in df["xref_panther"].dropna():
+        ids = entry.strip(";").split(";")
+        unique_panther_ids.update(ids)
+
+    print (unique_panther_ids)
+    
+    return list(unique_panther_ids)
+
+
+
+def retrieve_panther_family_name(panther_id):
+    url = f"https://www.pantherdb.org/panther/family.do?clsAccession={panther_id}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        family_name_element = soup.find('td', class_='mainText')
+        if family_name_element:
+            family_name = family_name_element.text.strip()
+            # Strip the PANTHER ID from the family name
+            family_name = family_name.replace(f"({panther_id})", "").strip()
+            return family_name
+        else:
+            print("Family name not found on the page.")
+            return 'Not found'
+    else:
+        print("Error:", response.status_code)
+        return None
+
+
+def add_panther_family_name(row, panther_mapping):
+    panther_ids = row["xref_panther"].split(";")
+
+    family_names = []
+    for panther_id in panther_ids:
+        print (panther_id)
+        if panther_id:
+            panther_id = panther_id.strip()
+            family_name = panther_mapping.get(panther_id, "Unknown")
+            family_names.append(family_name)
+            print (family_name)
+
+    print (family_names)
+
+    row["panther_family_name"] = ";".join(family_names)
+    
+    return row
+
+
+
+
 
 
 
@@ -32,6 +118,9 @@ def map_interpro_ids(ids, result_dict):
     ids_list = ids.split(";")
     summary_list = [result_dict.get(i, "") for i in ids_list if i in result_dict]
     return ";".join(summary_list)
+
+
+
 
 
 # Function to get OrthoDB names and level names from a dataframe with a column containing OrthoDB IDs
@@ -210,12 +299,6 @@ def add_interpro_name_column(row, interpro_mapping):
     return row
 
 
-import pandas as pd
-
-import pandas as pd
-
-import pandas as pd
-
 def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None):
     """
     Adds specified columns from the loaded dataframe to df1 based on matching columns.
@@ -250,10 +333,6 @@ def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None)
         df1[col] = merged_df[col]
 
     return df1
-
-
-
-
 
 def process_note_column(df, column):
     pattern = r'note="([^"]+)"'

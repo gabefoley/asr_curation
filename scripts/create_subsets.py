@@ -4,6 +4,36 @@ import numpy as np
 import os 
 import time
 
+verbose = True
+
+def filter_based_on_iqr(df, verbose):
+    Q1 = df['length'].quantile(0.25)
+    Q3 = df['length'].quantile(0.75)
+
+    # Compute IQR
+    IQR = Q3 - Q1
+
+    # Compute the whiskers
+    lower_whisker = Q1 - 1.5 * IQR
+    upper_whisker = Q3 + 1.5 * IQR
+
+    if verbose:
+        # Print the whiskers
+        print(f"Lower Whisker: {lower_whisker}")
+        print(f"Upper Whisker: {upper_whisker}")
+
+    # To identify outliers
+    outliers = df[(df['length'] < lower_whisker) | (df['length'] > upper_whisker)]
+
+    if verbose:
+        print (f"Removing {len(outliers)} sequences that lie outside the interquartile range")
+
+    print ("Removing - ")
+    for index, row in outliers.iterrows():
+        print(f"Name: {row['info']}, Length: {row['length']}")
+
+    df = df.drop(outliers.index)
+    return df
 def format_subset_val(col, col_val):
     if type(col_val) == str:
         # Check if it is a list of values
@@ -87,8 +117,7 @@ def add_val_to_dict(term, add_val, add_dict):
         #     add_dict[term] = add_val
 
 def create_subsets():
-
-
+    df = pd.read_csv(snakemake.input.csv)
 
     # excluded_output_path = snakemake.output.explanation + "/subset_explanations.txt"
 
@@ -99,12 +128,21 @@ def create_subsets():
 
 
     for line in open(snakemake.input.rules).read().splitlines():
+
         # Reset the condition that we want to sample from the dataframe
         sample_from = None
 
+
+
         if line and not line.startswith("#"):
+
+
+
             col_val_dict = {}
             not_col_val_dict = {}
+
+            # Do we want to filter based on length of interquartile range
+            IQR = None
 
             # Check to see if custom name exists
             name = line.split("=")[0].strip()
@@ -114,7 +152,20 @@ def create_subsets():
 
             dict_def = line.split("=")[1].strip()
 
-            # Wildcard for accepting all columns
+            if "IQR" in dict_def:
+                iqr_type = dict_def.split("IQR")[1].split(":")[1].split("$")[0].strip().lower()
+                if iqr_type not in ['before', 'after']:
+                    raise ValueError("IQR in subset rules needs to be defined as either 'before' or 'after'")
+
+            if iqr_type == 'before':
+
+                if verbose:
+                    "Filtering based on length of interquartile range before applying other subset rules"
+
+                    df = filter_based_on_iqr(df, verbose)
+
+
+
             if dict_def != "*":
                 for i in dict_def.split("$"):
                     term = i.split(":")[0].strip()
@@ -122,7 +173,7 @@ def create_subsets():
                     print ('term is')
                     print (term)
 
-                    if term:
+                    if term != "IQR":
                         print(i)
                         term_val = i.split(":")[1].strip()
 
@@ -156,7 +207,6 @@ def create_subsets():
 
 
             if name == snakemake.wildcards.subset:
-                df = pd.read_csv(snakemake.input.csv)
 
                 # df = df.fillna("None")
 
@@ -189,7 +239,15 @@ def create_subsets():
 
      
                 # Write the subset to a fasta
-                # TODO: Currently this is just working for one subset file (not multiple)
+
+                if iqr_type == 'after':
+
+                    if verbose:
+                        "Filtering based on length of interquartile range after applying other subset rules"
+
+                        sub_df = filter_based_on_iqr(sub_df, verbose)
+
+
 
                 sub_df = sub_df.replace("None", np.NaN)
 

@@ -94,7 +94,7 @@ def process_and_store_embeddings(df, model_name, model_checkpoint, model_config,
         new_embedding_df = pd.DataFrame(new_embedding_data)
 
         # Merge the original DataFrame with the new embedding DataFrame based on 'sequence' column
-        df = df.merge(new_embedding_df, on='sequence', how='left')
+        merged_df = df.merge(new_embedding_df, on=['info', 'sequence'], how='left')
 
         # Concatenate the original embedding DataFrame with the new embedding DataFrame
         embedding_df = pd.concat([embedding_df, new_embedding_df], ignore_index=True)

@@ -2,6 +2,63 @@ import glob
 from collections import defaultdict
 import os
 
+
+
+
+def get_col_val_name(col_val_dict):
+    name =  "_".join(str(k) + "_" +  str(v) for k,v in col_val_dict.items())
+    return name
+
+def get_subset_names(subset_rules_dir):
+    subset_dict = defaultdict(list)
+
+    subsets = expand(os.path.basename(x).split('.')[0] for x in glob.glob(SUBDIR + "/*.subset"))
+
+    for subset in subsets:
+
+        if VERBOSE:
+            print (f'\nThe subset name is {subset}')
+
+        # If a subset rule doesn't exist, then just write out the full data set
+        if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
+            if VERBOSE:
+                print (f"No rules exist for subset - {subset}, writing out the full dataset")
+            subset_dict[subset].append('full_set')
+
+
+        for line in open(f"{SUBDIR}/{subset}.subset").read().splitlines():
+
+            if line and not line.startswith("#"):
+
+                if VERBOSE:
+
+                    print (f'The subset rules for {subset} are ')
+                    print (f"{line}\n")
+
+                # Check to see if custom name exists
+                name = line.split("=")[0].strip()
+
+                # If no custom name make name based on values of dictionary
+                if len(name) < 1:
+                    name = get_col_val_name(col_val_dict)
+
+                subset_dict[subset].append(name)
+
+    return subset_dict
+
+def get_ancestor_col_dict(ancestor_cols):
+    ancestor_col_dict = {}
+    for col_val in ancestor_cols:
+        print (col_val)
+        col = col_val.split(":")[0].strip()
+        val = col_val.split(":")[1].strip()
+        ancestor_col_dict[col] = val
+
+    return ancestor_col_dict
+
+
+
+
 # Set SNAKEMAKE environment variable (so that we can run scripts from the command line as well)
 os.environ["SNAKEMAKE"] = 'True'
 
@@ -100,12 +157,18 @@ except:
 
 DATASETS = expand(os.path.basename(x).split('.')[0] for x in glob.glob(FASTADIR + "/*.fasta") if os.path.basename(x).split('.')[0] not in config['blocked_datasets'])
 
+SUBSETS = get_subset_names(SUBDIR)
+
+
 if VERBOSE:
 
     print ("============================================================")
     print ("Running ASR curation pipeline")
     print ("Found the following FASTA files - ")
     print (DATASETS)
+
+    print ("Found the follow subset rules - ")
+    print (SUBSETS)
     print ("============================================================")
 
     print ("\nMain working directory is")
@@ -125,77 +188,31 @@ if VERBOSE:
 #         DATASETS.remove(blocked)
 
 
-def get_col_val_name(col_val_dict):
-    name =  "_".join(str(k) + "_" +  str(v) for k,v in col_val_dict.items())
-    return name
+# Setup alignment and tree paths based on which tools will be used
+if ALIGNMENT_TOOL == 'mafft':
+    alignment_path = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/mafft/{dataset}_{subset}_{cluster_thresh}.aln"
 
-def get_subset_names(subset_rules_dir):
-    subset_dict = defaultdict(list)
-
-    subsets = expand(os.path.basename(x).split('.')[0] for x in glob.glob(SUBDIR + "/*.subset"))
-
-    for subset in subsets:
-
-        if VERBOSE:
-            print (f'\nThe subset name is {subset}')
-
-        # If a subset rule doesn't exist, then just write out the full data set
-        if not open(f"{SUBDIR}/{subset}.subset").read().splitlines():
-            if VERBOSE:
-                print (f"No rules exist for subset - {subset}, writing out the full dataset")
-            subset_dict[subset].append('full_set')
-
-
-        for line in open(f"{SUBDIR}/{subset}.subset").read().splitlines():
-
-            if line and not line.startswith("#"):
-
-                if VERBOSE:
-
-                    print (f'The subset rules for {subset} are ')
-                    print (f"{line}\n")
-
-                # Check to see if custom name exists
-                name = line.split("=")[0].strip()
-
-                # If no custom name make name based on values of dictionary
-                if len(name) < 1:
-                    name = get_col_val_name(col_val_dict)
-
-                subset_dict[subset].append(name)
-
-    return subset_dict
-
-def get_ancestor_col_dict(ancestor_cols):
-    ancestor_col_dict = {}
-    for col_val in ancestor_cols:
-        print (col_val)
-        col = col_val.split(":")[0].strip()
-        val = col_val.split(":")[1].strip()
-        ancestor_col_dict[col] = val
-
-    return ancestor_col_dict
-
-subsets = get_subset_names(SUBDIR)
+elif ALIGNMENT_TOOL == 'mafft-dash':
+    alignment_path = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/mafft_dash/{dataset}_{subset}_{cluster_thresh}.aln"
 
 
 if VERBOSE:
     print ("Running the following subset files with the following subset rules")
-    for k,v in subsets.items():
+    for k,v in SUBSETS.items():
         print (f"{k} - {v}")
     print()
 
 rule all:
         input:
-           brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-           custom =     [f'{WORKDIR}/{dataset}/csv/custom/{dataset}_annotated.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-           annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-           reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-           itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset] for col in ANNOTATION_COLS],
-           trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-#             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-#             extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]],
-#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_build/html/index.html' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subsets[dataset]]
+           brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+           custom =     [f'{WORKDIR}/{dataset}/csv/custom/{dataset}_annotated.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+           annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+           reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+           itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset] for col in ANNOTATION_COLS],
+           trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+#             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subseSUBSETSts[dataset]],
+#             extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+#             summary_document = [f'{WORKDIR}/{dataset}/dataset_summary/{subset}_{cluster_thresh}/_build/html/index.html' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]]
 
 # Create the initial annotation file from the FASTA file or list of IDs
 rule create_annotations:
@@ -249,7 +266,9 @@ rule add_generic_annotations:
     input:
         WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
     output:
-        WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv"
+        WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv",
+    params:
+        verbose=VERBOSE,
     script:
         "scripts/add_generic_annotations.py"
 
@@ -260,6 +279,8 @@ rule add_custom_annotations:
         custom_dir = CUSTOM_DIR
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
+    params:
+        verbose=VERBOSE,
     script:
         CUSTOM_DIR + "/add_custom_annotations.py"
 
@@ -268,6 +289,8 @@ rule create_column_summary_images:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_annotated.csv"
     output:
         img = WORKDIR + "/{dataset}/col_images/{dataset}_brenda.png"
+    params:
+        verbose=VERBOSE,
     script:
         "scripts/get_column_summary_images.py"
 
@@ -279,6 +302,8 @@ rule create_subsets:
         fasta = WORKDIR + "/{dataset}/subsets/{subset}/{dataset}_{subset}.fasta",
         csv = WORKDIR + "/{dataset}/subsets/{subset}/csv/{dataset}_{subset}.csv",
         subset_log = WORKDIR + "/{dataset}/subsets/{subset}/{subset}.log"
+    params:
+        verbose=VERBOSE,
     script:
         "scripts/create_subsets.py"
 
@@ -288,6 +313,8 @@ rule cluster_sequences:
 
         output:
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.fasta"
+        params:
+            verbose=VERBOSE,
         shell:
             "cd-hit -i {input} -o {output} -c {wildcards.cluster_thresh}"
 
@@ -311,7 +338,8 @@ rule add_key_sequences:
     output:
         fasta = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.fasta",
         csv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_key_sequences_added.csv"
-
+    params:
+        verbose=VERBOSE,
     script:
         "scripts/add_key_sequences.py"
 
@@ -332,7 +360,6 @@ elif ALIGNMENT_TOOL == 'mafft-dash':
             WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.aln"
         shell:
             "mafft --dash --reorder --originalseqonly {input} > {output}"
-
 
 if TREE_TOOL == 'fasttree':
 

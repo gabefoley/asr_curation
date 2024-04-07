@@ -9,7 +9,7 @@ def get_color_dict_and_info_list(df, col):
     # Get unique values from the 'funfam_specific_summary' column
     unique_values = df[col].unique()
 
-    print (unique_values)
+    # print (unique_values)
 
     # Select an appropriate ColorBrewer color set based on the number of unique values
     color_set = [
@@ -21,7 +21,7 @@ def get_color_dict_and_info_list(df, col):
         value: color_set[i % len(color_set)] for i, value in enumerate(unique_values)
     }
 
-    print (color_dict)
+    # print (color_dict)
 
     colors = distinctipy.get_colors(len(unique_values))
 
@@ -45,8 +45,8 @@ def generate_itol_colorstrip(col, color_dict, info_list, output_filename):
     with open(output_filename, "w") as f:
         f.write(itol_text.dataset_colorstrip_text.replace("<custom_dataset_label>", col))
         for info, label in info_list:
-            print (info)
-            print (label)
+            # print (info)
+            # print (label)
             f.write(f"{info} {color_dict[label]} {label} \n")
 
     print(f"File '{output_filename}' has been created.")
@@ -106,7 +106,7 @@ def generate_lab_assays(df, outpath):
 
         # Select columns from 'Activity_Zn_PnP' to 'Activity_Mn_4NPS' (inclusive)
 
-        print (df[selected_columns])
+        # print (df[selected_columns])
 
         # Iterate through the rows of the DataFrame
         for index, row in df[selected_columns].iterrows():
@@ -162,7 +162,7 @@ if __name__ == "__main__":
 
     outpath = os.path.dirname(snakemake.output.tsv)
 
-    print (outpath)
+    # print (outpath)
 
     with open (snakemake.output.tsv, "w+") as output_text:
 
@@ -173,14 +173,14 @@ if __name__ == "__main__":
             # Skip the info column, which won't be informative
             if col != 'info' and col in df:
 
-                print (col)
+                # print (col)
 
                 color_dict, info_list = get_color_dict_and_info_list(df, col)
-                print ('color dict')
-                print (color_dict)
+                # print ('color dict')
+                # print (color_dict)
 
-                print ('color list')
-                print (info_list)
+                # print ('color list')
+                # print (info_list)
 
                 generate_itol_colorstrip(
                     col, color_dict, info_list, f"{outpath}/{col}itol_colorstrip.txt"
@@ -200,9 +200,9 @@ if __name__ == "__main__":
         single_colours = [
             distinctipy.get_hex(x) for x in distinctipy.get_colors(len(single_colour_annotation_cols), pastel_factor=0.7)
         ]
-        print ('rasperyy')
+        # print ('rasperyy')
 
-        print (single_colours)
+        # print (single_colours)
         idx = 0
         for single_col in single_colour_annotation_cols:
             print ('here is single col')

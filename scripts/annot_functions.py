@@ -23,6 +23,69 @@ logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 def exact_match(df, col, match):
     return df[col] == match
 
+def get_list_of_unique_ids(df, column_name):
+    unique_ids = set()
+    for entry in df[column_name]:
+        if isinstance(entry, str):
+            unique_ids.update(entry.split(";"))
+    unique_ids = [x for x in unique_ids if x]
+
+    print(unique_ids)
+    return unique_ids
+
+
+def retrieve_name(endpoint, id_value, get_short=False):
+    url = f"https://www.ebi.ac.uk/interpro/api/entry/{endpoint}/{id_value}"
+
+    print(url)
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if get_short:
+            name = data["metadata"]["name"]["short"]
+        else:
+            name = data["metadata"]["name"]["name"]
+        return name
+    else:
+        return "Unknown"
+
+
+def add_name_column(row, id_column, name_mapping, get_short=False):
+    if isinstance(row[id_column], float):
+        row[id_column + "_name"] = None
+    else:
+        unique_entries = row[id_column].split(";")
+        if get_short:
+            name_column = id_column + "_short_name"
+        else:
+            name_column = id_column + "_name"
+        row[name_column] = ";".join(
+            name_mapping.get(ids, "") for ids in unique_entries if name_mapping.get(ids) is not None)
+    return row
+
+
+def get_names(df, id_column, endpoint, output_dir, get_short=False):
+    existing_mapping = os.path.join(output_dir, f"{id_column}_{'short_' if get_short else ''}names.txt")
+
+    print(f"Adding the actual names for {id_column} IDs")
+
+    unique_ids = get_list_of_unique_ids(df, id_column)
+
+    # Check for an existing mapping generated from a previous run
+    name_mapping = read_to_dict(existing_mapping)
+
+    for id_value in unique_ids:
+        # If it already exists we don't need to retrieve it again
+        if id_value not in name_mapping:
+            name_mapping[id_value] = retrieve_name(endpoint, id_value, get_short)
+
+    # Update the name mapping .txt in the annotations folder to be able to reuse this
+    write_from_dict(existing_mapping, name_mapping)
+    # Apply the add_name_column function to each row of the DataFrame
+    df = df.apply(lambda row: add_name_column(row, id_column, name_mapping, get_short), axis=1)
+
+    return df
+
 
 def get_panther_family_names(df, output_dir):
     existing_mapping = output_dir + "/panther_mappings.txt"
@@ -44,7 +107,7 @@ def get_panther_family_names(df, output_dir):
     write_from_dict(existing_mapping, name_mapping)
 
     # Apply the add_panther_family_name function to each row of the DataFrame
-    
+
     print("Add the actual PANTHER names")
 
     df = df.apply(lambda row: add_panther_family_name(row, name_mapping), axis=1)
@@ -53,17 +116,16 @@ def get_panther_family_names(df, output_dir):
 
 
 def get_list_of_unique_panther_ids(df):
-
     unique_panther_ids = set()
     # Get all unique PANTHER IDs
     for entry in df["xref_panther"].dropna():
         ids = entry.strip(";").split(";")
         unique_panther_ids.update(ids)
 
-    print (unique_panther_ids)
-    
-    return list(unique_panther_ids)
+    print('here are the unique panther ids')
+    print(unique_panther_ids)
 
+    return list(unique_panther_ids)
 
 
 def retrieve_panther_family_name(panther_id):
@@ -87,40 +149,22 @@ def retrieve_panther_family_name(panther_id):
 
 
 def add_panther_family_name(row, panther_mapping):
-    panther_ids = row["xref_panther"].split(";")
+    panther_ids = row.get("xref_panther", "").split(";") if pd.notna(row.get("xref_panther", "")) else []
 
     family_names = []
     for panther_id in panther_ids:
-        print (panther_id)
+        print(panther_id)
         if panther_id:
             panther_id = panther_id.strip()
             family_name = panther_mapping.get(panther_id, "Unknown")
             family_names.append(family_name)
-            print (family_name)
+            print(family_name)
 
-    print (family_names)
+    print(family_names)
 
-    row["panther_family_name"] = ";".join(family_names)
-    
+    row["xref_panther_name"] = ";".join(family_names)
+
     return row
-
-
-
-
-
-
-
-
-# Map between a
-def map_interpro_ids(ids, result_dict):
-    if pd.isnull(ids):
-        return None
-    ids_list = ids.split(";")
-    summary_list = [result_dict.get(i, "") for i in ids_list if i in result_dict]
-    return ";".join(summary_list)
-
-
-
 
 
 # Function to get OrthoDB names and level names from a dataframe with a column containing OrthoDB IDs
@@ -212,6 +256,9 @@ def add_orthodb_columns(row, orthodb_mapping):
     return row
 
 
+import os
+import requests
+
 # Load in dictionary file stored as plain text locally
 def read_to_dict(filename):
     data_dict = {}
@@ -221,8 +268,8 @@ def read_to_dict(filename):
 
     with open(filename, "r") as file:
         for line in file:
-            if ":" in line:
-                key, value = line.strip().split(":", 1)
+            if "||" in line:
+                key, value = line.strip().split("||", 1)
                 data_dict[key.strip()] = value.strip()
     return data_dict
 
@@ -235,68 +282,70 @@ def write_from_dict(filename, data_dict):
 
     with open(filename, "w+") as file:
         for key, value in merged_data.items():
-            file.write(f"{key} : {value}\n")
+            file.write(f"{key} || {value}\n")
 
 
-# Function to get interpro names from a dataframe with a column containing a list of interpro IDs
-def get_interpro_names(df, output_dir):
-    existing_mapping = output_dir + "/interpro_mappings.txt"
-
-    print("Add the actual InterPro names")
-
-    unique_interpro_ids = get_list_of_unique_interpro_ids(df)
-
-    # Check for an existing mapping generated from a previous run
-    name_mapping = read_to_dict(existing_mapping)
-
-    for interpro_id in unique_interpro_ids:
-        # If it already exists we don't need to retrieve it again
-        if interpro_id not in name_mapping:
-            name_mapping[interpro_id] = retrieve_interpro_name(interpro_id)
-
-    # Update the name mapping .txt in the annotations folder to be able to reuse this
-    write_from_dict(existing_mapping, name_mapping)
-    # Apply the add_interpro_name_column function to each row of the DataFrame
-    df = df.apply(lambda row: add_interpro_name_column(row, name_mapping), axis=1)
-
-    return df
 
 
-def get_list_of_unique_interpro_ids(df):
-    # Get all unique InterPro IDs
-    unique_interpro_ids = set()
-    for entry in df["xref_interpro"]:
-        if isinstance(entry, str):
-            unique_interpro_ids.update(entry.split(";"))
+# # Function to get interpro names from a dataframe with a column containing a list of interpro IDs
+# def get_interpro_names(df, output_dir):
+#     existing_mapping = output_dir + "/interpro_mappings.txt"
 
-    unique_interpro_ids = [x for x in unique_interpro_ids if x]
+#     print("Add the actual InterPro names")
 
-    return unique_interpro_ids
+#     unique_interpro_ids = get_list_of_unique_interpro_ids(df)
 
+#     # Check for an existing mapping generated from a previous run
+#     name_mapping = read_to_dict(existing_mapping)
 
-# Function to query InterPro API and retrieve names for multiple IDs
-def retrieve_interpro_name(interpro_id):
-    api_url = "https://www.ebi.ac.uk/interpro/api/entry/interpro/"
+#     for interpro_id in unique_interpro_ids:
+#         # If it already exists we don't need to retrieve it again
+#         if interpro_id not in name_mapping:
+#             name_mapping[interpro_id] = retrieve_interpro_name(interpro_id)
 
-    url = api_url + interpro_id
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        interpro_name = data["metadata"]["name"]["name"]
-        return interpro_name
-    else:
-        return "Unknown"
+#     # Update the name mapping .txt in the annotations folder to be able to reuse this
+#     write_from_dict(existing_mapping, name_mapping)
+#     # Apply the add_interpro_name_column function to each row of the DataFrame
+#     df = df.apply(lambda row: add_interpro_name_column(row, name_mapping), axis=1)
+
+#     return df
 
 
-def add_interpro_name_column(row, interpro_mapping):
-    if isinstance(row["xref_interpro"], float):
-        row["interpro_name"] = None
-    else:
-        unique_entries = row["xref_interpro"].split(";")
-        row["interpro_name"] = ";".join(
-            interpro_mapping.get(ids, "Unknown") for ids in unique_entries
-        )
-    return row
+# def get_list_of_unique_interpro_ids(df):
+#     # Get all unique InterPro IDs
+#     unique_interpro_ids = set()
+#     for entry in df["xref_interpro"]:
+#         if isinstance(entry, str):
+#             unique_interpro_ids.update(entry.split(";"))
+
+#     unique_interpro_ids = [x for x in unique_interpro_ids if x]
+
+#     return unique_interpro_ids
+
+
+# # Function to query InterPro API and retrieve names for multiple IDs
+# def retrieve_interpro_name(interpro_id):
+#     api_url = "https://www.ebi.ac.uk/interpro/api/entry/interpro/"
+
+#     url = api_url + interpro_id
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         data = response.json()
+#         interpro_name = data["metadata"]["name"]["name"]
+#         return interpro_name
+#     else:
+#         return "Unknown"
+
+
+# def add_interpro_name_column(row, interpro_mapping):
+#     if isinstance(row["xref_interpro"], float):
+#         row["interpro_name"] = None
+#     else:
+#         unique_entries = row["xref_interpro"].split(";")
+#         row["interpro_name"] = ";".join(
+#             interpro_mapping.get(ids, "Unknown") for ids in unique_entries
+#         )
+#     return row
 
 
 def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None):
@@ -1070,7 +1119,7 @@ def create_top_column(df, threshold_percentage, max_threshold_percentage=100):
                 if (most_common_value_percentage > threshold_percentage and
                         most_common_value_percentage < max_threshold_percentage and
                         not pd.isna(most_common_value)):
-                    new_column_name = f"TOP_{column}||{most_common_value}"
+                    new_column_name = f'TOP_{column}__"{most_common_value}"'
                     new_df[new_column_name] = (df[column] == most_common_value) & (~df[column].isna())
 
     return new_df.dropna(axis=1, how='all')

@@ -110,6 +110,37 @@ def test_add_columns_missing_data(sample_dataframe, sample_other_df_missing):
     import os
     os.remove(filepath)
 
+def test_get_interpro_names():
+    df = pd.read_csv("test/files/annot_functions/test_add_interpro_names.csv")
+
+    df = an.get_names(df, 'xref_interpro', "interpro", "./", get_short=False)
+    df = an.get_names(df, 'xref_interpro', "interpro", "./", get_short=True)
+    df = an.get_names(df, 'xref_cdd', "cdd", "./", get_short=False)
+    df = an.get_names(df, 'xref_cdd', "cdd", "./", get_short=True)
+    df = an.get_names(df, 'xref_hamap', "hamap", "./", get_short=False)
+    df = an.get_names(df, 'xref_hamap', "hamap", "./", get_short=True)
+    df = an.get_names(df.head(), 'xref_pirsf', "pirsf", "./", get_short=True)
+    df = an.get_names(df.head(), 'xref_pirsf', "pirsf", "./", get_short=False)
+    df = an.get_names(df.head(), 'xref_smart', "smart", "./", get_short=True)
+    df = an.get_names(df.head(), 'xref_smart', "smart", "./", get_short=False)
+
+    assert 'xref_interpro_name' in df.columns
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_name"].values[0] == 'Metallo-beta-lactamase domain-containing protein 1;Metallo-beta-lactamase;Ribonuclease Z/Hydroxyacylglutathione hydrolase-like;'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_short_name"].values[0] == 'MBLAC1;Metallo-B-lactamas;RibonucZ/Hydroxyglut_hydro;'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_cdd_short_name"].values[0] == 'MBLAC1-like_MBL-fold;'
+    assert df.loc[df["info"] == "sp|F2WP51|LPAKS_PSESP", "xref_smart_name"].values[0] == 'Metallo-beta-lactamase superfamily;'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_name"].values[0] == 'Ribonuclease J [rnj];'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_short_name"].values[0] == 'RNase_J_bact;'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_pirsf_short_name"].values[0] == 'RnjA;'
+
+
+def test_get_panther_names():
+    df = pd.read_csv("test/files/annot_functions/test_add_interpro_names.csv")
+
+    df = an.get_panther_family_names(df.head(n=1), "./")
+
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_panther"].values[0] == 'PTHR23200:SF48;PTHR23200;'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_panther_name"].values[0] == 'METALLO-BETA-LACTAMASE DOMAIN-CONTAINING PROTEIN 1;UNCHARACTERIZED'
 
 def test_get_amino_acids():
     pos = an.get_amino_acids("PPGP", 0)

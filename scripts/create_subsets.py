@@ -157,6 +157,10 @@ def create_subsets():
                 if iqr_type not in ['before', 'after']:
                     raise ValueError("IQR in subset rules needs to be defined as either 'before' or 'after'")
 
+            else:
+
+                iqr_type = None
+
             if iqr_type == 'before':
 
                 if verbose:

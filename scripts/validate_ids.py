@@ -34,6 +34,9 @@ to_id_db_lookup = {
     "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
     "UNIPROT": "UniProtKB",
     "UNIPARC": "UniParc",
+    "UNIREF50": "UniRef50",
+    "UNIREF90": "UniRef90",
+
 }
 
 # Response format for different databases
@@ -43,42 +46,13 @@ db_response_format = {
     "UNIPARC": "long",
     "EMBL": "short",
     "EMBL-CDS": "short",
+    "UNIREF50": "long",
+    "UNIREF90": "long",
+
 }
 
 # Response key to be used in JSON format
-db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId"}
-
-# list of lookup for aiding the querying and processing of results
-
-# database name in uniprot for different databases when used in the "FROM" field.
-from_id_db_lookup = {
-    "NCBI": "RefSeq_Protein",
-    "EMBL": "EMBL-GenBank-DDBJ",
-    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
-    "UNIPROT-FROM": "UniProtKB_AC-ID",
-    "UNIPARC": "UniParc",
-}
-
-# database name in uniprot for different databases when used in the "TO" field.
-to_id_db_lookup = {
-    "NCBI": "RefSeq_Protein",
-    "EMBL": "EMBL-GenBank-DDBJ",
-    "EMBL-CDS": "EMBL-GenBank-DDBJ_CDS",
-    "UNIPROT": "UniProtKB",
-    "UNIPARC": "UniParc",
-}
-
-# response format from uniprot when using these databases in the "TO" field.
-db_response_format = {
-    "UNIPROT": "long",
-    "NCBI": "short",
-    "UNIPARC": "long",
-    "EMBL": "short",
-    "EMBL-CDS": "short",
-}
-
-# response key to be used in JSON format is the response format is long.
-db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId"}
+db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId", "UNIREF50" : "id", "UNIREF90" : "id"}
 
 
 # functions
@@ -306,6 +280,9 @@ def process_results(data_df, results, from_db, to_db):
             from_id = d["from"]
             to_key = db_response_key[to_db]
             to_id = d["to"][to_key]
+
+            print (to_key)
+            print (to_id)
             id_mapping_list.append((from_id, to_id))
         result_df = pd.DataFrame(id_mapping_list, columns=["from", "to"])
 
@@ -331,7 +308,7 @@ def create_output_file(data_df, to_id_lookup, output_file):
         lambda x: " ".join(x)
     )
     for db in to_id_lookup:
-        data_df[to_id_lookup] = data_df.groupby(["sequence"])[to_id_lookup].transform(
+        data_df[db] = data_df.groupby(["sequence"])[db].transform(
             lambda x: " ".join(x.str.strip())
         )
 
@@ -444,4 +421,6 @@ if __name__ == "__main__":
     input_file = snakemake.input[0]
     output_file = snakemake.output[0]
     verbose = snakemake.params.verbose
-    all_ids_lookup(input_file, output_file, verbose=verbose)
+    # all_ids_lookup(input_file, output_file, to_id_lookup=to_id_db_lookup, verbose=verbose)
+    all_ids_lookup(input_file, output_file, to_id_lookup=to_id_db_lookup, verbose=verbose)
+

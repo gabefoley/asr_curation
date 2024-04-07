@@ -96,6 +96,8 @@ def generate_parameter_subsets(df, cols_to_check):
                 for column in cols_to_check:
                     alpha = 0.05  # Significance level
 
+                    print (column)
+
                     diff_column = compare_categorical_distributions(df, noise_df, column, alpha)
 
                     if diff_column:
@@ -181,12 +183,14 @@ def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
                  'reviewed', 'UniProt_DB', 'cdd_evalue', 'cdd_incomplete', 'embeddings',
                  'embeddings2', 'IQR_marked', 'curated', 'Routine_exclusion', 'cdd_pssm_id',
                  'cdd_from', 'cdd_to', 'cdd_bitscore', 'lineage_thermo', 'organism_name', 'organism_id', 'length',
-                 'mass', 'sequence_version', 'version', 'Length_2', 'annotation_score',
+                 'mass', 'sequence_version', 'version', 'Length_2', 'annotation_score', 'lit_pubmed_id',
                  'lineage_subkingdom', 'volker_sadht', 'lineage_thermo', 'thermo_bacteria', 'lineage_thermo_no_metha',
                  'model_name', 'Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS', 'embeddings_encoded',
                   'BRENDA', 'dbscan']
 
     cols_to_check = [x for x in df.keys() if not any(x.startswith(term) for term in skip_cols)]
+
+    print (cols_to_check)
 
 
 

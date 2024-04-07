@@ -125,13 +125,13 @@ def test_get_interpro_names():
     df = an.get_names(df.head(), 'xref_smart', "smart", "./", get_short=False)
 
     assert 'xref_interpro_name' in df.columns
-    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_name"].values[0] == 'Metallo-beta-lactamase domain-containing protein 1;Metallo-beta-lactamase;Ribonuclease Z/Hydroxyacylglutathione hydrolase-like;'
-    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_short_name"].values[0] == 'MBLAC1;Metallo-B-lactamas;RibonucZ/Hydroxyglut_hydro;'
-    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_cdd_short_name"].values[0] == 'MBLAC1-like_MBL-fold;'
-    assert df.loc[df["info"] == "sp|F2WP51|LPAKS_PSESP", "xref_smart_name"].values[0] == 'Metallo-beta-lactamase superfamily;'
-    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_name"].values[0] == 'Ribonuclease J [rnj];'
-    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_short_name"].values[0] == 'RNase_J_bact;'
-    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_pirsf_short_name"].values[0] == 'RnjA;'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_name"].values[0] == 'Metallo-beta-lactamase domain-containing protein 1;Metallo-beta-lactamase;Ribonuclease Z/Hydroxyacylglutathione hydrolase-like'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_interpro_short_name"].values[0] == 'MBLAC1;Metallo-B-lactamas;RibonucZ/Hydroxyglut_hydro'
+    assert df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_cdd_short_name"].values[0] == 'MBLAC1-like_MBL-fold'
+    assert df.loc[df["info"] == "sp|F2WP51|LPAKS_PSESP", "xref_smart_name"].values[0] == 'Metallo-beta-lactamase superfamily'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_name"].values[0] == 'Ribonuclease J [rnj]'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_hamap_short_name"].values[0] == 'RNase_J_bact'
+    assert df.loc[df["info"] == "tr|O86842|O86842_STRCO", "xref_pirsf_short_name"].values[0] == 'RnjA'
 
 
 def test_get_panther_names():
@@ -402,8 +402,8 @@ def test_read_to_dict_non_empty_file():
     # Create a test file with sample data
     test_file = "test_data.txt"
     with open(test_file, "w") as file:
-        file.write("key1: value1\n")
-        file.write("key2: value2\n")
+        file.write("key1 || value1\n")
+        file.write("key2 || value2\n")
 
     # Call the function with the test file
     result = an.read_to_dict(test_file)

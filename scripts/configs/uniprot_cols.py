@@ -3,7 +3,7 @@
 
 reduced_uniprot_cols = [
     "accession",
-    "id",q
+    "id",
     "sequence",
     "length",
     "fragment",

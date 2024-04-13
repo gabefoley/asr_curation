@@ -12,13 +12,18 @@ reduced_uniprot_cols = [
     "ec",
     "ft_binding",
     "lineage",
+    "xref_brenda",
+    "xref_cdd",
     "xref_gene3d",
+    "xref_hamap",
     "xref_interpro",
     "xref_oma",
     "xref_orthodb",
     "xref_panther",
     "xref_pdb",
     "xref_pfam",
+    "xref_pirsf",
+    "xref_smart",
 ]
 
 

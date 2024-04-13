@@ -23,6 +23,23 @@ logging.basicConfig(filename="annotation_issues.log", level=logging.DEBUG)
 def exact_match(df, col, match):
     return df[col] == match
 
+
+def add_label_to_column(df, column, value, new_column, new_label):
+    # Check if new_column exists, if not create it
+    if new_column not in df.columns:
+        df[new_column] = ""
+
+    # Iterate through rows and update new_column
+    for index, row in df.iterrows():
+        if not pd.isna(row[column]) and value in row[column]:  # Check if value is a substring and not NaN
+            # Check if the new label is already present in the column
+            current_value = df.at[index, new_column]
+            if pd.isna(current_value):
+                df.at[index, new_column] = new_label
+            elif new_label not in str(current_value):
+                df.at[index, new_column] += " | " + new_label
+
+
 def get_list_of_unique_ids(df, column_name):
     unique_ids = set()
     for entry in df[column_name]:

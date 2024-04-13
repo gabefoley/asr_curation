@@ -47,6 +47,9 @@ All changes should be made in your `add_custom_annotations.py` file and you shou
 to you `config` file.
 
 
+# Regnerating annotation files without making new alignments or trees
+
+
 ## Create a top column
 
 Creates a new column where if a value within a column is more than a given percentage, it will create a new column,

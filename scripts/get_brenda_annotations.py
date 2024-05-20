@@ -20,7 +20,7 @@ def get_ec_nums(df):
 
 
     # Split the 'ec' column by semicolon (;) and iterate through the values
-    for row in df_filtered['ec'].str.split(';'):
+    for row in df_filtered['ec'].astype(str).split(';'):
         if row:
             for ec in row:
                 ec = ec.strip()  # Remove leading/trailing whitespaces

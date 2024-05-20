@@ -12,24 +12,45 @@ def parse_proteins_for_ec(ec="1.1.1.1"):
     return proteins
 
 
+# def get_ec_nums(df):
+#     # Initialize a set to store unique EC numbers
+#     unique_ec_nums = set()
+#
+#     df_filtered = df[pd.notna(df['ec'])]
+#
+#
+#     # Split the 'ec' column by semicolon (;) and iterate through the values
+#     for row in df_filtered['ec'].astype(str).split(';'):
+#         if row:
+#             for ec in row:
+#                 ec = ec.strip()  # Remove leading/trailing whitespaces
+#                 if "-" not in ec:  # Filter out invalid EC numbers
+#                     unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
+#
+#         ec_nums = list(unique_ec_nums)
+#
+#         return ec_nums
+
 def get_ec_nums(df):
     # Initialize a set to store unique EC numbers
     unique_ec_nums = set()
 
+    # Filter the DataFrame to keep rows where the 'ec' column is not null
     df_filtered = df[pd.notna(df['ec'])]
 
+    # Iterate through each row in the filtered DataFrame
+    for ecs in df_filtered['ec'].astype(str):
+        # Split the 'ec' column values by semicolon (;)
+        for ec in ecs.split(';'):
+            ec = ec.strip()  # Remove leading/trailing whitespaces
+            if "-" not in ec:  # Filter out invalid EC numbers
+                unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
 
-    # Split the 'ec' column by semicolon (;) and iterate through the values
-    for row in df_filtered['ec'].astype(str).split(';'):
-        if row:
-            for ec in row:
-                ec = ec.strip()  # Remove leading/trailing whitespaces
-                if "-" not in ec:  # Filter out invalid EC numbers
-                    unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
+    # Convert the set to a list
+    ec_nums = list(unique_ec_nums)
 
-        ec_nums = list(unique_ec_nums)
+    return ec_nums
 
-        return ec_nums
 
 
 # def count_uniprot_entries(ec_dict):

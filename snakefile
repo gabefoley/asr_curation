@@ -264,7 +264,7 @@ rule get_brenda_annotations:
 # Add any generic annotations
 rule add_generic_annotations:
     input:
-        WORKDIR + "/{dataset}/csv/brenda/{dataset}_brenda.csv"
+        WORKDIR + "/{dataset}/csv/uniprot/{dataset}_uniprot.csv"
     output:
         WORKDIR + "/{dataset}/csv/custom/{dataset}_generic_annotated.csv",
     params:

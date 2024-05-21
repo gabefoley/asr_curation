@@ -81,17 +81,19 @@ def add_val(brenda_dict, protein, attrib, attrib_count, bc):
 
             # Create separate units, references, comments columns for each individual substrate
             for term in terms:
-                if term in attrib:
+                if term in attrib and isinstance(attrib[term], (dict, list, int, float)):  # Check type before accessing
                     brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_{term.upper()}"].append(
                         f"{attrib[term]}_count={attrib_count}")
         else:
-            # Split up the data, units, refrences, and comments into separate columns
+            # Split up the data, units, references, and comments into separate columns
             terms = ["data", "units", "refs", "comment"]
             for term in terms:
-                if term in attrib:
+                if term in attrib and isinstance(attrib[term], (dict, list, int, float)):  # Check type before accessing
                     brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{term.upper()}"].append(
                         f"{attrib[term]}_count={attrib_count}")
-
+                else:
+                    print ('term was funky')
+                    print (term)
 
 def main():
     original_df = pd.read_csv(snakemake.input[0])

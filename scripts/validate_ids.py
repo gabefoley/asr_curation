@@ -39,6 +39,13 @@ to_id_db_lookup = {
 
 }
 
+to_id_db_lookup = {
+    "UNIPROT": "UniProtKB",
+    "UNIREF50": "UniRef50",
+    "UNIREF90": "UniRef90",
+
+}
+
 # Response format for different databases
 db_response_format = {
     "UNIPROT": "long",
@@ -53,7 +60,7 @@ db_response_format = {
 
 # Response key to be used in JSON format
 db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId", "UNIREF50" : "id", "UNIREF90" : "id"}
-
+# db_response_key = {"UNIPROT": "primaryAccession"}
 
 # functions
 def submit_id_mapping(from_db, to_db, ids):
@@ -246,11 +253,22 @@ def merge_results_to_main_data(main_df, add_df, from_db, to_db):
 
     # left join on all extracted ids to check if they match on the returned result
     main_df = main_df.merge(add_df, left_on="extracted_id", right_on="from", how="left")
+
+    print ('done')
+    print (from_db)
+    print (to_db)
+
+    print (main_df.head())
+
+
     main_df[to_db] = main_df[to_db].str.cat(main_df["grouped_to"], sep=" ", na_rep="")
 
     # to be done only if it is not uniprot id
-    if from_db != "UNIPROT-FROM":
-        main_df[from_db] = main_df[from_db].str.cat(main_df["from"], sep=" ", na_rep="")
+    # if from_db != "UNIPROT-FROM":
+    #     main_df[from_db] = main_df[from_db].str.cat(main_df["from"], sep=" ", na_rep="")
+
+    if from_db == 'EMBL-CDS':
+        main_df[from_db] = main_df['grouped_to'].str.cat(main_df["from"], sep=" ", na_rep="")
     main_df.drop(columns=["from", "grouped_to"], inplace=True)
 
     # main_df = main_df.merge(add_df,left_on='Extracted_ID_2', right_on='from', how='left')
@@ -294,6 +312,8 @@ def process_results(data_df, results, from_db, to_db):
         result_df[["from", "grouped_to"]].drop_duplicates().reset_index(drop=True)
     )
 
+    print (result_df)
+
     # merge the results with the main dataframe
     merged_df = merge_results_to_main_data(data_df, result_df, from_db, to_db)
 
@@ -303,17 +323,22 @@ def process_results(data_df, results, from_db, to_db):
 def create_output_file(data_df, to_id_lookup, output_file):
     """function is create a clean output file with sequence as the primary key"""
 
+    print ('got here')
+    print (data_df)
+
+    print (to_id_lookup)
+
     # combine entry column,id columns by sequence
-    data_df["accession_all"] = data_df.groupby(["sequence"])["info"].transform(
+    data_df["accession_all"] = data_df.groupby(["info"])["info"].transform(
         lambda x: " ".join(x)
     )
     for db in to_id_lookup:
-        data_df[db] = data_df.groupby(["sequence"])[db].transform(
+        data_df[db] = data_df.groupby(["info"])[db].transform(
             lambda x: " ".join(x.str.strip())
         )
 
     # drop duplicates by sequence
-    cols_output_file = ["sequence", "accession_all"] + [db for db in to_id_lookup]
+    cols_output_file = ["info", "accession_all"] + [db for db in to_id_lookup]
     data_df = data_df.drop_duplicates().reset_index(drop=True)
 
     # remove duplicates in id each column themselves
@@ -347,6 +372,8 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     # Set default from and to id lookups
     if not from_id_lookup:
         from_id_lookup = ["UNIPROT-FROM"]
+        # from_id_lookup = ["EMBL-CDS"]
+
 
     if not to_id_lookup:
         to_id_lookup = ["UNIPROT"]
@@ -355,6 +382,8 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
     # read data and get ids
     df_data = pd.read_csv(input_file)
     ids = list(df_data["extracted_id"])
+
+    print (ids)
 
     if verbose:
         print ("Validating IDs")

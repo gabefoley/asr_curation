@@ -243,8 +243,10 @@ def uniprot_annotation_lkp(
     if verbose:
         print("Creating .csv output file")
 
+    print (results_df)
+
     merged_df = validated_df.merge(
-        results_df, left_on="sequence", right_on="sequence", how="left"
+        results_df, left_on="info", right_on="accession", how="left"
     )
 
     merged_df = merged_df.drop_duplicates(subset="info", keep="first")

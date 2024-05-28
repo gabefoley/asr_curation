@@ -36,14 +36,14 @@ def main():
 
         concat_df = concat_df.drop_duplicates(subset="info", keep="first")
 
-        sc.write_to_fasta(concat_df, output_fasta, trim=True)
+        sc.write_to_fasta(concat_df, output_fasta)
 
         # Write the subset to its own CSV file
         concat_df.to_csv(output_csv, index=False)
     else:  # No sequences found in the key sequence file, just write out the subset again
         add_df = full_df[full_df["info"].isin(seqs_df["info"].values)]
 
-        sc.write_to_fasta(seqs_df, output_fasta, trim=True)
+        sc.write_to_fasta(seqs_df, output_fasta)
         add_df.to_csv(output_csv, index=False)
 
 

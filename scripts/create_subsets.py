@@ -255,7 +255,7 @@ def create_subsets():
 
                 sub_df = sub_df.replace("None", np.NaN)
 
-                sc.write_to_fasta(sub_df, snakemake.output.fasta, trim=True)
+                sc.write_to_fasta(sub_df, snakemake.output.fasta)
 
                 print (excluded_identifiers)
 

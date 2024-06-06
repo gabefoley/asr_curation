@@ -103,8 +103,9 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace(" ", "_")
     annot_df.columns = annot_df.columns.str.replace("-", "_")
     annot_df.columns = annot_df.columns.str.replace("[()]", "", regex=False)
-
-    print (annot_df.columns)
+    print ('print the columns')
+    for x in annot_df.columns:
+        print (x)
     # seperate lineage columns ( after the new api changes)
     (
         annot_df["lineage_superkingdom"],

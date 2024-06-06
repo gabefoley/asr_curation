@@ -47,7 +47,7 @@ def generate_itol_colorstrip(col, color_dict, info_list, output_filename):
         for info, label in info_list:
             # print (info)
             # print (label)
-            f.write(f"{info} {color_dict[label]} {label} \n")
+            f.write(f"{info},{color_dict[label]},{label} \n")
 
     print(f"File '{output_filename}' has been created.")
 

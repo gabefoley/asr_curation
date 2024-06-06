@@ -135,7 +135,7 @@ def process_results(intermediate_tsv_file):
         annot_df["lineage_species_group"],
         annot_df["lineage_varietas"],
         annot_df["lineage_forma"],
-    ) = zip(*annot_df["Taxonomic lineage"].map(split_lineage))
+    ) = zip(*annot_df["lineage"].map(split_lineage))
 
     return annot_df
 

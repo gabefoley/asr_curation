@@ -247,9 +247,15 @@ def uniprot_annotation_lkp(
 
     print (results_df)
 
-    merged_df = validated_df.merge(
-        results_df, left_on="info", right_on="accession", how="left"
-    )
+    # We merge on sequence if it exists in both (it won't exist if we started with just a list of IDs)
+    if 'sequence' in validated_df.columns and 'sequence' in results_df.columns:
+        merged_df = validated_df.merge(
+            results_df, left_on="sequence", right_on="sequence", how="left"
+        )
+    else:
+        merged_df = validated_df.merge(
+            results_df, left_on="info", right_on="accession", how="left"
+        )
 
     merged_df = merged_df.drop_duplicates(subset="info", keep="first")
     merged_df.to_csv(output_file, index=False)

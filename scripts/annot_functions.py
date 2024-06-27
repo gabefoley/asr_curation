@@ -79,41 +79,63 @@ def retrieve_name(endpoint, id_value, get_short=False):
 
 
 def add_name_column(row, id_column, name_mapping, get_short=False):
+    new_columns = {}  # Dictionary to store new columns to be added later
+
     if isinstance(row[id_column], float):
-        row[id_column + "_name"] = None
+        if get_short:
+            new_columns[id_column + "_short_name"] = None
+        else:
+            new_columns[id_column + "_name"] = None
     else:
         unique_entries = row[id_column].split(";")
         if get_short:
             name_column = id_column + "_short_name"
         else:
             name_column = id_column + "_name"
-        row[name_column] = ";".join(
+
+        new_columns[name_column] = ";".join(
             name_mapping.get(ids, "") for ids in unique_entries if name_mapping.get(ids) is not None)
-    return row
+
+    return new_columns
+
 
 
 def get_names(df, id_column, endpoint, output_dir, get_short=False):
+
+    # Define the existing mapping file path
     existing_mapping = os.path.join(output_dir, f"{id_column}_{'short_' if get_short else ''}names.txt")
 
     print(f"Adding the actual names for {id_column} IDs")
 
+    # Extract unique IDs from the DataFrame
     unique_ids = get_list_of_unique_ids(df, id_column)
 
-    # Check for an existing mapping generated from a previous run
+    # Read existing mapping if it exists
     name_mapping = read_to_dict(existing_mapping)
 
+    # Retrieve names for each unique ID if not already mapped
     for id_value in unique_ids:
-        # If it already exists we don't need to retrieve it again
         if id_value not in name_mapping:
             name_mapping[id_value] = retrieve_name(endpoint, id_value, get_short)
 
-    # Update the name mapping .txt in the annotations folder to be able to reuse this
+    # Write the updated name mapping to a file for reuse
     write_from_dict(existing_mapping, name_mapping)
+
+    # Create a DataFrame to hold new columns
+    new_columns_df = pd.DataFrame()
+
     # Apply the add_name_column function to each row of the DataFrame
-    df = df.apply(lambda row: add_name_column(row, id_column, name_mapping, get_short), axis=1)
+    for index, row in df.iterrows():
+        new_columns = add_name_column(row, id_column, name_mapping, get_short)
+        for col_name, value in new_columns.items():
+            if col_name not in new_columns_df.columns:
+                new_columns_df[col_name] = None
+            new_columns_df.at[index, col_name] = value
+
+    # Append the new columns to the original DataFrame
+    df = pd.concat([df, new_columns_df], axis=1)
 
     return df
-
 
 def get_panther_family_names(df, output_dir):
     existing_mapping = output_dir + "/panther_mappings.txt"
@@ -215,9 +237,14 @@ def get_orthodb_names(df, output_dir):
     # Update the name mapping .txt in the annotations folder to reuse
     write_from_dict(existing_mapping, name_mapping)
 
+    print ('here now')
+    print (df.columns)
+
     # Apply the add_orthodb_columns function to each row of the DataFrame
     df = df.apply(lambda row: add_orthodb_columns(row, name_mapping), axis=1)
 
+    print ('and now')
+    print (df.columns)
     return df
 
 
@@ -284,8 +311,7 @@ def add_orthodb_columns(row, orthodb_mapping):
     return row
 
 
-import os
-import requests
+
 
 # Load in dictionary file stored as plain text locally
 def read_to_dict(filename):

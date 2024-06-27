@@ -204,11 +204,11 @@ if VERBOSE:
 
 rule all:
         input:
-           brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+#           brenda =     [f'{WORKDIR}/{dataset}/csv/brenda/{dataset}_brenda.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
            custom =     [f'{WORKDIR}/{dataset}/csv/custom/{dataset}_annotated.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
-           annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
+           annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/annotations/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
            reordered_annotations = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_reordered.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
-           itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset] for col in ANNOTATION_COLS],
+           itol_summary = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/annotations/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset] for col in ANNOTATION_COLS],
            trees = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/{dataset}_{subset}_{cluster_thresh}.nwk' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
 #             ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestors.csv' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in subseSUBSETSts[dataset]],
 #             extants_and_ancestors = [f'{WORKDIR}/{dataset}/subsets/{subset}/{cluster_thresh}/concatenated_seqs/{dataset}_{subset}_{cluster_thresh}_ancestors.aln' for cluster_thresh in CLUSTER_THRESHOLDS for dataset in DATASETS for subset in SUBSETS[dataset]],
@@ -431,7 +431,7 @@ rule create_alignment_annotation_file:
     params:
         annotation_cols = ANNOTATION_COLS
     output:
-        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt",
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/annotations/{dataset}_{subset}_{cluster_thresh}_alignment_annotations.txt",
     script:
         "scripts/create_annotation_file.py"
 
@@ -456,7 +456,7 @@ rule create_ancestor_annotation_file:
     params:
         annotation_cols = ANNOTATION_COLS
     output:
-        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/{dataset}_{subset}_{cluster_thresh}_ancestor_annotations.txt",
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/annotations/{dataset}_{subset}_{cluster_thresh}_ancestor_annotations.txt",
     script:
         "scripts/create_annotation_file.py"
 
@@ -469,7 +469,7 @@ rule create_itol_annotations:
         single_colour_annotation_cols = SINGLE_COLOUR_ANNOTATION_COLS
 
     output:
-        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/csv/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt",
+        tsv = WORKDIR + "/{dataset}/subsets/{subset}/{cluster_thresh}/annotations/itol_annotations/{dataset}_{subset}_{cluster_thresh}_itol_summary.txt",
     script:
         "scripts/create_itol_files.py"
 

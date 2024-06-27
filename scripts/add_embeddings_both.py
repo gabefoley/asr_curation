@@ -1,39 +1,57 @@
 import pandas as pd
 import os
-from transformers import BertModel, AutoTokenizer, T5EncoderModel, T5Tokenizer
+from transformers import AutoModel, AutoTokenizer
 import torch
-import gc
-from tm_vec.embed_structure_model import trans_basic_block, trans_basic_block_Config
-from tm_vec.tm_vec_utils import featurize_prottrans, embed_tm_vec, encode
-from sklearn.manifold import TSNE
 
-def calculate_t5_embeddings(sequences, model_deep, model, tokenizer, device):
-    encoded_sequences = encode(sequences, model_deep, model, tokenizer, device)
-    # Process and return T5 embeddings as needed
-    return encoded_sequences
 
-def process_and_store_embeddings(df, model_name, embedding_df_path, calculate_embeddings_func):
-    model = None
-    tokenizer = None
+def calculate_embeddings(sequence, model, tokenizer, model_type):
+    """Calculate various embeddings for a given sequence."""
+    inputs = tokenizer(" ".join(sequence), return_tensors='pt', padding=True, truncation=True)
+    with torch.no_grad():
+        if model_type == 'protbert':
+            outputs = model(**inputs)
+        elif model_type == 't5':
+            outputs = model(**inputs.input_ids)
+        else:
+            raise ValueError(f"Unsupported model type: {model_type}")
 
-    if "DistilProtBert" in model_name:
-        model = BertModel.from_pretrained(model_name, output_hidden_states=True)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-    elif "prot_t5_xl_uniref50" in model_name:
-        model = T5EncoderModel.from_pretrained(model_name)
-        tokenizer = T5Tokenizer.from_pretrained(model_name, do_lower_case=False)
-    
-    if model is None or tokenizer is None:
-        print("Unsupported model name.")
-        return df
+    embeddings = outputs.last_hidden_state
 
+    # Mean pooling
+    mean_embedding = embeddings.mean(dim=1).squeeze().numpy()
+
+    # CLS token pooling (if applicable, using first token)
+    cls_embedding = embeddings[:, 0].squeeze().numpy()
+
+    # Max pooling
+    max_embedding = embeddings.max(dim=1).values.squeeze().numpy()
+
+    # Weighted pooling
+    weights = torch.linspace(0.1, 1.0, embeddings.size(1), device=embeddings.device)
+    weights = weights.unsqueeze(0).unsqueeze(-1)  # Add extra dimensions for broadcasting
+    weighted_embedding = (embeddings * weights).mean(dim=1).squeeze().numpy()
+
+    return {
+        f'{model_type}_mean_embedding': mean_embedding,
+        f'{model_type}_cls_embedding': cls_embedding,
+        f'{model_type}_max_embedding': max_embedding,
+        f'{model_type}_weighted_embedding': weighted_embedding
+    }
+
+
+def process_and_store_embeddings(df, model_name, embedding_df_path, model_type):
+    """Process and store multiple types of embeddings for sequences in the DataFrame."""
+    model = AutoModel.from_pretrained(model_name, output_hidden_states=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+    # Load existing embeddings if they exist
     if os.path.exists(embedding_df_path):
         embedding_df = pd.read_pickle(embedding_df_path)
     else:
-        embedding_df = pd.DataFrame(columns=["sequence", "model_name"])
+        embedding_df = pd.DataFrame(columns=["info", "sequence", "model_name"])
 
     for idx, row in df.iterrows():
-        print(idx)
+        info = row['info']
         sequence = row["sequence"]
 
         existing_row = embedding_df[
@@ -42,27 +60,19 @@ def process_and_store_embeddings(df, model_name, embedding_df_path, calculate_em
         ]
 
         if not existing_row.empty:
-            print("not empty")
-            embed_data = existing_row.iloc[0].to_dict()
-            for key, value in embed_data.items():
-                if key not in df.columns:
-                    df[key] = [None] * len(df)
-                df.at[idx, key] = value
-        else:
-            embeddings = calculate_embeddings_func(sequence, model, tokenizer)
-            
-            new_row = {"sequence": sequence, "model_name": model_name, **embeddings}
+            print(f"Embeddings for sequence {sequence} already exist.")
+            continue  # Skip if embeddings for this sequence already exist
+
+        try:
+            embeddings = calculate_embeddings(sequence, model, tokenizer, model_type)
+            new_row = {"info": info, "sequence": sequence, "model_name": model_name, **embeddings}
             embedding_df = pd.concat([embedding_df, pd.DataFrame([new_row])], ignore_index=True)
 
+        except Exception as e:
+            print(f"Failed to process sequence {sequence} with error: {e}")
+
+    # Save embedding_df with full embeddings
     embedding_df.to_pickle(embedding_df_path)
-    return df
 
-# Example usage for BERT:
-bert_model_name = "yarongef/DistilProtBert"
-bert_embedding_df_path = "bert_embeddings.pkl"
-process_and_store_embeddings(annot_df, bert_model_name, bert_embedding_df_path, calculate_bert_embeddings)
+    return embedding_df
 
-# Example usage for T5:
-t5_model_name = "Rostlab/prot_t5_xl_uniref50"
-t5_embedding_df_path = "t5_embeddings.pkl"
-process_and_store_embeddings(annot_df, t5_model_name, t5_embedding_df_path, calculate_t5_embeddings)

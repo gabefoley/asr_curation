@@ -14,6 +14,10 @@ from scipy.stats import fisher_exact
 dbscan_params_eps = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 2, 5, 10, 20]
 dbscan_params_min_samples = [1,2,3,4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 500, 1000, 5000]
 
+dbscan_params_eps = [0.1, 20]
+dbscan_params_min_samples = [1, 5000]
+
+
 
 
 
@@ -67,10 +71,18 @@ def compare_categorical_distributions(df1, df2, column_name, alpha=0.05):
 
     else:
         return
+def convert_arrays_to_tuples(df, columns):
+    """Convert numpy arrays in specified columns to tuples for hashable types."""
+    for column in columns:
+        if column in df.columns:
+            df[column] = df[column].apply(lambda x: tuple(x) if isinstance(x, np.ndarray) else x)
+    return df
 
 def generate_parameter_subsets(df, cols_to_check):
-    '''
-    Generate a dictionary with each parameter combination, and the list of annotation columns implied as to be excluded on'''
+    """
+    Generate a dictionary with each parameter combination and the list of annotation columns
+    implied as to be excluded.
+    """
     parameter_subsets = defaultdict(list)
 
     for eps_param in dbscan_params_eps:
@@ -78,7 +90,11 @@ def generate_parameter_subsets(df, cols_to_check):
             noise_indices = set(df[df[f'dbscan_eps={eps_param}_minsamples={min_samples_param}'] == -1].index)
             noise_df = df.loc[list(noise_indices)]
 
-            # Merge df1 and df2 with an indicator column
+            # Convert arrays to tuples in both dataframes for hashability
+            noise_df = convert_arrays_to_tuples(noise_df, ['info'] + cols_to_check)
+            df = convert_arrays_to_tuples(df, ['info'] + cols_to_check)
+
+            # Merge df and noise_df with an indicator column
             merged = pd.merge(df, noise_df, on=['info'] + cols_to_check, how='left', indicator=True,
                               suffixes=('', '_df2'))
 
@@ -92,12 +108,12 @@ def generate_parameter_subsets(df, cols_to_check):
             diff_columns = []
 
             if subset_wo_noise.shape[0] != 0:
-
                 for column in cols_to_check:
                     alpha = 0.05  # Significance level
 
-                    print (column)
+                    print(column)
 
+                    # Assuming compare_categorical_distributions is a function you defined
                     diff_column = compare_categorical_distributions(df, noise_df, column, alpha)
 
                     if diff_column:
@@ -105,6 +121,7 @@ def generate_parameter_subsets(df, cols_to_check):
                 parameter_subsets[f'dbscan_eps={eps_param}_minsamples={min_samples_param}'] = diff_columns
 
     return parameter_subsets
+
 
 def generate_db_scan_coverage_plot(df, parameter_subsets, outpath):
     # Create a scatter plot
@@ -174,8 +191,9 @@ def generate_db_scan_coverage_plot(df, parameter_subsets, outpath):
 
 
 def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
-    embedding_cols = ['Prot_T5 Embed Encoded', 'Prot_T5 Embed Mean', 'Prot_T5 Embed CLS']
     df = generate_dbscan_embeddings(df, embedding_col)
+
+    print ('generated')
 
     # We always want to skip these columns as they will be uninformative
     skip_cols += ['info', 'truncated_info', 'extracted_id',
@@ -195,6 +213,8 @@ def generate_dbscan_coverage(df, embedding_col, outpath, skip_cols=[]):
 
 
     parameter_subsets = generate_parameter_subsets(df, cols_to_check)
+
+    print ('parameter subsets')
 
     # Write out the parameter subsets
     with open(f'{outpath}.txt', 'w') as file:

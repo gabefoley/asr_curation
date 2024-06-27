@@ -1,5 +1,3 @@
-
-
 dataset_ranges_text = f"""
     DATASET_RANGE
 #Colored/labeled range datasets allow the highlighting of various clades or leaf ranges by using colored boxes or brackets.
@@ -365,7 +363,6 @@ DATA
 """
 
 
-
 lab_assays_text = f"""
     DATASET_EXTERNALSHAPE
 #Nodes have multiple values associated with them. Values will be displayed as geometric shapes of different sizes in columns outside the tree.
@@ -556,7 +553,7 @@ DATA
 #2097|1502,label,clade,#ff0000,1,normal
 """
 
-shape_text = '''
+shape_text = """
 DATASET_EXTERNALSHAPE
 #Nodes have multiple values associated with them. Values will be displayed as geometric shapes of different sizes in columns outside the tree.
 #Highest value in the dataset will have the largest size, and all others will be scaled down proportionally.
@@ -669,4 +666,4 @@ DATA
 #ID2,value4,value5,value6
 #9606,10,10,20,40
 #LEAF1|LEAF2,50,60,80,90
-'''
+"""

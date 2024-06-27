@@ -14,8 +14,6 @@ def test_validate_ids_main():
     assert os.path.isfile(outpath)
 
 
-
-
 # def test_creating_and_validating_diverse_headers():
 #     # This test creates a DataFrame that contains full NCBI accession header, full UniProt header, gi header
 #     # (as downloaded from Conserved Domain Database alignment) and single NCBI identifier and single UniProt identifier

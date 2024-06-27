@@ -3,17 +3,20 @@ import pytest
 import os
 import tempfile
 import pandas as pd
+
+
 @pytest.fixture
 def temporary_fasta_file():
     # Create a temporary FASTA file with test data
     fasta_content = ">seq1\nPPGN\n>seq2\nPPGD"
-    fasta_file = tempfile.NamedTemporaryFile(delete=False, mode='w')
+    fasta_file = tempfile.NamedTemporaryFile(delete=False, mode="w")
     fasta_file.write(fasta_content)
     fasta_file.close()
     yield fasta_file.name
 
     # Remove the temporary FASTA file
     os.remove(fasta_file.name)
+
 
 def test_get_sequence_content_from_fasta(temporary_fasta_file):
     # Call the function with the temporary FASTA file
@@ -23,8 +26,10 @@ def test_get_sequence_content_from_fasta(temporary_fasta_file):
     expected_sequences = ["PPGN", "PPGD"]
     assert sequences == expected_sequences
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pytest.main()
+
 
 def test_randstring():
     default_rand = sc.randstring()
@@ -74,7 +79,7 @@ def test_get_sequence_df_multiple_paths():
 # Test for add_from_csv function
 def test_add_from_csv(tmp_path):
     # Create a sample DataFrame
-    df = pd.DataFrame({"info": ["A", "B", "C"], "data": ['1', '2', '3']})
+    df = pd.DataFrame({"info": ["A", "B", "C"], "data": ["1", "2", "3"]})
 
     # Create a sample CSV file
     add_data = pd.DataFrame({"info": ["B", "C"], "additional_data": ["X", "Y"]})
@@ -84,14 +89,17 @@ def test_add_from_csv(tmp_path):
     merged_df = sc.add_from_csv(df, tmp_path / "add_data.csv", match="info")
 
     # Define the expected merged DataFrame
-    expected_df = pd.DataFrame({
-        "info": ["A", "B", "C"],
-        "data": ['1', '2', '3'],
-        "additional_data": [None, "X", "Y"]
-    })
+    expected_df = pd.DataFrame(
+        {
+            "info": ["A", "B", "C"],
+            "data": ["1", "2", "3"],
+            "additional_data": [None, "X", "Y"],
+        }
+    )
 
     # Check if the result matches the expected DataFrame
     assert merged_df.equals(expected_df)
+
 
 # Test for get_entry_ids_from_fasta function
 def test_get_entry_ids_from_fasta(tmp_path):

@@ -3,6 +3,7 @@ import distinctipy
 import configs.itol_text as itol_text
 import os
 
+
 def get_color_dict_and_info_list(df, col):
     df = df.fillna("None")
 
@@ -37,13 +38,20 @@ def get_single_info_dict(df, col):
     # Get unique values from the 'funfam_specific_summary' column
     unique_values = df[(df[col] != "None") & (df[col] != False)][col].unique()
 
-    info_dict = {info: value for value in unique_values for info in df[df[col] == value]["info"].tolist()}
+    info_dict = {
+        info: value
+        for value in unique_values
+        for info in df[df[col] == value]["info"].tolist()
+    }
 
     return info_dict
 
+
 def generate_itol_colorstrip(col, color_dict, info_list, output_filename):
     with open(output_filename, "w") as f:
-        f.write(itol_text.dataset_colorstrip_text.replace("<custom_dataset_label>", col))
+        f.write(
+            itol_text.dataset_colorstrip_text.replace("<custom_dataset_label>", col)
+        )
         for info, label in info_list:
             # print (info)
             # print (label)
@@ -65,12 +73,13 @@ def generate_itol_ranges(col, color_dict, info_list, output_filename):
 
     print(f"File '{output_filename}' has been created.")
 
+
 def get_lab_percentages(df):
     # Filter the DataFrame to include only rows with "Extant" in the "Enzyme Type" column
-    extant_df = df[df['Enzyme Type'] == 'Extant']
+    extant_df = df[df["Enzyme Type"] == "Extant"]
 
     # Get the columns that start with "Activity"
-    activity_columns = [col for col in extant_df.columns if col.startswith('Activity')]
+    activity_columns = [col for col in extant_df.columns if col.startswith("Activity")]
 
     # Calculate the number of filled cells that start with "Activity" (excluding NaN values)
     filled_cells = extant_df[activity_columns].count().sum()
@@ -87,9 +96,7 @@ def get_lab_percentages(df):
     return filled_cells, total_cells, formatted_percentage
 
 
-
 def generate_lab_assays(df, outpath):
-
     completed, total, percentage = get_lab_percentages(df)
 
     selected_columns = df.columns[
@@ -99,7 +106,6 @@ def generate_lab_assays(df, outpath):
     selected_columns = selected_columns.insert(0, "info")
 
     with open(outpath, "w+") as f:
-
         text_to_write = itol_text.lab_assays_text.replace("<completed>", str(completed))
         text_to_write = text_to_write.replace("<total>", str(total))
         f.write(text_to_write.replace("<percentage>", percentage))
@@ -117,7 +123,7 @@ def generate_lab_assays(df, outpath):
             #     # Join the row values into a single line with commas
             row_line = ", ".join(row_values)
 
-                # Print the row line
+            # Print the row line
             f.write(f"{row_line}\n")
 
     print(f"File '{outpath}' has been created.")
@@ -138,13 +144,10 @@ def generate_dataset_style(col, color_dict, info_list, output_filename):
 
 
 def generate_shape_style(col, colour, info_dict, output_filename):
-
     with open(output_filename, "w") as f:
-
         text_to_write = itol_text.shape_text.replace("<custom_dataset_label>", col)
         text_to_write = text_to_write.replace("<col>", col)
         f.write(text_to_write.replace("<custom_color>", colour))
-
 
         for info, val in info_dict.items():
             f.write(f"{info},1\n")
@@ -157,22 +160,19 @@ if __name__ == "__main__":
     annotation_cols = snakemake.params.annotation_cols
     single_colour_annotation_cols = snakemake.params.single_colour_annotation_cols
 
-    print ('Creating ITOL files')
-    print (snakemake.output.tsv)
+    print("Creating ITOL files")
+    print(snakemake.output.tsv)
 
     outpath = os.path.dirname(snakemake.output.tsv)
 
     # print (outpath)
 
-    with open (snakemake.output.tsv, "w+") as output_text:
-
+    with open(snakemake.output.tsv, "w+") as output_text:
         output_text.write(f"Lab Assays written to {outpath}/lab_assays.txt\n")
 
         for col in annotation_cols:
-
             # Skip the info column, which won't be informative
-            if col != 'info' and col in df:
-
+            if col != "info" and col in df:
                 # print (col)
 
                 color_dict, info_list = get_color_dict_and_info_list(df, col)
@@ -186,43 +186,47 @@ if __name__ == "__main__":
                     col, color_dict, info_list, f"{outpath}/{col}itol_colorstrip.txt"
                 )
 
-
-                output_text.write(f"Colorstrip generated for {col} at {outpath}/{col}itol_colorstrip.txt ")
+                output_text.write(
+                    f"Colorstrip generated for {col} at {outpath}/{col}itol_colorstrip.txt "
+                )
 
                 generate_itol_ranges(
                     col, color_dict, info_list, f"{outpath}/{col}_itol_ranges.txt"
                 )
 
-                output_text.write(f"Color list generated for {col} at {outpath}/{col}_itol_ranges.txt\n")
-
+                output_text.write(
+                    f"Color list generated for {col} at {outpath}/{col}_itol_ranges.txt\n"
+                )
 
         # single_colours = distinctipy.get_hex(distinctipy.get_colors(len(single_colour_annotation_cols), pastel_factor=0.7))
         single_colours = [
-            distinctipy.get_hex(x) for x in distinctipy.get_colors(len(single_colour_annotation_cols), pastel_factor=0.7)
+            distinctipy.get_hex(x)
+            for x in distinctipy.get_colors(
+                len(single_colour_annotation_cols), pastel_factor=0.7
+            )
         ]
         # print ('rasperyy')
 
         # print (single_colours)
         idx = 0
         for single_col in single_colour_annotation_cols:
-            print ('here is single col')
-            print (single_col)
+            print("here is single col")
+            print(single_col)
 
             if single_col in df.columns:
                 info_dict = get_single_info_dict(df, single_col)
 
-
-                print (single_colours[idx])
+                print(single_colours[idx])
 
                 generate_shape_style(
-                    single_col, single_colours[idx], info_dict, f"{outpath}/{single_col}_itol_dataset_style.txt"
+                    single_col,
+                    single_colours[idx],
+                    info_dict,
+                    f"{outpath}/{single_col}_itol_dataset_style.txt",
                 )
 
-                idx +=1
+                idx += 1
 
-                output_text.write(f"Dataset style generated for {single_col} at {outpath}/{single_col}_itol_dataset_style.txt\n")
-
-
-
-
-
+                output_text.write(
+                    f"Dataset style generated for {single_col} at {outpath}/{single_col}_itol_dataset_style.txt\n"
+                )

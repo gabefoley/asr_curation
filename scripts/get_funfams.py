@@ -148,8 +148,8 @@ def get_funfams(df, output_dir):
         # print (name_mapping)
 
         if seq_id not in name_mapping:
-            print ('not there')
-            print (seq_id)
+            print("not there")
+            print(seq_id)
 
             seq_funfam_info = process_sequence(seq_id, sequence)
             if seq_funfam_info:
@@ -169,24 +169,30 @@ def classify_funfams_specific(row, name_mapping, name_mapping_specific):
     longer_names_specific = list(name_mapping_specific.keys())
     longer_names_general = list(name_mapping.keys())
 
-    description = row['funfam_descriptions']
+    description = row["funfam_descriptions"]
 
     if not pd.isnull(description):
-        specific_matches = [name_mapping_specific.get(str(longer_name), None) for longer_name in longer_names_specific
-                            if longer_name in description]
+        specific_matches = [
+            name_mapping_specific.get(str(longer_name), None)
+            for longer_name in longer_names_specific
+            if longer_name in description
+        ]
         if specific_matches:
-            return ';'.join(specific_matches)
+            return ";".join(specific_matches)
         else:
-            general_matches = [name_mapping.get(str(longer_name), None) for longer_name in longer_names_general if
-                               longer_name in description]
-            return ';'.join(general_matches) if general_matches else None
+            general_matches = [
+                name_mapping.get(str(longer_name), None)
+                for longer_name in longer_names_general
+                if longer_name in description
+            ]
+            return ";".join(general_matches) if general_matches else None
     else:
         return None
 
 
 def classify_funfams_general(row, name_mapping):
     longer_names_general = list(name_mapping.keys())
-    description = row['funfam_descriptions']
+    description = row["funfam_descriptions"]
 
     # for longer_name in longer_names_general:
     # 	print (longer_name)
@@ -199,11 +205,13 @@ def classify_funfams_general(row, name_mapping):
     # print(longer_names_general)
 
     if not pd.isnull(description):
+        general_matches = [
+            name_mapping.get(str(longer_name), None)
+            for longer_name in longer_names_general
+            if longer_name in description
+        ]
 
-        general_matches = [name_mapping.get(str(longer_name), None) for longer_name in longer_names_general if
-                           longer_name in description]
-
-        return ';'.join(general_matches) if general_matches else None
+        return ";".join(general_matches) if general_matches else None
     else:
         return None
 
@@ -212,7 +220,7 @@ def classify_funfams_specific_top(row, name_mapping, name_mapping_specific):
     longer_names_specific = list(name_mapping_specific.keys())
     longer_names_general = list(name_mapping.keys())
 
-    description = row['funfam_descriptions']
+    description = row["funfam_descriptions"]
 
     if not pd.isnull(description):
         first_match = None
@@ -236,7 +244,7 @@ def classify_funfams_specific_top(row, name_mapping, name_mapping_specific):
 
 def classify_funfams_general_top(row, name_mapping):
     longer_names_general = list(name_mapping.keys())
-    description = row['funfam_descriptions']
+    description = row["funfam_descriptions"]
 
     if not pd.isnull(description):
         first_match = None

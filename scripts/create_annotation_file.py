@@ -9,7 +9,6 @@ def create_annotations(df, annotation_cols, outpath):
     if annotation_cols[0] != "extracted_id":
         annotation_cols = ["extracted_id"] + annotation_cols
 
-
     # Subset the columns
     subset_df = df[[x for x in annotation_cols if x in df.columns]]
     subset_df = subset_df.fillna("None")

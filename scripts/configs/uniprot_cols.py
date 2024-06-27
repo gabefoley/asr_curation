@@ -356,8 +356,8 @@ full_uniprot_cols = [
     "comment_count",  # extra fields 2022 sep
     "xref_unicarbkb",
     "xref_vectorbase",
-    #"xref_wbparasitetranscriptprotein",#
+    # "xref_wbparasitetranscriptprotein",#
     # "xref_ko",
     "xref_cleanex",
-    #"xref_prodom",
+    # "xref_prodom",
 ]

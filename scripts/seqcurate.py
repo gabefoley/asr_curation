@@ -149,20 +149,28 @@ def get_subset(df, *cols_dict, include=True):
     return df
 
 
-def write_to_fasta(df, outpath, id_column='info', just_ids=False):
+def write_to_fasta(df, outpath, id_column="info", just_ids=False):
     if just_ids:
-        print (id_column)
+        print(id_column)
         seq_list = [
-            SeqRecord(Seq(""), id=str(getattr(r, id_column)), description=str(getattr(r, id_column)))
+            SeqRecord(
+                Seq(""),
+                id=str(getattr(r, id_column)),
+                description=str(getattr(r, id_column)),
+            )
             for r in df.itertuples()
         ]
     else:
         seq_list = [
-            SeqRecord(Seq(r.sequence), id=getattr(r, id_column), description=getattr(r, id_column))
+            SeqRecord(
+                Seq(r.sequence),
+                id=getattr(r, id_column),
+                description=getattr(r, id_column),
+            )
             for r in df.itertuples()
             if r.sequence
         ]
-    
+
     SeqIO.write(seq_list, outpath, "fasta")
 
 

@@ -103,9 +103,9 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace(" ", "_")
     annot_df.columns = annot_df.columns.str.replace("-", "_")
     annot_df.columns = annot_df.columns.str.replace("[()]", "", regex=False)
-    print ('print the columns')
+    print("print the columns")
     for x in annot_df.columns:
-        print (x)
+        print(x)
     # seperate lineage columns ( after the new api changes)
     (
         annot_df["lineage_superkingdom"],
@@ -141,7 +141,12 @@ def process_results(intermediate_tsv_file):
 
 
 def get_uniprot_annotations(
-    uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
+    uniprot_list_ids,
+    uniprot_cols,
+    intermediate_tsv_file,
+    id_batch_size,
+    result_batch_size,
+    verbose,
 ):
     """running uniprot ids batches"""
 
@@ -170,7 +175,9 @@ def get_uniprot_annotations(
     return 1
 
 
-def fetch_annotations_in_batches(ids, uniprot_cols, intermediate_tsv_file, result_batch_size, verbose):
+def fetch_annotations_in_batches(
+    ids, uniprot_cols, intermediate_tsv_file, result_batch_size, verbose
+):
     """process uniprot api results in batches and load it in .tsv file on the disk"""
 
     cols = ",".join(uniprot_cols)
@@ -218,7 +225,14 @@ def get_uniprot_id_list(df):
 
 
 def uniprot_annotation_lkp(
-    input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose):
+    input_file,
+    output_file,
+    uniprot_cols,
+    intermediate_tsv_file,
+    id_batch_size,
+    result_batch_size,
+    verbose,
+):
     """main function to get uniprot ids annotation"""
 
     # get all uniprot ids
@@ -232,7 +246,12 @@ def uniprot_annotation_lkp(
 
     # submit all ids to uniprot for getting annotation and load in .tsv file
     results_uniprot_loaded = get_uniprot_annotations(
-        uniprot_list_ids, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
+        uniprot_list_ids,
+        uniprot_cols,
+        intermediate_tsv_file,
+        id_batch_size,
+        result_batch_size,
+        verbose,
     )
 
     # process results
@@ -245,10 +264,10 @@ def uniprot_annotation_lkp(
     if verbose:
         print("Creating .csv output file")
 
-    print (results_df)
+    print(results_df)
 
     # We merge on sequence if it exists in both (it won't exist if we started with just a list of IDs)
-    if 'sequence' in validated_df.columns and 'sequence' in results_df.columns:
+    if "sequence" in validated_df.columns and "sequence" in results_df.columns:
         merged_df = validated_df.merge(
             results_df, left_on="sequence", right_on="sequence", how="left"
         )
@@ -274,28 +293,32 @@ def main():
     uniprot_col_size = snakemake.params.uniprot_col_size
     verbose = snakemake.params.verbose
 
-    if uniprot_col_size == 'full':
-
+    if uniprot_col_size == "full":
         if verbose:
-            print ('Retrieving all of the UniProt columns')
+            print("Retrieving all of the UniProt columns")
 
         uniprot_cols = full_uniprot_cols
-    elif uniprot_col_size == 'reduced':
-
-        print ('Retrieving a reduced set of the UniProt columns')
+    elif uniprot_col_size == "reduced":
+        print("Retrieving a reduced set of the UniProt columns")
 
         uniprot_cols = reduced_uniprot_cols
 
     if verbose:
-        print ("UniProt columns to retrieve - ")
-        print (uniprot_cols)
+        print("UniProt columns to retrieve - ")
+        print(uniprot_cols)
         print("\nStarting to retrieve UniProt annotations")
 
     id_batch_size = 110  # process ids in batches of this parameter
     result_batch_size = 50  # process results in this batches (uses pagination)
 
     uniprot_annotation_lkp(
-        input_file, output_file, uniprot_cols, intermediate_tsv_file, id_batch_size, result_batch_size, verbose
+        input_file,
+        output_file,
+        uniprot_cols,
+        intermediate_tsv_file,
+        id_batch_size,
+        result_batch_size,
+        verbose,
     )
 
 

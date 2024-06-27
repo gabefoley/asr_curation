@@ -31,17 +31,18 @@ def parse_proteins_for_ec(ec="1.1.1.1"):
 #
 #         return ec_nums
 
+
 def get_ec_nums(df):
     # Initialize a set to store unique EC numbers
     unique_ec_nums = set()
 
     # Filter the DataFrame to keep rows where the 'ec' column is not null
-    df_filtered = df[pd.notna(df['ec'])]
+    df_filtered = df[pd.notna(df["ec"])]
 
     # Iterate through each row in the filtered DataFrame
-    for ecs in df_filtered['ec'].astype(str):
+    for ecs in df_filtered["ec"].astype(str):
         # Split the 'ec' column values by semicolon (;)
-        for ec in ecs.split(';'):
+        for ec in ecs.split(";"):
             ec = ec.strip()  # Remove leading/trailing whitespaces
             if "-" not in ec:  # Filter out invalid EC numbers
                 unique_ec_nums.add(ec)  # Add to the set to ensure uniqueness
@@ -50,7 +51,6 @@ def get_ec_nums(df):
     ec_nums = list(unique_ec_nums)
 
     return ec_nums
-
 
 
 # def count_uniprot_entries(ec_dict):
@@ -63,37 +63,47 @@ def get_ec_nums(df):
 
 def add_col_from_brenda_dict(df, entry_id, cols_to_add, brenda_dict):
     for name, annots in brenda_dict.items():
-        df.loc[df["extracted_id"].str.contains(entry_id), name] = ";".join(str(x) for x in annots)
+        df.loc[df["extracted_id"].str.contains(entry_id), name] = ";".join(
+            str(x) for x in annots
+        )
     return df
 
 
 def add_val(brenda_dict, protein, attrib, attrib_count, bc):
     # Not adding in info about mutants
     if "comment" not in attrib or "mutant" not in attrib["comment"]:
-
         # If it is an annotation on a specific substrate, make a separate column so the data can be compared correctly
         if type(attrib) == dict and "substrate" in attrib:
             terms = ["units", "refs", "comment"]
-            brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_DATA"].append(
-                f"{attrib['value']}_count={attrib_count}")
+            brenda_dict[protein.uniprot][
+                f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_DATA"
+            ].append(f"{attrib['value']}_count={attrib_count}")
             brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}"].append(
-                f"{attrib['value']};{attrib['substrate']}_count={attrib_count}")
+                f"{attrib['value']};{attrib['substrate']}_count={attrib_count}"
+            )
 
             # Create separate units, references, comments columns for each individual substrate
             for term in terms:
-                if term in attrib and isinstance(attrib[term], (dict, list, int, float)):  # Check type before accessing
-                    brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_{term.upper()}"].append(
-                        f"{attrib[term]}_count={attrib_count}")
+                if term in attrib and isinstance(
+                    attrib[term], (dict, list, int, float)
+                ):  # Check type before accessing
+                    brenda_dict[protein.uniprot][
+                        f"BRENDA_{str(bc)}_{str(attrib['substrate'])}_{term.upper()}"
+                    ].append(f"{attrib[term]}_count={attrib_count}")
         else:
             # Split up the data, units, references, and comments into separate columns
             terms = ["data", "units", "refs", "comment"]
             for term in terms:
-                if term in attrib and isinstance(attrib[term], (dict, list, int, float)):  # Check type before accessing
-                    brenda_dict[protein.uniprot][f"BRENDA_{str(bc)}_{term.upper()}"].append(
-                        f"{attrib[term]}_count={attrib_count}")
+                if term in attrib and isinstance(
+                    attrib[term], (dict, list, int, float)
+                ):  # Check type before accessing
+                    brenda_dict[protein.uniprot][
+                        f"BRENDA_{str(bc)}_{term.upper()}"
+                    ].append(f"{attrib[term]}_count={attrib_count}")
                 else:
-                    print ('term was funky')
-                    print (term)
+                    print("term was funky")
+                    print(term)
+
 
 def main():
     original_df = pd.read_csv(snakemake.input[0])
@@ -101,7 +111,6 @@ def main():
     verbose = snakemake.params.verbose
 
     brenda_dict = defaultdict(lambda: defaultdict(list))
-
 
     if ec_nums:
         for ec_num in ec_nums:
@@ -116,10 +125,13 @@ def main():
             for prot_id, protein in sorted(ec_dict.items()):
                 if protein.uniprot:
                     for refno, ref_dict in protein.references.items():
-                        brenda_dict[protein.uniprot][f"BRENDA_REFERENCES_{refno}"].append(ref_dict["info"])
+                        brenda_dict[protein.uniprot][
+                            f"BRENDA_REFERENCES_{refno}"
+                        ].append(ref_dict["info"])
                         if "pubmed" in ref_dict.keys():
-                            brenda_dict[protein.uniprot][f"BRENDA_REFERENCES_{refno}_PUBMED"].append(
-                                (ref_dict["pubmed"]))
+                            brenda_dict[protein.uniprot][
+                                f"BRENDA_REFERENCES_{refno}_PUBMED"
+                            ].append((ref_dict["pubmed"]))
 
                     for bc in brenda_cols:
                         attrib_count = 0

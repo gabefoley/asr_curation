@@ -24,14 +24,18 @@ def exact_match(df, col, match):
     return df[col] == match
 
 
-def add_label_to_column(df, column, value, new_column, new_label, exclude=None, verbose=False):
+def add_label_to_column(
+    df, column, value, new_column, new_label, exclude=None, verbose=False
+):
     # Check if new_column exists, if not create it
     if new_column not in df.columns:
         df[new_column] = None  # Initialize new column with None values
 
     # Iterate through rows and update new_column
     for index, row in df.iterrows():
-        if not pd.isna(row[column]) and value in row[column]:  # Check if value is a substring and not NaN
+        if (
+            not pd.isna(row[column]) and value in row[column]
+        ):  # Check if value is a substring and not NaN
             # Check if the entry should be excluded
             if exclude and exclude in row[column]:
                 continue
@@ -50,6 +54,7 @@ def add_label_to_column(df, column, value, new_column, new_label, exclude=None, 
     # Print verbose message
     if verbose:
         print(verbose_message)
+
 
 def get_list_of_unique_ids(df, column_name):
     unique_ids = set()
@@ -94,16 +99,19 @@ def add_name_column(row, id_column, name_mapping, get_short=False):
             name_column = id_column + "_name"
 
         new_columns[name_column] = ";".join(
-            name_mapping.get(ids, "") for ids in unique_entries if name_mapping.get(ids) is not None)
+            name_mapping.get(ids, "")
+            for ids in unique_entries
+            if name_mapping.get(ids) is not None
+        )
 
     return new_columns
 
 
-
 def get_names(df, id_column, endpoint, output_dir, get_short=False):
-
     # Define the existing mapping file path
-    existing_mapping = os.path.join(output_dir, f"{id_column}_{'short_' if get_short else ''}names.txt")
+    existing_mapping = os.path.join(
+        output_dir, f"{id_column}_{'short_' if get_short else ''}names.txt"
+    )
 
     print(f"Adding the actual names for {id_column} IDs")
 
@@ -136,6 +144,7 @@ def get_names(df, id_column, endpoint, output_dir, get_short=False):
     df = pd.concat([df, new_columns_df], axis=1)
 
     return df
+
 
 def get_panther_family_names(df, output_dir):
     existing_mapping = output_dir + "/panther_mappings.txt"
@@ -172,7 +181,7 @@ def get_list_of_unique_panther_ids(df):
         ids = entry.strip(";").split(";")
         unique_panther_ids.update(ids)
 
-    print('here are the unique panther ids')
+    print("here are the unique panther ids")
     print(unique_panther_ids)
 
     return list(unique_panther_ids)
@@ -183,8 +192,8 @@ def retrieve_panther_family_name(panther_id):
     response = requests.get(url)
 
     if response.status_code == 200:
-        soup = BeautifulSoup(response.content, 'html.parser')
-        family_name_element = soup.find('td', class_='mainText')
+        soup = BeautifulSoup(response.content, "html.parser")
+        family_name_element = soup.find("td", class_="mainText")
         if family_name_element:
             family_name = family_name_element.text.strip()
             # Strip the PANTHER ID from the family name
@@ -192,14 +201,18 @@ def retrieve_panther_family_name(panther_id):
             return family_name
         else:
             print("Family name not found on the page.")
-            return 'Not found'
+            return "Not found"
     else:
         print("Error:", response.status_code)
         return None
 
 
 def add_panther_family_name(row, panther_mapping):
-    panther_ids = row.get("xref_panther", "").split(";") if pd.notna(row.get("xref_panther", "")) else []
+    panther_ids = (
+        row.get("xref_panther", "").split(";")
+        if pd.notna(row.get("xref_panther", ""))
+        else []
+    )
 
     family_names = []
     for panther_id in panther_ids:
@@ -237,14 +250,14 @@ def get_orthodb_names(df, output_dir):
     # Update the name mapping .txt in the annotations folder to reuse
     write_from_dict(existing_mapping, name_mapping)
 
-    print ('here now')
-    print (df.columns)
+    print("here now")
+    print(df.columns)
 
     # Apply the add_orthodb_columns function to each row of the DataFrame
     df = df.apply(lambda row: add_orthodb_columns(row, name_mapping), axis=1)
 
-    print ('and now')
-    print (df.columns)
+    print("and now")
+    print(df.columns)
     return df
 
 
@@ -311,8 +324,6 @@ def add_orthodb_columns(row, orthodb_mapping):
     return row
 
 
-
-
 # Load in dictionary file stored as plain text locally
 def read_to_dict(filename):
     data_dict = {}
@@ -337,8 +348,6 @@ def write_from_dict(filename, data_dict):
     with open(filename, "w+") as file:
         for key, value in merged_data.items():
             file.write(f"{key} || {value}\n")
-
-
 
 
 # # Function to get interpro names from a dataframe with a column containing a list of interpro IDs
@@ -424,9 +433,11 @@ def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None)
 
     # If columns_to_match is None, match on index
     if columns_to_match is None:
-        merged_df = pd.merge(df1, df2, on='info', how='left')  # Keep all rows from df1
+        merged_df = pd.merge(df1, df2, on="info", how="left")  # Keep all rows from df1
     else:
-        merged_df = pd.merge(df1, df2, on=columns_to_match, how='left')  # Keep all rows from df1
+        merged_df = pd.merge(
+            df1, df2, on=columns_to_match, how="left"
+        )  # Keep all rows from df1
 
     if columns_to_add is None:
         columns_to_add = df2.columns
@@ -437,25 +448,29 @@ def add_columns_to_df(df1, filepath, columns_to_match=None, columns_to_add=None)
 
     return df1
 
+
 def process_note_column(df, column):
     pattern = r'note="([^"]+)"'
-    df[column + '_notes'] = df[column].str.extractall(pattern)[0].groupby(level=0).apply(lambda x: '|'.join(x))
-    binary_matrix = df[column + '_notes'].str.get_dummies()
-    result_df = pd.concat([df, binary_matrix.add_prefix(f'{column}||')], axis=1)
-    result_df = result_df.drop(columns=[column + '_notes'])
+    df[column + "_notes"] = (
+        df[column]
+        .str.extractall(pattern)[0]
+        .groupby(level=0)
+        .apply(lambda x: "|".join(x))
+    )
+    binary_matrix = df[column + "_notes"].str.get_dummies()
+    result_df = pd.concat([df, binary_matrix.add_prefix(f"{column}||")], axis=1)
+    result_df = result_df.drop(columns=[column + "_notes"])
     return result_df
 
 
-
 def separate_notes(df):
-    note_columns = df.applymap(lambda x: 'note=' in str(x)).any()
+    note_columns = df.applymap(lambda x: "note=" in str(x)).any()
     result_columns = note_columns[note_columns].index.tolist()
-
 
     # Iterate through each column and process it
     for col in result_columns:
         df = process_note_column(df, col)
-        
+
     return df
 
 
@@ -495,9 +510,6 @@ def annotate_nonAA(df):
     return df
 
 
-
-
-
 def annotate_AA(df):
     # Does the sequences have non amino acid characters in it
 
@@ -505,6 +517,7 @@ def annotate_AA(df):
     df["AA_Character"] = ~(df["sequence"].dropna().str.contains(non_AA, na=None))
 
     return df
+
 
 def get_pos(align_df, seq_id, col_name, pos_type="list"):
     """
@@ -668,7 +681,6 @@ def get_aligned_positions(sequence, *positions):
     """
 
     sequence = "".join(sequence)
-
 
     aligned_positions = []
 
@@ -1170,14 +1182,17 @@ def create_top_column(df, threshold_percentage, max_threshold_percentage=100):
                 most_common_value = value_counts.idxmax()
 
                 # Check if the most common value is not np.nan and meets the threshold conditions
-                if (most_common_value_percentage > threshold_percentage and
-                        most_common_value_percentage < max_threshold_percentage and
-                        not pd.isna(most_common_value)):
+                if (
+                    most_common_value_percentage > threshold_percentage
+                    and most_common_value_percentage < max_threshold_percentage
+                    and not pd.isna(most_common_value)
+                ):
                     new_column_name = f'TOP_{column}__"{most_common_value}"'
-                    new_df[new_column_name] = (df[column] == most_common_value) & (~df[column].isna())
+                    new_df[new_column_name] = (df[column] == most_common_value) & (
+                        ~df[column].isna()
+                    )
 
-    return new_df.dropna(axis=1, how='all')
-
+    return new_df.dropna(axis=1, how="all")
 
 
 def check_sequence_for_loop_length(seq):
@@ -1228,16 +1243,15 @@ def check_if_positions_align_with_target(target_pos, seq_pos):
 
 # Function to add a new column to the DataFrame
 def add_labels_from_file(df, column_name, file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         entries = {}
         for line in file:
-            parts = line.strip().split('\t')
+            parts = line.strip().split("\t")
             if len(parts) >= 2:
                 entries[parts[0]] = parts[1]
 
-        print (entries)
+        print(entries)
 
-        df[column_name] = df['info'].apply(lambda x: entries.get(x, None))
+        df[column_name] = df["info"].apply(lambda x: entries.get(x, None))
 
     return df
-

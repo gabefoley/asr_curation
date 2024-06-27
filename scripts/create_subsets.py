@@ -1,14 +1,15 @@
 import seqcurate as sc
 import pandas as pd
 import numpy as np
-import os 
+import os
 import time
 
 verbose = True
 
+
 def filter_based_on_iqr(df, verbose):
-    Q1 = df['length'].quantile(0.25)
-    Q3 = df['length'].quantile(0.75)
+    Q1 = df["length"].quantile(0.25)
+    Q3 = df["length"].quantile(0.75)
 
     # Compute IQR
     IQR = Q3 - Q1
@@ -23,17 +24,21 @@ def filter_based_on_iqr(df, verbose):
         print(f"Upper Whisker: {upper_whisker}")
 
     # To identify outliers
-    outliers = df[(df['length'] < lower_whisker) | (df['length'] > upper_whisker)]
+    outliers = df[(df["length"] < lower_whisker) | (df["length"] > upper_whisker)]
 
     if verbose:
-        print (f"Removing {len(outliers)} sequences that lie outside the interquartile range")
+        print(
+            f"Removing {len(outliers)} sequences that lie outside the interquartile range"
+        )
 
-    print ("Removing - ")
+    print("Removing - ")
     for index, row in outliers.iterrows():
         print(f"Name: {row['info']}, Length: {row['length']}")
 
     df = df.drop(outliers.index)
     return df
+
+
 def format_subset_val(col, col_val):
     if type(col_val) == str:
         # Check if it is a list of values
@@ -54,7 +59,6 @@ def format_subset_val(col, col_val):
 
 
 def subset_column_vals(df, col_val_dict, not_col_val_dict):
-    
     excluded_identifiers = {}
 
     # For everything that has to be there, we can just query the data_frame directly
@@ -65,18 +69,17 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict):
     print(f"Creating a subset with {qry}")
 
     sub_df = df.query(qry)
-    
 
-    
     for col, col_val in col_val_dict.items():
-        excluded_identifiers[f'{col}_{col_val}'] = df.loc[~df[col].eq(col_val), 'info'].tolist()
+        excluded_identifiers[f"{col}_{col_val}"] = df.loc[
+            ~df[col].eq(col_val), "info"
+        ].tolist()
 
     sub_df = sub_df.fillna("None")
 
     # print(f"Subset length is {len(sub_df)}")
 
     for col, col_val in not_col_val_dict.items():
-
         if col in df:
             df[col] = df[col].astype(str)
             sub_df[col] = sub_df[col].astype(str)
@@ -85,13 +88,15 @@ def subset_column_vals(df, col_val_dict, not_col_val_dict):
             # If it is a list split it up
             for val in col_val.split(","):
                 sub_df = sub_df[~sub_df[col].str.contains(val.strip(), na=False)]
-                excluded_identifiers[f'{col}_NOT_{val}'] = (df[~df[col].str.contains(val.strip(), na=False)]['info'].tolist())
+                excluded_identifiers[f"{col}_NOT_{val}"] = df[
+                    ~df[col].str.contains(val.strip(), na=False)
+                ]["info"].tolist()
 
-#     sub_df, not_identifiers = subset_not_column_vals(df, not_col_val_dict)
-
+    #     sub_df, not_identifiers = subset_not_column_vals(df, not_col_val_dict)
 
     sub_df = sub_df.drop_duplicates(subset="accession")
     return sub_df, excluded_identifiers
+
 
 def get_col_val_name(col_val_dict, not_col_val_dict):
     name = "_".join(str(k) + "_" + str(v) for k, v in col_val_dict.items())
@@ -116,28 +121,21 @@ def add_val_to_dict(term, add_val, add_dict):
         # except ValueError:
         #     add_dict[term] = add_val
 
+
 def create_subsets():
     df = pd.read_csv(snakemake.input.csv)
 
     # excluded_output_path = snakemake.output.explanation + "/subset_explanations.txt"
 
-
     # If a subset rule doesn't exist, then just write out the full data set
     if snakemake.wildcards.subset == "full_set":
         sc.write_to_fasta(pd.read_csv(snakemake.input.csv), snakemake.output[0])
 
-
     for line in open(snakemake.input.rules).read().splitlines():
-
         # Reset the condition that we want to sample from the dataframe
         sample_from = None
 
-
-
         if line and not line.startswith("#"):
-
-
-
             col_val_dict = {}
             not_col_val_dict = {}
 
@@ -153,29 +151,29 @@ def create_subsets():
             dict_def = line.split("=")[1].strip()
 
             if "IQR" in dict_def:
-                iqr_type = dict_def.split("IQR")[1].split(":")[1].split("$")[0].strip().lower()
-                if iqr_type not in ['before', 'after']:
-                    raise ValueError("IQR in subset rules needs to be defined as either 'before' or 'after'")
+                iqr_type = (
+                    dict_def.split("IQR")[1].split(":")[1].split("$")[0].strip().lower()
+                )
+                if iqr_type not in ["before", "after"]:
+                    raise ValueError(
+                        "IQR in subset rules needs to be defined as either 'before' or 'after'"
+                    )
 
             else:
-
                 iqr_type = None
 
-            if iqr_type == 'before':
-
+            if iqr_type == "before":
                 if verbose:
                     "Filtering based on length of interquartile range before applying other subset rules"
 
                     df = filter_based_on_iqr(df, verbose)
 
-
-
             if dict_def != "*":
                 for i in dict_def.split("$"):
                     term = i.split(":")[0].strip()
 
-                    print ('term is')
-                    print (term)
+                    print("term is")
+                    print(term)
 
                     if term != "IQR":
                         print(i)
@@ -204,14 +202,11 @@ def create_subsets():
                                     term, term_val.split(" ")[0], col_val_dict
                                 )
 
-
             # If no custom name make name based on values of dictionary
             if len(name) < 1:
                 name = get_col_val_name(col_val_dict, not_col_val_dict)
 
-
             if name == snakemake.wildcards.subset:
-
                 # df = df.fillna("None")
 
                 # Subset the annotation file
@@ -221,8 +216,6 @@ def create_subsets():
                     sub_df, excluded_identifiers = subset_column_vals(
                         df, col_val_dict, not_col_val_dict
                     )
-                    
-
 
                 if sample_from:
                     print(
@@ -241,37 +234,31 @@ def create_subsets():
                     print("After sampling the length to write out is")
                     print(len(sub_df))
 
-     
                 # Write the subset to a fasta
 
-                if iqr_type == 'after':
-
+                if iqr_type == "after":
                     if verbose:
                         "Filtering based on length of interquartile range after applying other subset rules"
 
                         sub_df = filter_based_on_iqr(sub_df, verbose)
 
-
-
                 sub_df = sub_df.replace("None", np.NaN)
 
                 sc.write_to_fasta(sub_df, snakemake.output.fasta)
 
-                print (excluded_identifiers)
+                print(excluded_identifiers)
 
-                print (snakemake.output.subset_log)
+                print(snakemake.output.subset_log)
 
                 with open(snakemake.output.subset_log, "w+") as file:
                     for key, value in excluded_identifiers.items():
                         file.write(f"{key} : {value}\n")
 
-
-
-
                 print("write to csv")
 
                 # Write the subset to its own csv file
                 sub_df.to_csv(snakemake.output.csv, index=False)
+
 
 def main():
     print("Starting to create subsets IDs")

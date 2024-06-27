@@ -36,14 +36,12 @@ to_id_db_lookup = {
     "UNIPARC": "UniParc",
     "UNIREF50": "UniRef50",
     "UNIREF90": "UniRef90",
-
 }
 
 to_id_db_lookup = {
     "UNIPROT": "UniProtKB",
     "UNIREF50": "UniRef50",
     "UNIREF90": "UniRef90",
-
 }
 
 # Response format for different databases
@@ -55,12 +53,17 @@ db_response_format = {
     "EMBL-CDS": "short",
     "UNIREF50": "long",
     "UNIREF90": "long",
-
 }
 
 # Response key to be used in JSON format
-db_response_key = {"UNIPROT": "primaryAccession", "UNIPARC": "uniParcId", "UNIREF50" : "id", "UNIREF90" : "id"}
+db_response_key = {
+    "UNIPROT": "primaryAccession",
+    "UNIPARC": "uniParcId",
+    "UNIREF50": "id",
+    "UNIREF90": "id",
+}
 # db_response_key = {"UNIPROT": "primaryAccession"}
+
 
 # functions
 def submit_id_mapping(from_db, to_db, ids):
@@ -254,12 +257,11 @@ def merge_results_to_main_data(main_df, add_df, from_db, to_db):
     # left join on all extracted ids to check if they match on the returned result
     main_df = main_df.merge(add_df, left_on="extracted_id", right_on="from", how="left")
 
-    print ('done')
-    print (from_db)
-    print (to_db)
+    print("done")
+    print(from_db)
+    print(to_db)
 
-    print (main_df.head())
-
+    print(main_df.head())
 
     main_df[to_db] = main_df[to_db].str.cat(main_df["grouped_to"], sep=" ", na_rep="")
 
@@ -267,8 +269,10 @@ def merge_results_to_main_data(main_df, add_df, from_db, to_db):
     # if from_db != "UNIPROT-FROM":
     #     main_df[from_db] = main_df[from_db].str.cat(main_df["from"], sep=" ", na_rep="")
 
-    if from_db == 'EMBL-CDS':
-        main_df[from_db] = main_df['grouped_to'].str.cat(main_df["from"], sep=" ", na_rep="")
+    if from_db == "EMBL-CDS":
+        main_df[from_db] = main_df["grouped_to"].str.cat(
+            main_df["from"], sep=" ", na_rep=""
+        )
     main_df.drop(columns=["from", "grouped_to"], inplace=True)
 
     # main_df = main_df.merge(add_df,left_on='Extracted_ID_2', right_on='from', how='left')
@@ -299,8 +303,8 @@ def process_results(data_df, results, from_db, to_db):
             to_key = db_response_key[to_db]
             to_id = d["to"][to_key]
 
-            print (to_key)
-            print (to_id)
+            print(to_key)
+            print(to_id)
             id_mapping_list.append((from_id, to_id))
         result_df = pd.DataFrame(id_mapping_list, columns=["from", "to"])
 
@@ -312,7 +316,7 @@ def process_results(data_df, results, from_db, to_db):
         result_df[["from", "grouped_to"]].drop_duplicates().reset_index(drop=True)
     )
 
-    print (result_df)
+    print(result_df)
 
     # merge the results with the main dataframe
     merged_df = merge_results_to_main_data(data_df, result_df, from_db, to_db)
@@ -323,10 +327,10 @@ def process_results(data_df, results, from_db, to_db):
 def create_output_file(data_df, to_id_lookup, output_file):
     """function is create a clean output file with sequence as the primary key"""
 
-    print ('got here')
-    print (data_df)
+    print("got here")
+    print(data_df)
 
-    print (to_id_lookup)
+    print(to_id_lookup)
 
     # combine entry column,id columns by sequence
     data_df["accession_all"] = data_df.groupby(["info"])["info"].transform(
@@ -366,7 +370,9 @@ def chunk_it(iterable, size):
 CHUNK_SIZE = 5000  # Adjust based on your requirements
 
 
-def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=None, verbose=True):
+def all_ids_lookup(
+    input_file, output_file, from_id_lookup=None, to_id_lookup=None, verbose=True
+):
     """Main function to map input ids to different database specified in the id_lookup list"""
 
     # Set default from and to id lookups
@@ -374,23 +380,20 @@ def all_ids_lookup(input_file, output_file, from_id_lookup=None, to_id_lookup=No
         from_id_lookup = ["UNIPROT-FROM"]
         # from_id_lookup = ["EMBL-CDS"]
 
-
     if not to_id_lookup:
         to_id_lookup = ["UNIPROT"]
-
 
     # read data and get ids
     df_data = pd.read_csv(input_file)
     ids = list(df_data["extracted_id"])
 
-    print (ids)
+    print(ids)
 
     if verbose:
-        print ("Validating IDs")
-        print (f"Mapping from - {from_id_lookup}")
-        print (f"Mapping to - {to_id_lookup}")
+        print("Validating IDs")
+        print(f"Mapping from - {from_id_lookup}")
+        print(f"Mapping to - {to_id_lookup}")
         print(f"There are a total of {len(ids)} IDs to map")
-
 
     # Create an empty DataFrame to hold concatenated results
     df_final = pd.DataFrame()
@@ -451,5 +454,6 @@ if __name__ == "__main__":
     output_file = snakemake.output[0]
     verbose = snakemake.params.verbose
     # all_ids_lookup(input_file, output_file, to_id_lookup=to_id_db_lookup, verbose=verbose)
-    all_ids_lookup(input_file, output_file, to_id_lookup=to_id_db_lookup, verbose=verbose)
-
+    all_ids_lookup(
+        input_file, output_file, to_id_lookup=to_id_db_lookup, verbose=verbose
+    )

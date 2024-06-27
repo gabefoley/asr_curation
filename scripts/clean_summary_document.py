@@ -15,11 +15,13 @@ def modify_file(input_file_path, output_file_path):
                 line += ',\n\t"remove-cell"\n'
             out_file.write(line)
 
+
 def main():
     input_file_path = snakemake.input[0]  # Replace with the actual input file path
     output_file_path = snakemake.output[0]  # Replace with the actual output file path
 
     modify_file(input_file_path, output_file_path)
+
 
 if __name__ == "__main__":
     main()

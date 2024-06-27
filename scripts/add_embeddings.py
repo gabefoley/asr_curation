@@ -6,11 +6,13 @@ import torch
 
 def calculate_embeddings(sequence, model, tokenizer, model_type):
     """Calculate various embeddings for a given sequence."""
-    inputs = tokenizer(" ".join(sequence), return_tensors='pt', padding=True, truncation=True)
+    inputs = tokenizer(
+        " ".join(sequence), return_tensors="pt", padding=True, truncation=True
+    )
     with torch.no_grad():
-        if model_type == 'protbert':
+        if model_type == "protbert":
             outputs = model(**inputs)
-        elif model_type == 't5':
+        elif model_type == "t5":
             outputs = model(**inputs.input_ids)
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
@@ -28,14 +30,16 @@ def calculate_embeddings(sequence, model, tokenizer, model_type):
 
     # Weighted pooling
     weights = torch.linspace(0.1, 1.0, embeddings.size(1), device=embeddings.device)
-    weights = weights.unsqueeze(0).unsqueeze(-1)  # Add extra dimensions for broadcasting
+    weights = weights.unsqueeze(0).unsqueeze(
+        -1
+    )  # Add extra dimensions for broadcasting
     weighted_embedding = (embeddings * weights).mean(dim=1).squeeze().numpy()
 
     return {
-        f'{model_type}_mean_embedding': mean_embedding,
-        f'{model_type}_cls_embedding': cls_embedding,
-        f'{model_type}_max_embedding': max_embedding,
-        f'{model_type}_weighted_embedding': weighted_embedding
+        f"{model_type}_mean_embedding": mean_embedding,
+        f"{model_type}_cls_embedding": cls_embedding,
+        f"{model_type}_max_embedding": max_embedding,
+        f"{model_type}_weighted_embedding": weighted_embedding,
     }
 
 
@@ -51,7 +55,7 @@ def process_and_store_embeddings(df, model_name, embedding_df_path, model_type):
         embedding_df = pd.DataFrame(columns=["info", "sequence", "model_name"])
 
     for idx, row in df.iterrows():
-        info = row['info']
+        info = row["info"]
         sequence = row["sequence"]
 
         existing_row = embedding_df[
@@ -65,8 +69,15 @@ def process_and_store_embeddings(df, model_name, embedding_df_path, model_type):
 
         try:
             embeddings = calculate_embeddings(sequence, model, tokenizer, model_type)
-            new_row = {"info": info, "sequence": sequence, "model_name": model_name, **embeddings}
-            embedding_df = pd.concat([embedding_df, pd.DataFrame([new_row])], ignore_index=True)
+            new_row = {
+                "info": info,
+                "sequence": sequence,
+                "model_name": model_name,
+                **embeddings,
+            }
+            embedding_df = pd.concat(
+                [embedding_df, pd.DataFrame([new_row])], ignore_index=True
+            )
 
         except Exception as e:
             print(f"Failed to process sequence {sequence} with error: {e}")
@@ -75,4 +86,3 @@ def process_and_store_embeddings(df, model_name, embedding_df_path, model_type):
     embedding_df.to_pickle(embedding_df_path)
 
     return embedding_df
-

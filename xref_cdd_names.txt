@@ -1,4 +1,0 @@
-cd07714 || RNAaseJ, MBL-fold metallo-hydrolase domain
-cd07711 || uncharacterized human metallo-beta-lactamase domain-containing protein 1 and related proteins; MBL-fold metallo hydrolase domain
-cd07710 || Pseudomonas aeruginosa arylsulfatase SdsA1, Pseudomonas sp. DSM6611 arylsulfatase Pisa1, and related proteins; MBL-fold metallo-hydrolase domain
-cd16300 || NDM-1, FIM-1 and related metallo-beta-lactamases, subclass B1; MBL-fold metallo-hydrolase domain

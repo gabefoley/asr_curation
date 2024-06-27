@@ -1,57 +1,57 @@
 import pandas as pd
 import os
-from transformers import BertModel, AutoTokenizer
-import pandas as pd
+from transformers import AutoModel, AutoTokenizer
 import torch
-import os
 
 
-def calculate_embeddings(sequence, model, model_name, tokenizer):
-    inputs = tokenizer(
-        " ".join(sequence),
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=512,
-    )
-    outputs = model(**inputs)
+def calculate_embeddings(sequence, model, tokenizer, model_type):
+    """Calculate various embeddings for a given sequence."""
+    inputs = tokenizer(" ".join(sequence), return_tensors='pt', padding=True, truncation=True)
+    with torch.no_grad():
+        if model_type == 'protbert':
+            outputs = model(**inputs)
+        elif model_type == 't5':
+            outputs = model(**inputs.input_ids)
+        else:
+            raise ValueError(f"Unsupported model type: {model_type}")
 
-    last_hidden_state = outputs[0]
-    embed_mean = last_hidden_state.mean(dim=1).detach().numpy().flatten().tolist()
-    embed_cls = last_hidden_state[:, 0, :].detach().numpy().flatten().tolist()
-    embed_max_pool = (
-        last_hidden_state.max(dim=1).values.detach().numpy().flatten().tolist()
-    )
-    hidden_states = outputs[2]
-    last_two_layers = torch.cat((hidden_states[-1], hidden_states[-2]), dim=-1)
-    embed_last_two_concat = (
-        last_two_layers.mean(dim=1).detach().numpy().flatten().tolist()
-    )
+    embeddings = outputs.last_hidden_state
 
-    embeddings = {
-        f"{model_name} Embed Mean": embed_mean,
-        f"{model_name} Embed CLS": embed_cls,
-        f"{model_name} Embed Max Pool": embed_max_pool,
-        f"{model_name} Embed Last Two Concat": embed_last_two_concat,
+    # Mean pooling
+    mean_embedding = embeddings.mean(dim=1).squeeze().numpy()
+
+    # CLS token pooling (if applicable, using first token)
+    cls_embedding = embeddings[:, 0].squeeze().numpy()
+
+    # Max pooling
+    max_embedding = embeddings.max(dim=1).values.squeeze().numpy()
+
+    # Weighted pooling
+    weights = torch.linspace(0.1, 1.0, embeddings.size(1), device=embeddings.device)
+    weights = weights.unsqueeze(0).unsqueeze(-1)  # Add extra dimensions for broadcasting
+    weighted_embedding = (embeddings * weights).mean(dim=1).squeeze().numpy()
+
+    return {
+        f'{model_type}_mean_embedding': mean_embedding,
+        f'{model_type}_cls_embedding': cls_embedding,
+        f'{model_type}_max_embedding': max_embedding,
+        f'{model_type}_weighted_embedding': weighted_embedding
     }
 
-    # print (sequence)
-    # print (embed_mean[0:5])
-    # print (embed_cls[0:5])
-    return embeddings
 
-
-def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.pkl"):
-    model = BertModel.from_pretrained(model_name, output_hidden_states=True)
+def process_and_store_embeddings(df, model_name, embedding_df_path, model_type):
+    """Process and store multiple types of embeddings for sequences in the DataFrame."""
+    model = AutoModel.from_pretrained(model_name, output_hidden_states=True)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
+    # Load existing embeddings if they exist
     if os.path.exists(embedding_df_path):
         embedding_df = pd.read_pickle(embedding_df_path)
     else:
-        embedding_df = pd.DataFrame(columns=["sequence", "model_name"])
+        embedding_df = pd.DataFrame(columns=["info", "sequence", "model_name"])
 
     for idx, row in df.iterrows():
-        print(idx)
+        info = row['info']
         sequence = row["sequence"]
 
         existing_row = embedding_df[
@@ -59,28 +59,20 @@ def process_and_store_embeddings(df, model_name, embedding_df_path="embeddings.p
             & (embedding_df["model_name"] == model_name)
         ]
 
-        # print (existing_row)
-
         if not existing_row.empty:
-            print("not empty")
+            print(f"Embeddings for sequence {sequence} already exist.")
+            continue  # Skip if embeddings for this sequence already exist
 
-            embed_data = existing_row.iloc[0].to_dict()
-            for key, value in embed_data.items():
-                # print (key)
-                if key not in df.columns:
-                    df[key] = [None] * len(df)
-                df.at[idx, key] = value
-        else:
-            embeddings = calculate_embeddings(sequence, model, model_name, tokenizer)
-            new_row = {"sequence": sequence, "model_name": model_name, **embeddings}
+        try:
+            embeddings = calculate_embeddings(sequence, model, tokenizer, model_type)
+            new_row = {"info": info, "sequence": sequence, "model_name": model_name, **embeddings}
             embedding_df = pd.concat([embedding_df, pd.DataFrame([new_row])], ignore_index=True)
 
-            # for key, value in embeddings.items():
-            #     if key not in df.columns:
-            #         df[key] = [None] * len(df)
-            #     df.at[idx, key] = value
+        except Exception as e:
+            print(f"Failed to process sequence {sequence} with error: {e}")
 
-    # Saving the updated embedding dataframe
+    # Save embedding_df with full embeddings
     embedding_df.to_pickle(embedding_df_path)
 
-    return df
+    return embedding_df
+

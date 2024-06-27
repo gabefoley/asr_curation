@@ -1,4 +1,0 @@
-cd07714 || RNaseJ_MBL-fold
-cd07711 || MBLAC1-like_MBL-fold
-cd07710 || arylsulfatase_Sdsa1-like_MBL-fold
-cd16300 || NDM_FIM-like_MBL-B1

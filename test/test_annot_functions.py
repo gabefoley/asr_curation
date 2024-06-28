@@ -188,7 +188,7 @@ def test_get_panther_names():
     )
     assert (
         df.loc[df["info"] == "sp|A4D2B0|MBLC1_HUMAN", "xref_panther_name"].values[0]
-        == "METALLO-BETA-LACTAMASE DOMAIN-CONTAINING PROTEIN 1;UNCHARACTERIZED"
+        == "METALLO-BETA-LACTAMASE DOMAIN-CONTAINING PROTEIN 1;METALLO-BETA-LACTAMASE DOMAIN-CONTAINING PROTEIN 1"
     )
 
 

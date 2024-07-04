@@ -58,8 +58,35 @@ dbscan_params_min_samples = [
     5000,
 ]
 
-dbscan_params_eps = [0.1, 20]
-dbscan_params_min_samples = [1, 5000]
+dbscan_params_eps = [
+    0.1,
+    0.15,
+    0.45,
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    1,
+    2,
+    5,
+    10,
+    20,
+]
+dbscan_params_min_samples = [
+    1,
+    2,
+    3,
+    8,
+    9,
+    10,
+    20,
+    500,
+    1000,
+    5000,
+]
+
+#dbscan_params_eps = [0.1, 20]
+#dbscan_params_min_samples = [1, 5000]
 
 
 def generate_dbscan_embeddings(

@@ -1,0 +1,7 @@
+# THIS IS A COMMENT LINE.
+
+eukaryotic_kari = lineage_superkingdom : Eukaryota $ protein_name : NOT Deleted, Merged $ Non_AA_Character : FALSE
+
+classI_kari = KARI_Class : Class_1 $ protein_name : NOT Deleted, Merged $ Non_AA_Character : FALSE
+
+all_kari = *

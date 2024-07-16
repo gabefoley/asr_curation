@@ -93,6 +93,10 @@ def split_lineage(x):
 
     return lineage_list
 
+def split_lineage(lineage):
+    # Placeholder function for splitting the lineage string.
+    # Replace this with your actual split logic.
+    return lineage.split(';') if pd.notnull(lineage) else [None] * 25
 
 def process_results(intermediate_tsv_file):
     """process results in tsv file"""
@@ -104,40 +108,80 @@ def process_results(intermediate_tsv_file):
     annot_df.columns = annot_df.columns.str.replace("-", "_")
     annot_df.columns = annot_df.columns.str.replace("[()]", "", regex=False)
     print("print the columns")
+
+    print("print the columns")
     for x in annot_df.columns:
         print(x)
-    # seperate lineage columns ( after the new api changes)
-    (
-        annot_df["lineage_superkingdom"],
-        annot_df["lineage_kingdom"],
-        annot_df["lineage_subkingdom"],
-        annot_df["lineage_superphylum"],
-        annot_df["lineage_phylum"],
-        annot_df["lineage_subphylum"],
-        annot_df["lineage_superclass"],
-        annot_df["lineage_class"],
-        annot_df["lineage_subclass"],
-        annot_df["lineage_infraclass"],
-        annot_df["lineage_superorder"],
-        annot_df["lineage_order"],
-        annot_df["lineage_suborder"],
-        annot_df["lineage_infraorder"],
-        annot_df["lineage_parvorder"],
-        annot_df["lineage_superfamily"],
-        annot_df["lineage_family"],
-        annot_df["lineage_subfamily"],
-        annot_df["lineage_tribe"],
-        annot_df["lineage_subtribe"],
-        annot_df["lineage_genus"],
-        annot_df["lineage_subgenus"],
-        annot_df["lineage_species_group"],
-        annot_df["lineage_species_group"],
-        annot_df["lineage_species_group"],
-        annot_df["lineage_varietas"],
-        annot_df["lineage_forma"],
-    ) = zip(*annot_df["lineage"].map(split_lineage))
+
+    # Separate lineage columns (after the new API changes)
+    lineage_columns = [
+        "lineage_superkingdom",
+        "lineage_kingdom",
+        "lineage_subkingdom",
+        "lineage_superphylum",
+        "lineage_phylum",
+        "lineage_subphylum",
+        "lineage_superclass",
+        "lineage_class",
+        "lineage_subclass",
+        "lineage_infraclass",
+        "lineage_superorder",
+        "lineage_order",
+        "lineage_suborder",
+        "lineage_infraorder",
+        "lineage_parvorder",
+        "lineage_superfamily",
+        "lineage_family",
+        "lineage_subfamily",
+        "lineage_tribe",
+        "lineage_subtribe",
+        "lineage_genus",
+        "lineage_subgenus",
+        "lineage_species_group",
+        "lineage_varietas",
+        "lineage_forma",
+    ]
+
+    # Split lineage and create new columns
+    annot_df[lineage_columns] = annot_df["lineage"].apply(split_lineage).apply(pd.Series)
 
     return annot_df
+
+
+    # for x in annot_df.columns:
+    #     print(x)
+    # # seperate lineage columns ( after the new api changes)
+    # (
+    #     annot_df["lineage_superkingdom"],
+    #     annot_df["lineage_kingdom"],
+    #     annot_df["lineage_subkingdom"],
+    #     annot_df["lineage_superphylum"],
+    #     annot_df["lineage_phylum"],
+    #     annot_df["lineage_subphylum"],
+    #     annot_df["lineage_superclass"],
+    #     annot_df["lineage_class"],
+    #     annot_df["lineage_subclass"],
+    #     annot_df["lineage_infraclass"],
+    #     annot_df["lineage_superorder"],
+    #     annot_df["lineage_order"],
+    #     annot_df["lineage_suborder"],
+    #     annot_df["lineage_infraorder"],
+    #     annot_df["lineage_parvorder"],
+    #     annot_df["lineage_superfamily"],
+    #     annot_df["lineage_family"],
+    #     annot_df["lineage_subfamily"],
+    #     annot_df["lineage_tribe"],
+    #     annot_df["lineage_subtribe"],
+    #     annot_df["lineage_genus"],
+    #     annot_df["lineage_subgenus"],
+    #     annot_df["lineage_species_group"],
+    #     annot_df["lineage_species_group"],
+    #     annot_df["lineage_species_group"],
+    #     annot_df["lineage_varietas"],
+    #     annot_df["lineage_forma"],
+    # ) = zip(*annot_df["lineage"].map(split_lineage))
+    #
+    # return annot_df
 
 
 def get_uniprot_annotations(
@@ -150,6 +194,7 @@ def get_uniprot_annotations(
 ):
     """running uniprot ids batches"""
 
+
     splits = np.array_split(
         np.array(uniprot_list_ids), max(1, round(len(uniprot_list_ids) / id_batch_size))
     )
@@ -158,6 +203,8 @@ def get_uniprot_annotations(
     # For each split go to UniProt to retrieve information
     for split in splits:
         split_count += 1
+        print ('here is split')
+        print (split)
         if verbose:
             print(f"Running stage {split_count} of {len(splits)}")
         split_fetch_success = fetch_annotations_in_batches(
@@ -237,7 +284,12 @@ def uniprot_annotation_lkp(
 
     # get all uniprot ids
     validated_df = pd.read_csv(input_file)
+    print ('validated df is')
+    print (validated_df.head(n=5))
     uniprot_list_ids = get_uniprot_id_list(validated_df)
+
+    print ('ids here are')
+    print (uniprot_list_ids)
 
     # create a new intermediate tsv file with header row for dumping results
     header = "\t".join(uniprot_cols)
@@ -292,6 +344,9 @@ def main():
     intermediate_tsv_file = snakemake.input.csv.split(".")[0] + ".tsv"
     uniprot_col_size = snakemake.params.uniprot_col_size
     verbose = snakemake.params.verbose
+
+    print ('input file is ')
+    print (input_file)
 
     if uniprot_col_size == "full":
         if verbose:

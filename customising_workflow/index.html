@@ -1,0 +1,877 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../defining_files/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.29">
+    
+    
+      
+        <title>Customising workflow - ASR Curation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.76a95c52.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#customising-workflows" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ASR Curation" class="md-header__button md-logo" aria-label="ASR Curation" data-md-component="logo">
+      
+  <img src="../images/tiny_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ASR Curation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Customising workflow
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  ASR curation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../install/" class="md-tabs__link">
+          
+  
+  Installation and quickstart
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_snakemake/" class="md-tabs__link">
+          
+  
+  Detailed explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../defining_files/" class="md-tabs__link">
+          
+  
+  Customisation
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ASR Curation" class="md-nav__button md-logo" aria-label="ASR Curation" data-md-component="logo">
+      
+  <img src="../images/tiny_logo.png" alt="logo">
+
+    </a>
+    ASR Curation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ASR curation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Installation and quickstart
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Installation and quickstart
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running example data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Explanation of output
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Detailed explanation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Detailed explanation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_snakemake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic snakemake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detailed_explanation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Snakemake diagram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Customisation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Customisation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../defining_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defining files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Customising workflow
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Customising workflow
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#customising-the-annotations-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customising the annotations scripts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-code-for-new-annotation-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing code for new annotation scripts
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#customising-the-annotations-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customising the annotations scripts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-code-for-new-annotation-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing code for new annotation scripts
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="customising-workflows">Customising workflows</h1>
+<h2 id="customising-the-annotations-scripts"><strong>Customising the annotations scripts</strong></h2>
+<p>The following rules / Python files stored in scripts are run at three different steps during the <code>asr_curation</code> pipeline </p>
+<ul>
+<li>
+<p><strong>add_custom_annotations / scripts/add_custom_annotations.py'</strong> - run after all of the database annotations are retrived and before subsets are made</p>
+</li>
+<li>
+<p><strong>add_annotations_from_alignment / scripts/add_annotations_from_alignment.py'</strong> - run after the sequences for a given subset have been aligned</p>
+</li>
+<li>
+<p><strong>add_annotations_from_ancestors / scripts/add_annotations_from_ancestors.py'</strong> - run after the ancestors for a given subset have been predicted</p>
+</li>
+</ul>
+<p>Which script to use for which custom annotation is a decision as to what information you require to build the rules. For example, if your custom rules make use of aligned positions, this will obviously need to come after alignments have been generated.</p>
+<p>Currently only <code>add_custom_annotations</code> comes before the creation of subsets, so only annotations added from this custom script (or annotations from the database retrievals) can be used to make subsets. </p>
+<p>The files stored in <code>scripts</code> are template files - they will read in the data and write it out correctly, but not add any annotations.</p>
+<p>You can override these files by copying them to a new location and writing code to be annotated into your data. </p>
+<p>Within your config file you then specify the location of any custom script. </p>
+<p>See <a href="../defining_files/#defining-the-config-files">Defining the config files</a> for more information.</p>
+<h2 id="writing-code-for-new-annotation-scripts">Writing code for new annotation scripts</h2>
+<p>You must keep the structure for the input and output the same but to help with this all three files define the following line -</p>
+<div class="highlight"><pre><span></span><code># IF CUSTOMISING THIS FILE PLACE CUSTOM CODE HERE
+</code></pre></div>
+<p>An example of how to write custom code is given in the <code>scripts/configs/example_custom_annotations</code> folder, and the example_workflow uses these files to add custom annotations to the datasets in the example_workflow</p>
+<p>There is a lot of code in <code>scripts/annot_functions</code> that is designed to do common annotation tasks.</p>
+<h1 id="customising-annotations">Customising annotations</h1>
+<h2 id="provided-annotation-functions"><strong>Provided annotation functions</strong></h2>
+<p>The following is a description of some of the provided annotation functions and how to incorporate them.</p>
+<p>All changes should be made in your <code>add_custom_annotations.py</code> file and you should add the custom location of this file
+to you <code>config</code> file.</p>
+<h1 id="regnerating-annotation-files-without-making-new-alignments-or-trees">Regnerating annotation files without making new alignments or trees</h1>
+<h2 id="create-a-top-column">Create a top column</h2>
+<p>Creates a new column where if a value within a column is more than a given percentage, it will create a new column,
+labelled TOP_<column_name>_<value_name> with <code>True</code> or <code>False</code> values depending on whether a sequence has
+that annotation.</p>
+<p>This can be useful for grouping together multiple annotations that differ from the dominant value in a column.</p>
+<p><code>annot_df = an.create_top_column(annot_df, 80)</code></p>
+<h1 id="separate-out-the-note-values-from-the-feature-columns">Separate out the note values from the feature columns</h1>
+<p>annot_df = an.separate_notes(annot_df)</p>
+<h2 id="generating-embeddings-and-running-dbscan">Generating embeddings and running DBSCAN</h2>
+<h1 id="add-embeddings">Add embeddings</h1>
+<p>Generate embeddings using TM Vec. You need to download the checkpoint and config.json and point to their path in your <code>add_custom_annotations.py</code> code</p>
+<p>To download the files -
+<code>!wget https://users.flatironinstitute.org/thamamsy/public_www/tm_vec_cath_model.ckpt -q gwpy\n"</code>
+<code>!wget https://users.flatironinstitute.org/thamamsy/public_www/tm_vec_cath_model_params.json -q gwpy"</code></p>
+<p>Then set their path in your file - </p>
+<div class="highlight"><pre><span></span><code>model_checkpoint_path = &lt;path_to_ckpt&gt;
+model_config_path = &lt;path_to_json&gt;
+</code></pre></div>
+<p>And then create the embeddings. This will store the generated embeddings in a local file, so that embeddings can be reused over subsequent runs of asr_curation.</p>
+<p>The default path is in the custom_annotations folder, in a pickle file - "embeddings.pkl", but this can be changed with the parameter <code>embedding_df_path</code> when using the following
+<code>process_and_store_embeddings</code> function</p>
+<p>annot_df = tm_vec_embed.process_and_store_embeddings(annot_df, 'Prot_T5', model_checkpoint_path, model_config_path)</p>
+<h1 id="generate-dbscan-images">Generate DBSCAN images</h1>
+<p>Generate a DBSCAN coverage image</p>
+<div class="highlight"><pre><span></span><code>db.generate_dbscan_coverage(annot_df, &#39;Prot_T5 Embed Encoded&#39;, 
+    f&quot;{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage&quot; )
+</code></pre></div>
+<p>Here we provide the <code>dataframe</code> name, the name of the column to find the embeddings in (by default 'Prot_T5 Embed Encoded' if you are using Prot_T5 in the previous step) and a prefix for the output files</p>
+<p>You can also pass columns that you do not wish to include in the DBSCAN analysis using the parameter <code>skip_cols</code>
+<div class="highlight"><pre><span></span><code>db.generate_dbscan_coverage(annot_df, &#39;Prot_T5 Embed Encoded&#39;, 
+    f&quot;{snakemake.input.custom_dir}/{snakemake.wildcards.dataset}_dbscan_coverage_no_ft&quot;,
+    skip_cols = [&#39;ft_var_seq||&#39;, &#39;ft_variant||&#39;, &#39;ft_conflict||&#39;, &#39;ft_chain||&#39;, &#39;ft_crosslnk||&#39;, &#39;ft_carbohyd||&#39;, &#39;ft_init_met||&#39; , &#39;ft_mod_res||&#39;, &#39;ft_lipid||&#39;, &#39;ft_transit||&#39;, &#39;ft_compbias||&#39;, &#39;ft_domain||&#39;, &#39;ft_motif||&#39;,  &#39;ft_region||&#39;, &#39;ft_repeat||&#39;, &#39;ft_zn_fing||&#39;, &#39;ft_binding||&#39;, &#39;ft_topo_dom||&#39;, &#39;ft_act_site||&#39;])
+</code></pre></div></p>
+<h1 id="full-minimal-example-of-generating-embeddings-and-running-dbscan-outlier-detection">Full minimal example of generating embeddings and running DBSCAN outlier detection</h1>
+<p>The following can be created as <code>add_custom_annotations.py</code> to generate embeddings. Make sure to specify that you are using a custom annotations file in your <code>config</code> file 
+and to update the paths to the TM-Vec checkpoint / config.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">annot_functions</span> <span class="k">as</span> <span class="nn">an</span>
+<span class="kn">import</span> <span class="nn">get_funfams</span> <span class="k">as</span> <span class="nn">ff</span>
+<span class="kn">import</span> <span class="nn">map_to_cdd</span> <span class="k">as</span> <span class="nn">m2c</span>
+<span class="kn">import</span> <span class="nn">seqcurate</span> <span class="k">as</span> <span class="nn">sc</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">add_embeddings</span> <span class="k">as</span> <span class="nn">embed</span>
+<span class="kn">import</span> <span class="nn">add_tm_vec_embeddings</span> <span class="k">as</span> <span class="nn">tm_vec_embed</span>
+<span class="kn">import</span> <span class="nn">create_itol_files</span> <span class="k">as</span> <span class="nn">itol</span>
+<span class="kn">import</span> <span class="nn">create_dbscan_coverage</span> <span class="k">as</span> <span class="nn">db</span>
+
+
+<span class="n">annot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">snakemake</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">csv</span><span class="p">)</span>
+
+<span class="c1"># Create TOP column for high scoring values</span>
+
+<span class="n">annot_df</span> <span class="o">=</span> <span class="n">an</span><span class="o">.</span><span class="n">create_top_column</span><span class="p">(</span><span class="n">annot_df</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+
+<span class="c1"># Separate out the note values from the feature columns</span>
+
+<span class="n">annot_df</span> <span class="o">=</span> <span class="n">an</span><span class="o">.</span><span class="n">separate_notes</span><span class="p">(</span><span class="n">annot_df</span><span class="p">)</span>
+
+<span class="c1"># Add embeddings</span>
+
+<span class="n">model_checkpoint_path</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">path_to_checkpoint</span><span class="o">&gt;</span>
+<span class="n">model_config_path</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">path_to_config</span><span class="o">&gt;</span>
+
+<span class="n">annot_df</span> <span class="o">=</span> <span class="n">tm_vec_embed</span><span class="o">.</span><span class="n">process_and_store_embeddings</span><span class="p">(</span><span class="n">annot_df</span><span class="p">,</span> <span class="s1">&#39;Prot_T5&#39;</span><span class="p">,</span> <span class="n">model_checkpoint_path</span><span class="p">,</span> <span class="n">model_config_path</span><span class="p">)</span>
+
+<span class="c1"># Generate DBSCAN images</span>
+<span class="n">db</span><span class="o">.</span><span class="n">generate_dbscan_coverage</span><span class="p">(</span><span class="n">annot_df</span><span class="p">,</span> <span class="s1">&#39;Prot_T5 Embed Encoded&#39;</span><span class="p">,</span> 
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">snakemake</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">custom_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">snakemake</span><span class="o">.</span><span class="n">wildcards</span><span class="o">.</span><span class="n">dataset</span><span class="si">}</span><span class="s2">_dbscan_coverage&quot;</span> <span class="p">)</span>
+
+
+<span class="n">db</span><span class="o">.</span><span class="n">generate_dbscan_coverage</span><span class="p">(</span><span class="n">annot_df</span><span class="p">,</span> <span class="s1">&#39;Prot_T5 Embed Encoded&#39;</span><span class="p">,</span> 
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">snakemake</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">custom_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">snakemake</span><span class="o">.</span><span class="n">wildcards</span><span class="o">.</span><span class="n">dataset</span><span class="si">}</span><span class="s2">_dbscan_coverage_no_ft&quot;</span><span class="p">,</span>
+    <span class="n">skip_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ft_var_seq||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_variant||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_conflict||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_chain||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_crosslnk||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_carbohyd||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_init_met||&#39;</span> <span class="p">,</span> <span class="s1">&#39;ft_mod_res||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_lipid||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_transit||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_compbias||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_domain||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_motif||&#39;</span><span class="p">,</span>  <span class="s1">&#39;ft_region||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_repeat||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_zn_fing||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_binding||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_topo_dom||&#39;</span><span class="p">,</span> <span class="s1">&#39;ft_act_site||&#39;</span><span class="p">])</span>
+
+<span class="n">annot_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">snakemake</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      
+    
+  </body>
+</html>
